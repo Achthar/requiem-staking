@@ -5,11 +5,11 @@ import "./libraries/math/SafeMath.sol";
 import "./libraries/ERC20Permit.sol";
 import "./libraries/VaultOwned.sol";
 
-contract OlympusERC20Token is ERC20Permit, VaultOwned {
+contract RequiemERC20Token is ERC20Permit, VaultOwned {
 
     using SafeMath for uint256;
 
-    constructor() ERC20("Olympus", "OHM", 9) {
+    constructor() ERC20("Requiem Token", "REQT", 18) {
     }
 
     function mint(address account_, uint256 amount_) external onlyVault() {
