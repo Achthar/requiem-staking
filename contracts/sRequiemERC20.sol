@@ -53,7 +53,7 @@ contract sRequiem is ERC20Permit, Manageable {
 
   mapping(address => mapping(address => uint256)) private _allowedValue;
 
-  constructor() ERC20("Staked Olympus", "sOHM", 9) ERC20Permit() {
+  constructor() ERC20("Staked Requiem", "sREQT", 9) ERC20Permit() {
     initializer = msg.sender;
     _totalSupply = INITIAL_FRAGMENTS_SUPPLY;
     _gonsPerFragment = TOTAL_GONS.div(_totalSupply);
@@ -79,7 +79,7 @@ contract sRequiem is ERC20Permit, Manageable {
   }
 
   /**
-        @notice increases sOHM supply to increase staking balances relative to profit_
+        @notice increases sREQT supply to increase staking balances relative to profit_
         @param profit_ uint256
         @return uint256
      */
@@ -158,7 +158,7 @@ contract sRequiem is ERC20Permit, Manageable {
     return gons.div(_gonsPerFragment);
   }
 
-  // Staking contract holds excess sOHM
+  // Staking contract holds excess sREQT
   function circulatingSupply() public view returns (uint256) {
     return _totalSupply.sub(balanceOf(stakingContract));
   }
