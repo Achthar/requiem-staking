@@ -41,9 +41,9 @@ contract RequiemCVXBondDepository is PolicyOwned {
 
   /* ======== STATE VARIABLES ======== */
 
-  address public immutable OHM; // token given as payment for bond
+  address public immutable REQT; // token given as payment for bond
   address public immutable principal; // token used to create bond
-  address public immutable treasury; // mints OHM when receives principal
+  address public immutable treasury; // mints REQT when receives principal
   address public immutable DAO; // receives profit share from bond
 
   address public staking; // to auto-stake payout
@@ -71,7 +71,7 @@ contract RequiemCVXBondDepository is PolicyOwned {
 
   // Info for bond holder
   struct Bond {
-    uint256 payout; // OHM remaining to be paid
+    uint256 payout; // REQT remaining to be paid
     uint256 vesting; // Blocks left to vest
     uint256 lastBlock; // Last interaction
     uint256 pricePaid; // In DAI, for front end viewing
@@ -89,13 +89,13 @@ contract RequiemCVXBondDepository is PolicyOwned {
   /* ======== INITIALIZATION ======== */
 
   constructor(
-    address _OHM,
+    address _REQT,
     address _principal,
     address _treasury,
     address _DAO
   ) {
-    require(_OHM != address(0));
-    OHM = _OHM;
+    require(_REQT != address(0));
+    REQT = _REQT;
     require(_principal != address(0));
     principal = _principal;
     require(_treasury != address(0));
@@ -233,7 +233,7 @@ contract RequiemCVXBondDepository is PolicyOwned {
     uint256 value = ITreasury(treasury).valueOf(principal, _amount);
     uint256 payout = payoutFor(value); // payout to bonder is computed
 
-    require(payout >= 10000000, "Bond too small"); // must be > 0.01 OHM ( underflow protection )
+    require(payout >= 10000000, "Bond too small"); // must be > 0.01 REQT ( underflow protection )
     require(payout <= maxPayout(), "Bond too large"); // size protection because there is no slippage
 
     /**
@@ -315,15 +315,15 @@ contract RequiemCVXBondDepository is PolicyOwned {
   ) internal returns (uint256) {
     if (!_stake) {
       // if user does not want to stake
-      IERC20(OHM).safeTransfer(_recipient, _amount); // send payout
+      IERC20(REQT).safeTransfer(_recipient, _amount); // send payout
     } else {
       // if user wants to stake
       if (useHelper) {
         // use if staking warmup is 0
-        IERC20(OHM).approve(stakingHelper, _amount);
+        IERC20(REQT).approve(stakingHelper, _amount);
         IStakingHelper(stakingHelper).stake(_amount, _recipient);
       } else {
-        IERC20(OHM).approve(staking, _amount);
+        IERC20(REQT).approve(staking, _amount);
         IStaking(staking).stake(_amount, _recipient);
       }
     }
@@ -373,7 +373,7 @@ contract RequiemCVXBondDepository is PolicyOwned {
    *  @return uint
    */
   function maxPayout() public view returns (uint256) {
-    return IERC20(OHM).totalSupply().mul(terms.maxPayout).div(100000);
+    return IERC20(REQT).totalSupply().mul(terms.maxPayout).div(100000);
   }
 
   /**
@@ -410,11 +410,11 @@ contract RequiemCVXBondDepository is PolicyOwned {
   }
 
   /**
-   *  @notice calculate current ratio of debt to OHM supply
+   *  @notice calculate current ratio of debt to REQT supply
    *  @return debtRatio_ uint
    */
   function debtRatio() public view returns (uint256 debtRatio_) {
-    uint256 supply = IERC20(OHM).totalSupply();
+    uint256 supply = IERC20(REQT).totalSupply();
     debtRatio_ = FixedPoint
       .fraction(currentDebt().mul(1e9), supply)
       .decode112with18()
@@ -463,7 +463,7 @@ contract RequiemCVXBondDepository is PolicyOwned {
   }
 
   /**
-   *  @notice calculate amount of OHM available for claim by depositor
+   *  @notice calculate amount of REQT available for claim by depositor
    *  @param _depositor address
    *  @return pendingPayout_ uint
    */
@@ -485,11 +485,11 @@ contract RequiemCVXBondDepository is PolicyOwned {
   /* ======= AUXILLIARY ======= */
 
   /**
-   *  @notice allow anyone to send lost tokens (excluding principal or OHM) to the DAO
+   *  @notice allow anyone to send lost tokens (excluding principal or REQT) to the DAO
    *  @return bool
    */
   function recoverLostToken(address _token) external returns (bool) {
-    require(_token != OHM);
+    require(_token != REQT);
     require(_token != principal);
     IERC20(_token).safeTransfer(DAO, IERC20(_token).balanceOf(address(this)));
     return true;

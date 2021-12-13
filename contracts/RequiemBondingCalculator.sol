@@ -24,15 +24,6 @@ contract RequiemWeightedBondingCalculator is IBondingCalculator {
     REQT = _REQT;
   }
 
-  function getKValue(address _pair) public view returns (uint256 k_) {
-    uint256 token0 = IERC20(IRequiemPair(_pair).token0()).decimals();
-    uint256 token1 = IERC20(IRequiemPair(_pair).token1()).decimals();
-    uint256 decimals = token0.add(token1).sub(IERC20(_pair).decimals());
-
-    (uint256 reserve0, uint256 reserve1, ) = IRequiemPair(_pair).getReserves();
-    k_ = reserve0.mul(reserve1).div(10**decimals);
-  }
-
   // calculates the liquidity value denominated in the provided token
   // uses the 0.1% inputAmount for that calculation
   function getTotalValue(address _pair) public view returns (uint256 _value) {

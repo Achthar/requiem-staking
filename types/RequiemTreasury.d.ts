@@ -24,7 +24,7 @@ interface RequiemTreasuryInterface extends ethers.utils.Interface {
     "LiquidityDepositorQueue(address)": FunctionFragment;
     "LiquidityManagerQueue(address)": FunctionFragment;
     "LiquidityTokenQueue(address)": FunctionFragment;
-    "OHM()": FunctionFragment;
+    "REQT()": FunctionFragment;
     "ReserveManagerQueue(address)": FunctionFragment;
     "auditReserves()": FunctionFragment;
     "blocksNeededForQueue()": FunctionFragment;
@@ -54,7 +54,7 @@ interface RequiemTreasuryInterface extends ethers.utils.Interface {
     "pushManagement(address)": FunctionFragment;
     "queue(uint8,address)": FunctionFragment;
     "renounceManagement()": FunctionFragment;
-    "repayDebtWithOHM(uint256)": FunctionFragment;
+    "repayDebtWithREQT(uint256)": FunctionFragment;
     "repayDebtWithReserve(uint256,address)": FunctionFragment;
     "reserveDepositorQueue(address)": FunctionFragment;
     "reserveDepositors(uint256)": FunctionFragment;
@@ -65,8 +65,8 @@ interface RequiemTreasuryInterface extends ethers.utils.Interface {
     "reserveTokens(uint256)": FunctionFragment;
     "rewardManagerQueue(address)": FunctionFragment;
     "rewardManagers(uint256)": FunctionFragment;
-    "sOHM()": FunctionFragment;
-    "sOHMQueue()": FunctionFragment;
+    "sREQT()": FunctionFragment;
+    "sREQTQueue()": FunctionFragment;
     "toggle(uint8,address,address)": FunctionFragment;
     "totalDebt()": FunctionFragment;
     "totalReserves()": FunctionFragment;
@@ -86,7 +86,7 @@ interface RequiemTreasuryInterface extends ethers.utils.Interface {
     functionFragment: "LiquidityTokenQueue",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "OHM", values?: undefined): string;
+  encodeFunctionData(functionFragment: "REQT", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ReserveManagerQueue",
     values: [string]
@@ -195,7 +195,7 @@ interface RequiemTreasuryInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "repayDebtWithOHM",
+    functionFragment: "repayDebtWithREQT",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -238,8 +238,11 @@ interface RequiemTreasuryInterface extends ethers.utils.Interface {
     functionFragment: "rewardManagers",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "sOHM", values?: undefined): string;
-  encodeFunctionData(functionFragment: "sOHMQueue", values?: undefined): string;
+  encodeFunctionData(functionFragment: "sREQT", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "sREQTQueue",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "toggle",
     values: [BigNumberish, string, string]
@@ -270,7 +273,7 @@ interface RequiemTreasuryInterface extends ethers.utils.Interface {
     functionFragment: "LiquidityTokenQueue",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "OHM", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "REQT", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ReserveManagerQueue",
     data: BytesLike
@@ -367,7 +370,7 @@ interface RequiemTreasuryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "repayDebtWithOHM",
+    functionFragment: "repayDebtWithREQT",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -410,8 +413,8 @@ interface RequiemTreasuryInterface extends ethers.utils.Interface {
     functionFragment: "rewardManagers",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "sOHM", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "sOHMQueue", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "sREQT", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "sREQTQueue", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "toggle", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "totalDebt", data: BytesLike): Result;
   decodeFunctionResult(
@@ -583,7 +586,7 @@ export class RequiemTreasury extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    OHM(overrides?: CallOverrides): Promise<[string]>;
+    REQT(overrides?: CallOverrides): Promise<[string]>;
 
     ReserveManagerQueue(
       arg0: string,
@@ -709,7 +712,7 @@ export class RequiemTreasury extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    repayDebtWithOHM(
+    repayDebtWithREQT(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -765,9 +768,9 @@ export class RequiemTreasury extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    sOHM(overrides?: CallOverrides): Promise<[string]>;
+    sREQT(overrides?: CallOverrides): Promise<[string]>;
 
-    sOHMQueue(overrides?: CallOverrides): Promise<[BigNumber]>;
+    sREQTQueue(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     toggle(
       _managing: BigNumberish,
@@ -808,7 +811,7 @@ export class RequiemTreasury extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  OHM(overrides?: CallOverrides): Promise<string>;
+  REQT(overrides?: CallOverrides): Promise<string>;
 
   ReserveManagerQueue(
     arg0: string,
@@ -913,7 +916,7 @@ export class RequiemTreasury extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  repayDebtWithOHM(
+  repayDebtWithREQT(
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -966,9 +969,9 @@ export class RequiemTreasury extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  sOHM(overrides?: CallOverrides): Promise<string>;
+  sREQT(overrides?: CallOverrides): Promise<string>;
 
-  sOHMQueue(overrides?: CallOverrides): Promise<BigNumber>;
+  sREQTQueue(overrides?: CallOverrides): Promise<BigNumber>;
 
   toggle(
     _managing: BigNumberish,
@@ -1009,7 +1012,7 @@ export class RequiemTreasury extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    OHM(overrides?: CallOverrides): Promise<string>;
+    REQT(overrides?: CallOverrides): Promise<string>;
 
     ReserveManagerQueue(
       arg0: string,
@@ -1111,7 +1114,7 @@ export class RequiemTreasury extends BaseContract {
 
     renounceManagement(overrides?: CallOverrides): Promise<void>;
 
-    repayDebtWithOHM(
+    repayDebtWithREQT(
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1167,9 +1170,9 @@ export class RequiemTreasury extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    sOHM(overrides?: CallOverrides): Promise<string>;
+    sREQT(overrides?: CallOverrides): Promise<string>;
 
-    sOHMQueue(overrides?: CallOverrides): Promise<BigNumber>;
+    sREQTQueue(overrides?: CallOverrides): Promise<BigNumber>;
 
     toggle(
       _managing: BigNumberish,
@@ -1399,7 +1402,7 @@ export class RequiemTreasury extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    OHM(overrides?: CallOverrides): Promise<BigNumber>;
+    REQT(overrides?: CallOverrides): Promise<BigNumber>;
 
     ReserveManagerQueue(
       arg0: string,
@@ -1522,7 +1525,7 @@ export class RequiemTreasury extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    repayDebtWithOHM(
+    repayDebtWithREQT(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1578,9 +1581,9 @@ export class RequiemTreasury extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    sOHM(overrides?: CallOverrides): Promise<BigNumber>;
+    sREQT(overrides?: CallOverrides): Promise<BigNumber>;
 
-    sOHMQueue(overrides?: CallOverrides): Promise<BigNumber>;
+    sREQTQueue(overrides?: CallOverrides): Promise<BigNumber>;
 
     toggle(
       _managing: BigNumberish,
@@ -1622,7 +1625,7 @@ export class RequiemTreasury extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    OHM(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    REQT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ReserveManagerQueue(
       arg0: string,
@@ -1765,7 +1768,7 @@ export class RequiemTreasury extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    repayDebtWithOHM(
+    repayDebtWithREQT(
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1821,9 +1824,9 @@ export class RequiemTreasury extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    sOHM(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    sREQT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    sOHMQueue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    sREQTQueue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     toggle(
       _managing: BigNumberish,

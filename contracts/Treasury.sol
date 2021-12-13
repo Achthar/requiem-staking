@@ -53,10 +53,10 @@ contract RequiemTreasury is Manageable {
     LIQUIDITYMANAGER,
     DEBTOR,
     REWARDMANAGER,
-    SOHM
+    SREQT
   }
 
-  address public immutable OHM;
+  address public immutable REQT;
   uint256 public immutable blocksNeededForQueue;
 
   address[] public reserveTokens; // Push only, beware false-positives.
@@ -98,21 +98,21 @@ contract RequiemTreasury is Manageable {
   mapping(address => bool) public isRewardManager;
   mapping(address => uint256) public rewardManagerQueue; // Delays changes to mapping.
 
-  address public sOHM;
-  uint256 public sOHMQueue; // Delays change to sOHM address
+  address public sREQT;
+  uint256 public sREQTQueue; // Delays change to sREQT address
 
   uint256 public totalReserves; // Risk-free value of all assets
   uint256 public totalDebt;
 
   constructor(
-    address _OHM,
+    address _REQT,
     address _DAI,
     address _Frax,
-    address _OHMDAI,
+    address _REQTDAI,
     uint256 _blocksNeededForQueue
   ) {
-    require(_OHM != address(0));
-    OHM = _OHM;
+    require(_REQT != address(0));
+    REQT = _REQT;
 
     isReserveToken[_DAI] = true;
     reserveTokens.push(_DAI);
@@ -120,14 +120,14 @@ contract RequiemTreasury is Manageable {
     isReserveToken[_Frax] = true;
     reserveTokens.push(_Frax);
 
-    isLiquidityToken[_OHMDAI] = true;
-    liquidityTokens.push(_OHMDAI);
+    isLiquidityToken[_REQTDAI] = true;
+    liquidityTokens.push(_REQTDAI);
 
     blocksNeededForQueue = _blocksNeededForQueue;
   }
 
   /**
-        @notice allow approved address to deposit an asset for OHM
+        @notice allow approved address to deposit an asset for REQT
         @param _amount uint
         @param _token address
         @param _profit uint
@@ -148,9 +148,9 @@ contract RequiemTreasury is Manageable {
     }
 
     uint256 value = valueOf(_token, _amount);
-    // mint OHM needed and store amount of rewards for distribution
+    // mint REQT needed and store amount of rewards for distribution
     send_ = value.sub(_profit);
-    IERC20Mintable(OHM).mint(msg.sender, send_);
+    IERC20Mintable(REQT).mint(msg.sender, send_);
 
     totalReserves = totalReserves.add(value);
     emit ReservesUpdated(totalReserves);
@@ -159,7 +159,7 @@ contract RequiemTreasury is Manageable {
   }
 
   /**
-        @notice allow approved address to burn OHM for reserves
+        @notice allow approved address to burn REQT for reserves
         @param _amount uint
         @param _token address
      */
@@ -168,7 +168,7 @@ contract RequiemTreasury is Manageable {
     require(isReserveSpender[msg.sender] == true, "Not approved");
 
     uint256 value = valueOf(_token, _amount);
-    IREQTERC20(OHM).burnFrom(msg.sender, value);
+    IREQTERC20(REQT).burnFrom(msg.sender, value);
 
     totalReserves = totalReserves.sub(value);
     emit ReservesUpdated(totalReserves);
@@ -189,7 +189,7 @@ contract RequiemTreasury is Manageable {
 
     uint256 value = valueOf(_token, _amount);
 
-    uint256 maximumDebt = IERC20(sOHM).balanceOf(msg.sender); // Can only borrow against sOHM held
+    uint256 maximumDebt = IERC20(sREQT).balanceOf(msg.sender); // Can only borrow against sREQT held
     uint256 availableDebt = maximumDebt.sub(debtorBalance[msg.sender]);
     require(value <= availableDebt, "Exceeds debt limit");
 
@@ -226,18 +226,18 @@ contract RequiemTreasury is Manageable {
   }
 
   /**
-        @notice allow approved address to repay borrowed reserves with OHM
+        @notice allow approved address to repay borrowed reserves with REQT
         @param _amount uint
      */
-  function repayDebtWithOHM(uint256 _amount) external {
+  function repayDebtWithREQT(uint256 _amount) external {
     require(isDebtor[msg.sender], "Not approved");
 
-    IREQTERC20(OHM).burnFrom(msg.sender, _amount);
+    IREQTERC20(REQT).burnFrom(msg.sender, _amount);
 
     debtorBalance[msg.sender] = debtorBalance[msg.sender].sub(_amount);
     totalDebt = totalDebt.sub(_amount);
 
-    emit RepayDebt(msg.sender, OHM, _amount, _amount);
+    emit RepayDebt(msg.sender, REQT, _amount, _amount);
   }
 
   /**
@@ -270,7 +270,7 @@ contract RequiemTreasury is Manageable {
     require(isRewardManager[msg.sender], "Not approved");
     require(_amount <= excessReserves(), "Insufficient reserves");
 
-    IERC20Mintable(OHM).mint(_recipient, _amount);
+    IERC20Mintable(REQT).mint(_recipient, _amount);
 
     emit RewardsMinted(msg.sender, _recipient, _amount);
   }
@@ -280,7 +280,7 @@ contract RequiemTreasury is Manageable {
         @return uint
      */
   function excessReserves() public view returns (uint256) {
-    return totalReserves.sub(IERC20(OHM).totalSupply().sub(totalDebt));
+    return totalReserves.sub(IERC20(REQT).totalSupply().sub(totalDebt));
   }
 
   /**
@@ -311,7 +311,7 @@ contract RequiemTreasury is Manageable {
   }
 
   /**
-        @notice returns OHM valuation of asset
+        @notice returns REQT valuation of asset
         @param _token address
         @param _amount uint
         @return value_ uint
@@ -322,8 +322,8 @@ contract RequiemTreasury is Manageable {
     returns (uint256 value_)
   {
     if (isReserveToken[_token]) {
-      // convert amount to match OHM decimals
-      value_ = _amount.mul(10**IERC20(OHM).decimals()).div(
+      // convert amount to match REQT decimals
+      value_ = _amount.mul(10**IERC20(REQT).decimals()).div(
         10**IERC20(_token).decimals()
       );
     } else if (isLiquidityToken[_token]) {
@@ -379,9 +379,9 @@ contract RequiemTreasury is Manageable {
     } else if (_managing == MANAGING.REWARDMANAGER) {
       // 8
       rewardManagerQueue[_address] = block.number.add(blocksNeededForQueue);
-    } else if (_managing == MANAGING.SOHM) {
+    } else if (_managing == MANAGING.SREQT) {
       // 9
-      sOHMQueue = block.number.add(blocksNeededForQueue);
+      sREQTQueue = block.number.add(blocksNeededForQueue);
     } else return false;
 
     emit ChangeQueued(_managing, _address);
@@ -497,10 +497,10 @@ contract RequiemTreasury is Manageable {
       }
       result = !isRewardManager[_address];
       isRewardManager[_address] = result;
-    } else if (_managing == MANAGING.SOHM) {
+    } else if (_managing == MANAGING.SREQT) {
       // 9
-      sOHMQueue = 0;
-      sOHM = _address;
+      sREQTQueue = 0;
+      sREQT = _address;
       result = true;
     } else return false;
 

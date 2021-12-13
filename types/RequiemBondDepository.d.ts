@@ -22,7 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface RequiemBondDepositoryInterface extends ethers.utils.Interface {
   functions: {
     "DAO()": FunctionFragment;
-    "OHM()": FunctionFragment;
+    "REQT()": FunctionFragment;
     "adjustment()": FunctionFragment;
     "bondCalculator()": FunctionFragment;
     "bondInfo(address)": FunctionFragment;
@@ -59,7 +59,7 @@ interface RequiemBondDepositoryInterface extends ethers.utils.Interface {
   };
 
   encodeFunctionData(functionFragment: "DAO", values?: undefined): string;
-  encodeFunctionData(functionFragment: "OHM", values?: undefined): string;
+  encodeFunctionData(functionFragment: "REQT", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "adjustment",
     values?: undefined
@@ -163,7 +163,7 @@ interface RequiemBondDepositoryInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "useHelper", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "DAO", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "OHM", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "REQT", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "adjustment", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "bondCalculator",
@@ -348,7 +348,7 @@ export class RequiemBondDepository extends BaseContract {
   functions: {
     DAO(overrides?: CallOverrides): Promise<[string]>;
 
-    OHM(overrides?: CallOverrides): Promise<[string]>;
+    REQT(overrides?: CallOverrides): Promise<[string]>;
 
     adjustment(
       overrides?: CallOverrides
@@ -509,7 +509,7 @@ export class RequiemBondDepository extends BaseContract {
 
   DAO(overrides?: CallOverrides): Promise<string>;
 
-  OHM(overrides?: CallOverrides): Promise<string>;
+  REQT(overrides?: CallOverrides): Promise<string>;
 
   adjustment(
     overrides?: CallOverrides
@@ -662,7 +662,7 @@ export class RequiemBondDepository extends BaseContract {
   callStatic: {
     DAO(overrides?: CallOverrides): Promise<string>;
 
-    OHM(overrides?: CallOverrides): Promise<string>;
+    REQT(overrides?: CallOverrides): Promise<string>;
 
     adjustment(
       overrides?: CallOverrides
@@ -939,7 +939,7 @@ export class RequiemBondDepository extends BaseContract {
   estimateGas: {
     DAO(overrides?: CallOverrides): Promise<BigNumber>;
 
-    OHM(overrides?: CallOverrides): Promise<BigNumber>;
+    REQT(overrides?: CallOverrides): Promise<BigNumber>;
 
     adjustment(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1062,7 +1062,7 @@ export class RequiemBondDepository extends BaseContract {
   populateTransaction: {
     DAO(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    OHM(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    REQT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     adjustment(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
