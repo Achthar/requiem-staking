@@ -9,7 +9,7 @@ contract RequiemERC20Token is ERC20Permit, VaultOwned {
 
     using SafeMath for uint256;
 
-    constructor() ERC20("Requiem Token", "REQT", 18) {
+    constructor() ERC20("Requiem Token", "REQT", 18) ERC20Permit("REQT") {
     }
 
     function mint(address account_, uint256 amount_) external onlyVault() {

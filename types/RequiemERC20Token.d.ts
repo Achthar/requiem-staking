@@ -22,7 +22,6 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface RequiemERC20TokenInterface extends ethers.utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
-    "PERMIT_TYPEHASH()": FunctionFragment;
     "_burnFrom(address,uint256)": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -49,10 +48,6 @@ interface RequiemERC20TokenInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "DOMAIN_SEPARATOR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "PERMIT_TYPEHASH",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -127,10 +122,6 @@ interface RequiemERC20TokenInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "DOMAIN_SEPARATOR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "PERMIT_TYPEHASH",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_burnFrom", data: BytesLike): Result;
@@ -247,8 +238,6 @@ export class RequiemERC20Token extends BaseContract {
   functions: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
-
     _burnFrom(
       account_: string,
       amount_: BigNumberish,
@@ -309,7 +298,7 @@ export class RequiemERC20Token extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,
@@ -352,8 +341,6 @@ export class RequiemERC20Token extends BaseContract {
   };
 
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
-
-  PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
   _burnFrom(
     account_: string,
@@ -415,7 +402,7 @@ export class RequiemERC20Token extends BaseContract {
   permit(
     owner: string,
     spender: string,
-    amount: BigNumberish,
+    value: BigNumberish,
     deadline: BigNumberish,
     v: BigNumberish,
     r: BytesLike,
@@ -458,8 +445,6 @@ export class RequiemERC20Token extends BaseContract {
 
   callStatic: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
-
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
     _burnFrom(
       account_: string,
@@ -518,7 +503,7 @@ export class RequiemERC20Token extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,
@@ -612,8 +597,6 @@ export class RequiemERC20Token extends BaseContract {
   estimateGas: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
-
     _burnFrom(
       account_: string,
       amount_: BigNumberish,
@@ -674,7 +657,7 @@ export class RequiemERC20Token extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,
@@ -718,8 +701,6 @@ export class RequiemERC20Token extends BaseContract {
 
   populateTransaction: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _burnFrom(
       account_: string,
@@ -787,7 +768,7 @@ export class RequiemERC20Token extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,

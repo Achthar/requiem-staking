@@ -315,7 +315,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		args: [REQ.address],
 	});
 
-	const bondingCalculatorContract = await ethers.getContractAt('RequiemWeightedBondingCalculator', bondingCalculator.address);
+	const bondingCalculatorContract = await ethers.getContractAt('RequiemQBondingCalculator', bondingCalculator.address);
 
 	const tV = await bondingCalculatorContract.getTotalValue(pairWeth)
 

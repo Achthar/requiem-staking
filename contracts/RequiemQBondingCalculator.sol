@@ -6,7 +6,6 @@ import "./interfaces/IBondingCalculator.sol";
 import "./interfaces/ERC20/IERC20.sol";
 import "./interfaces/IRequiemPair.sol";
 import "./interfaces/IRequiemSwap.sol";
-import "./libraries/math/SafeMath.sol";
 import "./libraries/math/FixedPoint.sol";
 
 /**
@@ -14,8 +13,6 @@ import "./libraries/math/FixedPoint.sol";
  */
 contract RequiemQBondingCalculator is IBondingCalculator {
   using FixedPoint for *;
-  using SafeMath for uint256;
-  using SafeMath for uint112;
 
   address public immutable REQT;
 
@@ -55,9 +52,10 @@ contract RequiemQBondingCalculator is IBondingCalculator {
     uint256 totalValue = getTotalValue(_pair);
     uint256 totalSupply = IRequiemPair(_pair).totalSupply();
 
-    _value = totalValue
-      .mul(FixedPoint.fraction(amount_, totalSupply).decode112with18())
-      .div(1e18);
+    _value =
+      (totalValue *
+        FixedPoint.fraction(amount_, totalSupply).decode112with18()) /
+      1e18;
   }
 
   function markdown(address _pair) external view returns (uint256) {
@@ -70,6 +68,6 @@ contract RequiemQBondingCalculator is IBondingCalculator {
       reserve = reserve0;
     }
     return
-      reserve.mul(2 * (10**IERC20(REQT).decimals())).div(getTotalValue(_pair));
+      (reserve * (2 * (10**IERC20(REQT).decimals()))) / (getTotalValue(_pair));
   }
 }

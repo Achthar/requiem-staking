@@ -2,10 +2,7 @@
 
 pragma solidity 0.8.10;
 
-import "./SafeMath.sol";
-
 library Counters {
-  using SafeMath for uint256;
 
   struct Counter {
     uint256 _value; // default: 0
@@ -20,6 +17,6 @@ library Counters {
   }
 
   function decrement(Counter storage counter) internal {
-    counter._value = counter._value.sub(1);
+    counter._value -= 1;
   }
 }

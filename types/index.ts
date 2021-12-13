@@ -2,7 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { IERC20 } from "./IERC20";
+export type { IERC20Metadata } from "./IERC20Metadata";
 export type { IERC20Mintable } from "./IERC20Mintable";
+export type { IERC20Permit } from "./IERC20Permit";
 export type { IAggragatorV3 } from "./IAggragatorV3";
 export type { IBond } from "./IBond";
 export type { IBondCalculator } from "./IBondCalculator";
@@ -51,7 +53,6 @@ export type { SRequiem } from "./SRequiem";
 export type { Distributor } from "./Distributor";
 export type { StakingHelper } from "./StakingHelper";
 export type { StakingWarmup } from "./StakingWarmup";
-export type { IERC20Metadata } from "./IERC20Metadata";
 export type { MockERC20 } from "./MockERC20";
 export type { IRequiemFactory } from "./IRequiemFactory";
 export type { IUniswapV2Callee } from "./IUniswapV2Callee";
@@ -71,7 +72,9 @@ export type { RequiemWETHBondDepository } from "./RequiemWETHBondDepository";
 export type { WREQT } from "./WREQT";
 
 export { IERC20__factory } from "./factories/IERC20__factory";
+export { IERC20Metadata__factory } from "./factories/IERC20Metadata__factory";
 export { IERC20Mintable__factory } from "./factories/IERC20Mintable__factory";
+export { IERC20Permit__factory } from "./factories/IERC20Permit__factory";
 export { IAggragatorV3__factory } from "./factories/IAggragatorV3__factory";
 export { IBond__factory } from "./factories/IBond__factory";
 export { IBondCalculator__factory } from "./factories/IBondCalculator__factory";
@@ -120,7 +123,6 @@ export { SRequiem__factory } from "./factories/SRequiem__factory";
 export { Distributor__factory } from "./factories/Distributor__factory";
 export { StakingHelper__factory } from "./factories/StakingHelper__factory";
 export { StakingWarmup__factory } from "./factories/StakingWarmup__factory";
-export { IERC20Metadata__factory } from "./factories/IERC20Metadata__factory";
 export { MockERC20__factory } from "./factories/MockERC20__factory";
 export { IRequiemFactory__factory } from "./factories/IRequiemFactory__factory";
 export { IUniswapV2Callee__factory } from "./factories/IUniswapV2Callee__factory";

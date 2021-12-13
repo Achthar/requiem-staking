@@ -23,7 +23,6 @@ interface SRequiemInterface extends ethers.utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "INDEX()": FunctionFragment;
-    "PERMIT_TYPEHASH()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceForGons(uint256)": FunctionFragment;
@@ -58,10 +57,6 @@ interface SRequiemInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "INDEX", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "PERMIT_TYPEHASH",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -160,10 +155,6 @@ interface SRequiemInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "INDEX", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "PERMIT_TYPEHASH",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(
@@ -271,7 +262,7 @@ export type LogSupplyEvent = TypedEvent<
   [BigNumber, BigNumber, BigNumber] & {
     epoch: BigNumber;
     timestamp: BigNumber;
-    totalSupply: BigNumber;
+    _totalSupply: BigNumber;
   }
 >;
 
@@ -335,8 +326,6 @@ export class SRequiem extends BaseContract {
 
     INDEX(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
-
     allowance(
       owner_: string,
       spender: string,
@@ -393,7 +382,7 @@ export class SRequiem extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,
@@ -474,8 +463,6 @@ export class SRequiem extends BaseContract {
 
   INDEX(overrides?: CallOverrides): Promise<BigNumber>;
 
-  PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
-
   allowance(
     owner_: string,
     spender: string,
@@ -532,7 +519,7 @@ export class SRequiem extends BaseContract {
   permit(
     owner: string,
     spender: string,
-    amount: BigNumberish,
+    value: BigNumberish,
     deadline: BigNumberish,
     v: BigNumberish,
     r: BytesLike,
@@ -613,8 +600,6 @@ export class SRequiem extends BaseContract {
 
     INDEX(overrides?: CallOverrides): Promise<BigNumber>;
 
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
-
     allowance(
       owner_: string,
       spender: string,
@@ -671,7 +656,7 @@ export class SRequiem extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,
@@ -786,19 +771,19 @@ export class SRequiem extends BaseContract {
     "LogSupply(uint256,uint256,uint256)"(
       epoch?: BigNumberish | null,
       timestamp?: null,
-      totalSupply?: null
+      _totalSupply?: null
     ): TypedEventFilter<
       [BigNumber, BigNumber, BigNumber],
-      { epoch: BigNumber; timestamp: BigNumber; totalSupply: BigNumber }
+      { epoch: BigNumber; timestamp: BigNumber; _totalSupply: BigNumber }
     >;
 
     LogSupply(
       epoch?: BigNumberish | null,
       timestamp?: null,
-      totalSupply?: null
+      _totalSupply?: null
     ): TypedEventFilter<
       [BigNumber, BigNumber, BigNumber],
-      { epoch: BigNumber; timestamp: BigNumber; totalSupply: BigNumber }
+      { epoch: BigNumber; timestamp: BigNumber; _totalSupply: BigNumber }
     >;
 
     "OwnershipPulled(address,address)"(
@@ -857,8 +842,6 @@ export class SRequiem extends BaseContract {
 
     INDEX(overrides?: CallOverrides): Promise<BigNumber>;
 
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
-
     allowance(
       owner_: string,
       spender: string,
@@ -915,7 +898,7 @@ export class SRequiem extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,
@@ -975,8 +958,6 @@ export class SRequiem extends BaseContract {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     INDEX(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     allowance(
       owner_: string,
@@ -1040,7 +1021,7 @@ export class SRequiem extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,

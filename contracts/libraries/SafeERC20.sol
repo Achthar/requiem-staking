@@ -1,21 +1,32 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
 
-import "./Address.sol";
-import "./math/SafeMath.sol";
+// Based on the ReentrancyGuard library from OpenZeppelin Contracts, altered to reduce gas costs.
+// The `safeTransfer` and `safeTransferFrom` functions assume that `token` is a contract (an account with code), and
+// work differently from the OpenZeppelin version if it is not.
+
+pragma solidity ^0.8.10;
+
+import "./helpers/RequiemErrors.sol";
+
 import "../interfaces/ERC20/IERC20.sol";
 
+/**
+ * @title SafeERC20
+ * @dev Wrappers around ERC20 operations that throw on failure (when the token
+ * contract returns false). Tokens that return no value (and instead revert or
+ * throw on failure) are also supported, non-reverting calls are assumed to be
+ * successful.
+ * To use this library you can add a `using SafeERC20 for IERC20;` statement to your contract,
+ * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.
+ */
 library SafeERC20 {
-  using SafeMath for uint256;
-  using Address for address;
-
   function safeTransfer(
     IERC20 token,
     address to,
     uint256 value
   ) internal {
     _callOptionalReturn(
-      token,
+      address(token),
       abi.encodeWithSelector(token.transfer.selector, to, value)
     );
   }
@@ -27,23 +38,8 @@ library SafeERC20 {
     uint256 value
   ) internal {
     _callOptionalReturn(
-      token,
+      address(token),
       abi.encodeWithSelector(token.transferFrom.selector, from, to, value)
-    );
-  }
-
-  function safeApprove(
-    IERC20 token,
-    address spender,
-    uint256 value
-  ) internal {
-    require(
-      (value == 0) || (token.allowance(address(this), spender) == 0),
-      "SafeERC20: approve from non-zero to non-zero allowance"
-    );
-    _callOptionalReturn(
-      token,
-      abi.encodeWithSelector(token.approve.selector, spender, value)
     );
   }
 
@@ -52,40 +48,36 @@ library SafeERC20 {
     address spender,
     uint256 value
   ) internal {
-    uint256 newAllowance = token.allowance(address(this), spender).add(value);
+    uint256 newAllowance = token.allowance(address(this), spender) + value;
     _callOptionalReturn(
-      token,
+      address(token),
       abi.encodeWithSelector(token.approve.selector, spender, newAllowance)
     );
   }
 
-  function safeDecreaseAllowance(
-    IERC20 token,
-    address spender,
-    uint256 value
-  ) internal {
-    uint256 newAllowance = token.allowance(address(this), spender).sub(
-      value,
-      "SafeERC20: decreased allowance below zero"
-    );
-    _callOptionalReturn(
-      token,
-      abi.encodeWithSelector(token.approve.selector, spender, newAllowance)
-    );
-  }
+  /**
+   * @dev Imitates a Solidity high-level call (i.e. a regular function call to a contract), relaxing the requirement
+   * on the return value: the return value is optional (but if data is returned, it must not be false).
+   *
+   * WARNING: `token` is assumed to be a contract: calls to EOAs will *not* revert.
+   */
+  function _callOptionalReturn(address token, bytes memory data) private {
+    // We need to perform a low level call here, to bypass Solidity's return data size checking mechanism, since
+    // we're implementing it ourselves.
+    (bool success, bytes memory returndata) = token.call(data);
 
-  function _callOptionalReturn(IERC20 token, bytes memory data) private {
-    bytes memory returndata = address(token).functionCall(
-      data,
-      "SafeERC20: low-level call failed"
-    );
-    if (returndata.length > 0) {
-      // Return data is optional
-      // solhint-disable-next-line max-line-length
-      require(
-        abi.decode(returndata, (bool)),
-        "SafeERC20: ERC20 operation did not succeed"
-      );
+    // If the low-level call didn't succeed we return whatever was returned from it.
+    assembly {
+      if eq(success, 0) {
+        returndatacopy(0, 0, returndatasize())
+        revert(0, returndatasize())
+      }
     }
+
+    // Finally we check the returndata size is either zero or true - note that this check will always pass for EOAs
+    RequiemErrors._require(
+      returndata.length == 0 || abi.decode(returndata, (bool)),
+      Errors.SAFE_ERC20_CALL_FAILED
+    );
   }
 }

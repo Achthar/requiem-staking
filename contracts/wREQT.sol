@@ -1,16 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-import "./libraries/Manageable.sol";
 import "./libraries/SafeERC20.sol";
 import "./libraries/ERC20.sol";
-import "./libraries/math/SafeMath.sol";
 import "./interfaces/IStaking.sol";
 
 contract wREQT is ERC20 {
   using SafeERC20 for ERC20;
-  using Address for address;
-  using SafeMath for uint256;
 
   address public immutable staking;
   address public immutable REQT;
@@ -93,7 +89,7 @@ contract wREQT is ERC20 {
         @return uint
      */
   function sREQTValue(uint256 _amount) public view returns (uint256) {
-    return _amount.mul(IStaking(staking).index()).div(10**decimals());
+    return (_amount * IStaking(staking).index()) / (10**decimals());
   }
 
   /**
@@ -102,6 +98,6 @@ contract wREQT is ERC20 {
         @return uint
      */
   function wREQTValue(uint256 _amount) public view returns (uint256) {
-    return _amount.mul(10**decimals()).div(IStaking(staking).index());
+    return (_amount * 10**decimals()) / IStaking(staking).index();
   }
 }
