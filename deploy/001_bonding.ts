@@ -305,11 +305,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	await ethers.getContractFactory('RequiemERC20Token');
 	// const req = await REQ.deploy();
 
-	const MockBonding = await ethers.getContractFactory('RequiemWeightedBondingCalculator');
-	const mockBonding = await MockBonding.deploy(REQ.address);
+	// const MockBonding = await ethers.getContractFactory('RequiemQBondingCalculator');
+	// const mockBonding = await MockBonding.deploy(REQ.address);
 
-	const bondingCalculator = await deploy('RequiemWeightedBondingCalculator', {
-		contract: 'RequiemWeightedBondingCalculator',
+	const bondingCalculator = await deploy('RequiemQBondingCalculator', {
+		contract: 'RequiemQBondingCalculator',
 		from: localhost,
 		log: true,
 		args: [REQ.address],
@@ -340,6 +340,56 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	const tV3 = await bondingCalculatorContract.getTotalValue(pairWETH_REQ)
 
 	console.log("indexValue3", tV3.toString())
+
+	const sREQ = await deploy('sRequiem', {
+		contract: 'sRequiem',
+		from: localhost,
+		log: true,
+		args: [],
+	});
+
+	const staking = await deploy('RequiemStaking', {
+		contract: 'RequiemStaking',
+		from: localhost,
+		log: true,
+		args: [
+			REQ.address, //address _REQT,
+			sREQ.address, // address _sREQT,
+			10000,// uint256 _epochLength,
+			0,// uint256 _firstEpochNumber,
+			0// uint256 _firstEpochBlock
+		],
+	});
+
+	await factoryContract.createPair(REQ.address, dai.address, ethers.BigNumber.from(80), ethers.BigNumber.from(5))
+	const pairREQT_DAI = await factoryContract.getPair(REQ.address, dai.address, ethers.BigNumber.from(80), ethers.BigNumber.from(5))
+	console.log("deposit dai reqt", pairREQT_DAI)
+	// await execute('TestWETH', { from: localhost, value: BigNumber.from('10000000000000') }, 'deposit')
+	// console.log("addWETH Liquidity")
+
+
+
+	const liqDaiREQT = await execute('RequiemQPairManager', { from: localhost }, 'addLiquidity', pairREQT_DAI, REQ.address, dai.address,
+		BigNumber.from('32000000000000'),
+		BigNumber.from('20000000000'),
+		BigNumber.from('32000000000000'),
+		BigNumber.from('20000000000'),
+		localhost,
+		'99999999999999999999');
+
+	const treasury = await deploy('RequiemTreasury', {
+		contract: 'RequiemTreasury',
+		from: localhost,
+		log: true,
+		args: [
+			REQ.address,	// address _REQT,
+			dai.address, // address _DAI,
+			tusd.address,// address _Frax,
+			pairREQT_DAI,// address _REQTDAI,
+			1,// uint256 _blocksNeededForQueue
+		],
+	});
+
 
 	// const MockPair = await ethers.getContractFactory('TestToken1');
 	// const mockPair = await MockPair.deploy();

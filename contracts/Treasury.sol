@@ -4,14 +4,12 @@ pragma solidity 0.8.10;
 import "./libraries/Manageable.sol";
 import "./libraries/SafeERC20.sol";
 import "./libraries/math/FixedPoint.sol";
-import "./libraries/math/SafeMath.sol";
 import "./interfaces/ITreasury.sol";
 import "./interfaces/ERC20/IERC20Mintable.sol";
 import "./interfaces/IREQTERC20.sol";
 import "./interfaces/IBondCalculator.sol";
 
 contract RequiemTreasury is Manageable {
-  using SafeMath for uint256;
   using SafeERC20 for IERC20;
 
   event Deposit(address indexed token, uint256 amount, uint256 value);
@@ -149,10 +147,10 @@ contract RequiemTreasury is Manageable {
 
     uint256 value = valueOf(_token, _amount);
     // mint REQT needed and store amount of rewards for distribution
-    send_ = value.sub(_profit);
+    send_ = value - _profit;
     IERC20Mintable(REQT).mint(msg.sender, send_);
 
-    totalReserves = totalReserves.add(value);
+    totalReserves += value;
     emit ReservesUpdated(totalReserves);
 
     emit Deposit(_token, _amount, value);
@@ -170,7 +168,7 @@ contract RequiemTreasury is Manageable {
     uint256 value = valueOf(_token, _amount);
     IREQTERC20(REQT).burnFrom(msg.sender, value);
 
-    totalReserves = totalReserves.sub(value);
+    totalReserves -= value;
     emit ReservesUpdated(totalReserves);
 
     IERC20(_token).safeTransfer(msg.sender, _amount);
@@ -190,13 +188,13 @@ contract RequiemTreasury is Manageable {
     uint256 value = valueOf(_token, _amount);
 
     uint256 maximumDebt = IERC20(sREQT).balanceOf(msg.sender); // Can only borrow against sREQT held
-    uint256 availableDebt = maximumDebt.sub(debtorBalance[msg.sender]);
+    uint256 availableDebt = maximumDebt - debtorBalance[msg.sender];
     require(value <= availableDebt, "Exceeds debt limit");
 
-    debtorBalance[msg.sender] = debtorBalance[msg.sender].add(value);
-    totalDebt = totalDebt.add(value);
+    debtorBalance[msg.sender] += value;
+    totalDebt += value;
 
-    totalReserves = totalReserves.sub(value);
+    totalReserves -= value;
     emit ReservesUpdated(totalReserves);
 
     IERC20(_token).transfer(msg.sender, _amount);
@@ -216,10 +214,10 @@ contract RequiemTreasury is Manageable {
     IERC20(_token).safeTransferFrom(msg.sender, address(this), _amount);
 
     uint256 value = valueOf(_token, _amount);
-    debtorBalance[msg.sender] = debtorBalance[msg.sender].sub(value);
-    totalDebt = totalDebt.sub(value);
+    debtorBalance[msg.sender] -= value;
+    totalDebt -= value;
 
-    totalReserves = totalReserves.add(value);
+    totalReserves += value;
     emit ReservesUpdated(totalReserves);
 
     emit RepayDebt(msg.sender, _token, _amount, value);
@@ -234,8 +232,8 @@ contract RequiemTreasury is Manageable {
 
     IREQTERC20(REQT).burnFrom(msg.sender, _amount);
 
-    debtorBalance[msg.sender] = debtorBalance[msg.sender].sub(_amount);
-    totalDebt = totalDebt.sub(_amount);
+    debtorBalance[msg.sender] -= _amount;
+    totalDebt -= _amount;
 
     emit RepayDebt(msg.sender, REQT, _amount, _amount);
   }
@@ -255,7 +253,7 @@ contract RequiemTreasury is Manageable {
     uint256 value = valueOf(_token, _amount);
     require(value <= excessReserves(), "Insufficient reserves");
 
-    totalReserves = totalReserves.sub(value);
+    totalReserves -= value;
     emit ReservesUpdated(totalReserves);
 
     IERC20(_token).safeTransfer(msg.sender, _amount);
@@ -280,7 +278,7 @@ contract RequiemTreasury is Manageable {
         @return uint
      */
   function excessReserves() public view returns (uint256) {
-    return totalReserves.sub(IERC20(REQT).totalSupply().sub(totalDebt));
+    return totalReserves - (IERC20(REQT).totalSupply() - totalDebt);
   }
 
   /**
@@ -290,20 +288,16 @@ contract RequiemTreasury is Manageable {
   function auditReserves() external onlyManager {
     uint256 reserves;
     for (uint256 i = 0; i < reserveTokens.length; i++) {
-      reserves = reserves.add(
-        valueOf(
+      reserves += valueOf(
           reserveTokens[i],
           IERC20(reserveTokens[i]).balanceOf(address(this))
-        )
-      );
+        );
     }
     for (uint256 i = 0; i < liquidityTokens.length; i++) {
-      reserves = reserves.add(
-        valueOf(
+      reserves += valueOf(
           liquidityTokens[i],
           IERC20(liquidityTokens[i]).balanceOf(address(this))
-        )
-      );
+        );
     }
     totalReserves = reserves;
     emit ReservesUpdated(reserves);
@@ -323,9 +317,9 @@ contract RequiemTreasury is Manageable {
   {
     if (isReserveToken[_token]) {
       // convert amount to match REQT decimals
-      value_ = _amount.mul(10**IERC20(REQT).decimals()).div(
-        10**IERC20(_token).decimals()
-      );
+      value_ =
+        (_amount * (10**IERC20(REQT).decimals())) /
+        (10**IERC20(_token).decimals());
     } else if (isLiquidityToken[_token]) {
       value_ = IBondCalculator(bondCalculator[_token]).valuation(
         _token,
@@ -348,40 +342,34 @@ contract RequiemTreasury is Manageable {
     require(_address != address(0));
     if (_managing == MANAGING.RESERVEDEPOSITOR) {
       // 0
-      reserveDepositorQueue[_address] = block.number.add(blocksNeededForQueue);
+      reserveDepositorQueue[_address] = block.number + blocksNeededForQueue;
     } else if (_managing == MANAGING.RESERVESPENDER) {
       // 1
-      reserveSpenderQueue[_address] = block.number.add(blocksNeededForQueue);
+      reserveSpenderQueue[_address] = block.number + blocksNeededForQueue;
     } else if (_managing == MANAGING.RESERVETOKEN) {
       // 2
-      reserveTokenQueue[_address] = block.number.add(blocksNeededForQueue);
+      reserveTokenQueue[_address] = block.number + blocksNeededForQueue;
     } else if (_managing == MANAGING.RESERVEMANAGER) {
       // 3
-      ReserveManagerQueue[_address] = block.number.add(
-        blocksNeededForQueue.mul(2)
-      );
+      ReserveManagerQueue[_address] = block.number + blocksNeededForQueue * 2;
     } else if (_managing == MANAGING.LIQUIDITYDEPOSITOR) {
       // 4
-      LiquidityDepositorQueue[_address] = block.number.add(
-        blocksNeededForQueue
-      );
+      LiquidityDepositorQueue[_address] = block.number + blocksNeededForQueue;
     } else if (_managing == MANAGING.LIQUIDITYTOKEN) {
       // 5
-      LiquidityTokenQueue[_address] = block.number.add(blocksNeededForQueue);
+      LiquidityTokenQueue[_address] = block.number + blocksNeededForQueue;
     } else if (_managing == MANAGING.LIQUIDITYMANAGER) {
       // 6
-      LiquidityManagerQueue[_address] = block.number.add(
-        blocksNeededForQueue.mul(2)
-      );
+      LiquidityManagerQueue[_address] = block.number + blocksNeededForQueue * 2;
     } else if (_managing == MANAGING.DEBTOR) {
       // 7
-      debtorQueue[_address] = block.number.add(blocksNeededForQueue);
+      debtorQueue[_address] = block.number + blocksNeededForQueue;
     } else if (_managing == MANAGING.REWARDMANAGER) {
       // 8
-      rewardManagerQueue[_address] = block.number.add(blocksNeededForQueue);
+      rewardManagerQueue[_address] = block.number + blocksNeededForQueue;
     } else if (_managing == MANAGING.SREQT) {
       // 9
-      sREQTQueue = block.number.add(blocksNeededForQueue);
+      sREQTQueue = block.number + blocksNeededForQueue;
     } else return false;
 
     emit ChangeQueued(_managing, _address);
