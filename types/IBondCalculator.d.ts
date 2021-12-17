@@ -20,17 +20,14 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface IBondCalculatorInterface extends ethers.utils.Interface {
   functions: {
-    "markdown(address)": FunctionFragment;
     "valuation(address,uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "markdown", values: [string]): string;
   encodeFunctionData(
     functionFragment: "valuation",
     values: [string, BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "markdown", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "valuation", data: BytesLike): Result;
 
   events: {};
@@ -80,29 +77,23 @@ export class IBondCalculator extends BaseContract {
   interface: IBondCalculatorInterface;
 
   functions: {
-    markdown(_LP: string, overrides?: CallOverrides): Promise<[BigNumber]>;
-
     valuation(
-      _LP: string,
-      _amount: BigNumberish,
+      pair_: string,
+      amount_: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { _value: BigNumber }>;
   };
 
-  markdown(_LP: string, overrides?: CallOverrides): Promise<BigNumber>;
-
   valuation(
-    _LP: string,
-    _amount: BigNumberish,
+    pair_: string,
+    amount_: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   callStatic: {
-    markdown(_LP: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     valuation(
-      _LP: string,
-      _amount: BigNumberish,
+      pair_: string,
+      amount_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -110,24 +101,17 @@ export class IBondCalculator extends BaseContract {
   filters: {};
 
   estimateGas: {
-    markdown(_LP: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     valuation(
-      _LP: string,
-      _amount: BigNumberish,
+      pair_: string,
+      amount_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    markdown(
-      _LP: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     valuation(
-      _LP: string,
-      _amount: BigNumberish,
+      pair_: string,
+      amount_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
