@@ -7,9 +7,9 @@ import "./libraries/math/FixedPoint.sol";
 import "./interfaces/ITreasury.sol";
 import "./interfaces/ERC20/IERC20Mintable.sol";
 import "./interfaces/IREQTERC20.sol";
-import "./interfaces/IBondCalculator.sol";
+import "./interfaces/IBondingCalculator.sol";
 
-contract RequiemTreasury is Manageable {
+contract RequiemTreasury is Manageable, ITreasury {
   using SafeERC20 for IERC20;
 
   event Deposit(address indexed token, uint256 amount, uint256 value);
@@ -289,15 +289,15 @@ contract RequiemTreasury is Manageable {
     uint256 reserves;
     for (uint256 i = 0; i < reserveTokens.length; i++) {
       reserves += valueOf(
-          reserveTokens[i],
-          IERC20(reserveTokens[i]).balanceOf(address(this))
-        );
+        reserveTokens[i],
+        IERC20(reserveTokens[i]).balanceOf(address(this))
+      );
     }
     for (uint256 i = 0; i < liquidityTokens.length; i++) {
       reserves += valueOf(
-          liquidityTokens[i],
-          IERC20(liquidityTokens[i]).balanceOf(address(this))
-        );
+        liquidityTokens[i],
+        IERC20(liquidityTokens[i]).balanceOf(address(this))
+      );
     }
     totalReserves = reserves;
     emit ReservesUpdated(reserves);
@@ -313,21 +313,22 @@ contract RequiemTreasury is Manageable {
   function valueOf(address _token, uint256 _amount)
     public
     view
+    override
     returns (uint256 value_)
   {
     if (isReserveToken[_token]) {
       // convert amount to match REQT decimals
       value_ =
-        (_amount * (10**IERC20(REQT).decimals())) /
-        (10**IERC20(_token).decimals());
-    } else if (isLiquidityToken[_token]) {
-      value_ = IBondCalculator(bondCalculator[_token]).valuation(
+        _amount *
+        (10**(IERC20(REQT).decimals() - IERC20(_token).decimals()));
+    }  else if (isLiquidityToken[_token]) {
+      value_ = IBondingCalculator(bondCalculator[_token]).valuation(
         _token,
         _amount
       );
     }
   }
-
+  
   /**
         @notice queue address to change boolean in mapping
         @param _managing MANAGING

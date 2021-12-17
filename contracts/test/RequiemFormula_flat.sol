@@ -514,7 +514,7 @@ contract RequiemFormula is IRequiemFormula {
       );
     }
   }
-
+  
   /**
    * @dev computes log(x / FIXED_1) * FIXED_1.
    * This functions assumes that "x >= FIXED_1", because the output would be negative otherwise.

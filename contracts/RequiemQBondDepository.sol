@@ -10,7 +10,7 @@ import "./interfaces/IStaking.sol";
 import "./interfaces/IStakingHelper.sol";
 import "./interfaces/IBondCalculator.sol";
 
-contract RequiemBondDepository is Manageable {
+contract RequiemQBondDepository is Manageable {
   using FixedPoint for *;
   using SafeERC20 for IERC20;
 
@@ -194,7 +194,7 @@ contract RequiemBondDepository is Manageable {
     uint256 _buffer
   ) external onlyPolicy {
     require(
-      _increment <= terms.controlVariable * 25 / 1000,
+      _increment <= (terms.controlVariable * 25) / 1000,
       "Increment too large"
     );
 
@@ -223,6 +223,7 @@ contract RequiemBondDepository is Manageable {
     }
   }
 
+
   /* ======== USER FUNCTIONS ======== */
 
   /**
@@ -248,15 +249,17 @@ contract RequiemBondDepository is Manageable {
     require(_maxPrice >= nativePrice, "Slippage limit: more than max price"); // slippage protection
 
     uint256 value = ITreasury(treasury).valueOf(principle, _amount);
+
     uint256 payout = payoutFor(value); // payout to bonder is computed
 
     require(payout >= 10000000, "Bond too small"); // must be > 0.01 REQT ( underflow protection )
     require(payout <= maxPayout(), "Bond too large"); // size protection because there is no slippage
 
     // profits are calculated
-    uint256 fee = payout * terms.fee/ 10000;
+    uint256 fee = (payout * terms.fee) / 10000;
+    require(value > payout + fee, "VALUE is less than payout plus fee");
     uint256 profit = value - payout - fee;
-
+    
     /**
             principle is transferred in
             approved and
@@ -313,7 +316,7 @@ contract RequiemBondDepository is Manageable {
     } else {
       // if unfinished
       // calculate payout vested
-      uint256 payout = info.payout * percentVested / 10000;
+      uint256 payout = (info.payout * percentVested) / 10000;
 
       // store updated deposit info
       bondInfo[_recipient] = Bond({
@@ -390,7 +393,7 @@ contract RequiemBondDepository is Manageable {
    *  @notice reduce total debt
    */
   function decayDebt() internal {
-    totalDebt = totalDebt - debtDecay();
+    totalDebt -= debtDecay();
     lastDecay = block.number;
   }
 
@@ -401,7 +404,7 @@ contract RequiemBondDepository is Manageable {
    *  @return uint
    */
   function maxPayout() public view returns (uint256) {
-    return IERC20(REQT).totalSupply() * terms.maxPayout / 100000;
+    return (IERC20(REQT).totalSupply() * terms.maxPayout) / 100000;
   }
 
   /**
@@ -443,11 +446,11 @@ contract RequiemBondDepository is Manageable {
    */
   function bondPriceInUSD() public view returns (uint256 price_) {
     if (isLiquidityBond) {
-      price_ = bondPrice()
-        * IBondCalculator(bondCalculator).markdown(principle)
-        / 100;
+      price_ =
+        (bondPrice() * IBondCalculator(bondCalculator).markdown(principle)) /
+        100;
     } else {
-      price_ = bondPrice() * 10**IERC20(principle).decimals()/ 100;
+      price_ = (bondPrice() * 10**IERC20(principle).decimals()) / 100;
     }
   }
 
@@ -457,10 +460,9 @@ contract RequiemBondDepository is Manageable {
    */
   function debtRatio() public view returns (uint256 debtRatio_) {
     uint256 supply = IERC20(REQT).totalSupply();
-    debtRatio_ = FixedPoint
-      .fraction(currentDebt() * 1e9, supply)
-      .decode112with18()
-      / 1e18;
+    debtRatio_ =
+      FixedPoint.fraction(currentDebt() * 1e9, supply).decode112with18() /
+      1e18;
   }
 
   /**
@@ -470,9 +472,8 @@ contract RequiemBondDepository is Manageable {
   function standardizedDebtRatio() external view returns (uint256) {
     if (isLiquidityBond) {
       return
-        debtRatio()
-          *IBondCalculator(bondCalculator).markdown(principle)
-          /1e9;
+        (debtRatio() * IBondCalculator(bondCalculator).markdown(principle)) /
+        1e9;
     } else {
       return debtRatio();
     }
@@ -492,7 +493,7 @@ contract RequiemBondDepository is Manageable {
    */
   function debtDecay() public view returns (uint256 decay_) {
     uint256 blocksSinceLast = block.number - lastDecay;
-    decay_ = totalDebt * blocksSinceLast / terms.vestingTerm;
+    decay_ = (totalDebt * blocksSinceLast) / terms.vestingTerm;
     if (decay_ > totalDebt) {
       decay_ = totalDebt;
     }
@@ -513,7 +514,7 @@ contract RequiemBondDepository is Manageable {
     uint256 vesting = bond.vesting;
 
     if (vesting > 0) {
-      percentVested_ = blocksSinceLast * 10000 / vesting;
+      percentVested_ = (blocksSinceLast * 10000) / vesting;
     } else {
       percentVested_ = 0;
     }
@@ -535,7 +536,7 @@ contract RequiemBondDepository is Manageable {
     if (percentVested >= 10000) {
       pendingPayout_ = payout;
     } else {
-      pendingPayout_ = payout * percentVested / 10000;
+      pendingPayout_ = (payout * percentVested) / 10000;
     }
   }
 

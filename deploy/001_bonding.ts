@@ -291,7 +291,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	const allow = await reqtContract.allowance(localhost, pairManager.address)
 	const allow1 = await wethContract.allowance(localhost, pairManager.address)
-	console.log("approved", allow.toString(),allow1.toString())
+	console.log("approved", allow.toString(), allow1.toString())
 
 	const liqWethREQT = await execute('RequiemQPairManager', { from: localhost }, 'addLiquidity', pairWETH_REQ, weth.address, REQ.address,
 		BigNumber.from('8000000000000'),
@@ -370,26 +370,255 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 
 	const liqDaiREQT = await execute('RequiemQPairManager', { from: localhost }, 'addLiquidity', pairREQT_DAI, REQ.address, dai.address,
-		BigNumber.from('32000000000000'),
-		BigNumber.from('20000000000'),
-		BigNumber.from('32000000000000'),
-		BigNumber.from('20000000000'),
+		BigNumber.from('320000000000000000000'),
+		BigNumber.from('200000000000000000'),
+		BigNumber.from('320000000000000000000'),
+		BigNumber.from('200000000000000000'),
 		localhost,
 		'99999999999999999999');
 
-	const treasury = await deploy('RequiemTreasury', {
-		contract: 'RequiemTreasury',
+
+	const tV4 = await bondingCalculatorContract.getTotalValue(pairREQT_DAI)
+
+	console.log("indexValue DAI", tV4.toString())
+
+
+	// const treasury = await deploy('RequiemTreasury', {
+	// 	contract: 'RequiemTreasury',
+	// 	from: localhost,
+	// 	log: true,
+	// 	args: [
+	// 		REQ.address,	// address _REQT,
+	// 		dai.address, // address _DAI,
+	// 		tusd.address,// address _Frax,
+	// 		pairREQT_DAI,// address _REQTDAI,
+	// 		0,// uint256 _blocksNeededForQueue
+	// 	],
+	// });
+
+	const treasuryFactory = await ethers.getContractFactory('RequiemTreasury');
+
+	const treasury = await treasuryFactory.deploy(
+		REQ.address,	// address _REQT,
+		dai.address, // address _DAI,
+		tusd.address,// address _Frax,
+		pairREQT_DAI,// address _REQTDAI,
+		0,// uint256 _blocksNeededForQueue
+	);
+
+	const bondingDepository = await deploy('RequiemQBondDepository', {
+		contract: 'RequiemQBondDepository',
 		from: localhost,
 		log: true,
 		args: [
-			REQ.address,	// address _REQT,
-			dai.address, // address _DAI,
-			tusd.address,// address _Frax,
-			pairREQT_DAI,// address _REQTDAI,
-			1,// uint256 _blocksNeededForQueue
+			REQ.address, // address _REQT,
+			pairREQT_DAI, // address _principle,
+			treasury.address, // address _treasury,
+			localhost, // address _DAO,
+			bondingCalculator.address// address _bondCalculator
 		],
 	});
 
+	console.log('set treasury as vault')
+	await reqtContract.setVault(treasury.address)
+
+	const depositoryContract = await ethers.getContractAt('RequiemQBondDepository', bondingDepository.address);
+	const treasuryContract = await ethers.getContractAt('RequiemTreasury', treasury.address);
+
+	const lpTokens = await treasuryContract.liquidityTokens(0)
+	console.log("LIQ", lpTokens)
+
+	console.log("get pair data")
+	const pairContract = await ethers.getContractAt('RequiemERC20', pairREQT_DAI);
+	const lpBalante = await pairContract.balanceOf(localhost)
+
+	console.log("balante", lpBalante.toString())
+
+	console.log("approve spending of treasury")
+
+	console.log("set manager")
+	await treasuryContract.pushManagement(localhost)
+
+	await pairContract.approve(treasuryContract.address, ethers.constants.MaxInt256)
+	console.log("approve spending of Depository")
+	await pairContract.approve(bondingDepository.address, ethers.constants.MaxInt256)
+
+	const isLiquidityToken = await treasuryContract.isLiquidityToken(pairContract.address)
+	console.log("isLP", isLiquidityToken)
+
+
+	enum PARAMETER {
+		VESTING,
+		PAYOUT,
+		FEE,
+		DEBT
+	}
+
+	const param = "VESTING"
+	await depositoryContract.setBondTerms(
+		PARAMETER.VESTING,//   PARAMETER _parameter, 
+		10000,//   uint256 _input
+	)
+
+	// enum according to the contract
+	enum MANAGING {
+		RESERVEDEPOSITOR,
+		RESERVESPENDER,
+		RESERVETOKEN,
+		RESERVEMANAGER,
+		LIQUIDITYDEPOSITOR,
+		LIQUIDITYTOKEN,
+		LIQUIDITYMANAGER,
+		DEBTOR,
+		REWARDMANAGER,
+		SREQT
+	}
+
+	console.log("depositor queue")
+
+	await treasuryContract.queue(MANAGING.LIQUIDITYDEPOSITOR, localhost)
+
+	console.log("toggle depositor")
+
+	// const dep = await treasuryContract.toggle(
+	// 	MANAGING.LIQUIDITYDEPOSITOR, // MANAGING _managing,
+	// 	localhost, // address _address,
+	// 	bondingCalculator.address// address _calculator
+	// )
+	// // console.log("toggle depositor", dep)
+
+	// console.log("queue token pairREQT_DAI")
+	// await treasuryContract.queue(MANAGING.LIQUIDITYTOKEN, pairREQT_DAI)
+
+	// const queue = await treasuryContract.LiquidityTokenQueue(pairREQT_DAI)
+	// console.log("token queue", queue.toString())
+
+	await execute('RequiemQRouter', { from: localhost }, 'onSwapTokensForExactTokens',
+		pools8,
+		tokens8,
+		BigNumber.from('3232112'), // out
+		BigNumber.from('99999999999999999999999'), //in max
+		localhost,// address to,
+		deadline,// uint256 deadline
+	);
+	console.log("trade done")
+
+	const tV21 = await bondingCalculatorContract.getTotalValue(pairWETH_REQ)
+
+	console.log("indexValue3", tV21.toString())
+
+	const isLP = await treasuryContract.isLiquidityToken(pairREQT_DAI)
+	console.log("is lp", isLP)
+
+	const bc = await treasuryContract.bondCalculator(pairREQT_DAI)
+	console.log("is bc", bc)
+
+	const bn = await ethers.provider.getBlockNumber()
+	console.log("block number", bn)
+
+	console.log("toggle token")
+	const togToken = await treasuryContract.toggle(
+		MANAGING.LIQUIDITYTOKEN, // MANAGING _managing,
+		pairREQT_DAI, // address _address,
+		bondingCalculator.address// address _calculator
+	)
+
+	const queue = await treasuryContract.LiquidityTokenQueue(pairREQT_DAI)
+	console.log("token queue", queue.toString())
+
+	console.log("queue token pairREQT_DAI")
+	await treasuryContract.queue(MANAGING.LIQUIDITYTOKEN, pairREQT_DAI)
+
+	console.log("toggle token2")
+	const togToken1 = await treasuryContract.toggle(
+		MANAGING.LIQUIDITYTOKEN, // MANAGING _managing,
+		pairREQT_DAI, // address _address,
+		bondingCalculator.address// address _calculator
+	)
+
+	// const ibonding = await ethers.getContractFactory("IBondingCalculator")
+	// const bonding = await ibonding.attach(bondingCalculator.address)
+
+	// const gg = await bonding.valuation(pairREQT_DAI, 12412)
+	// console.log("GG", gg.toString())
+
+	const bc2 = await treasuryContract.bondCalculator(pairREQT_DAI)
+	console.log("is bc after toggle", bc2)
+	// console.log("toggle token", togToken)
+
+	const inp1 = '121432443232324322'
+
+	// const valparams = await treasuryContract['valueOfParams(address,uint256)'](
+	// 	pairREQT_DAI,// address _token, 
+	// 	inp1// uint256 _amount
+	// )
+
+	// console.log("params", valparams)
+
+	let val = await treasuryContract['valueOf(address,uint256)'](
+		pairREQT_DAI,// address _token, 
+		inp1// uint256 _amount
+	)
+	const bn2 = await ethers.provider.getBlockNumber()
+	console.log("block number", bn2)
+	const wpairContract = await ethers.getContractAt('RequiemPair', pairREQT_DAI);
+	const testVal = await wpairContract.calculateSwapGivenIn(REQ.address, REQ.address, inp1);
+
+
+	console.log("value of ", inp1, val.toString())
+	console.log("test value of ", inp1, testVal.toString())
+
+	let val2 = await treasuryContract['valueOf(address,uint256)'](
+		dai.address,// address _token, 
+		inp1// uint256 _amount
+	)
+
+	console.log("value of dai", inp1, val2.toString())
+	// console.log("val of call")
+	//  let val = await execute('RequiemTreasury', { from: localhost }, 'valueOf',
+	// 	pairREQT_DAI,
+	// 	'123321'
+	// );
+
+	// const valparams1 = await treasuryContract['deposit(uint256,address,uint256)'](
+	// 	inp1,// uint256 _amount,
+	// 	pairREQT_DAI,// address _token,
+	// 	321// uint256 _profit
+	// )
+
+
+	await depositoryContract.initializeBondTerms(
+		10,// uint256 _controlVariable,
+		10,// uint256 _vestingTerm,
+		1,// uint256 _minimumPrice,
+		'1242144321432',// uint256 _maxPayout,
+		21,// uint256 _fee,
+		21432432,// uint256 _maxDebt,
+		121,// uint256 _initialDebt
+	)
+
+	const payoutInp = '32324211222'
+
+	let valForPayout = await treasuryContract['valueOf(address,uint256)'](
+		pairREQT_DAI,// address _token, 
+		payoutInp// uint256 _amount
+	)
+
+	console.log("inp", payoutInp, "valued at", valForPayout.toString() )
+
+
+	const x = await depositoryContract.payoutFor(
+		valForPayout// uint256 _value
+	)
+	console.log("payoutFor", x.toString())
+	// console.log("value of ", 12132, val.toString())
+	await depositoryContract.deposit(
+		payoutInp,// uint256 _amount,
+		'32211', // uint256 _profit
+		pairREQT_DAI, // address _token,
+	)
+
+	console.log("deposit done")
 
 	// const MockPair = await ethers.getContractFactory('TestToken1');
 	// const mockPair = await MockPair.deploy();

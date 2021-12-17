@@ -132,4 +132,5 @@ interface IRequiemFormula {
     uint112 collectedFee0,
     uint112 collectedFee1
   ) external view returns (uint256 amount);
+
 }
