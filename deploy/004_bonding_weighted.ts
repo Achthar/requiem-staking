@@ -306,17 +306,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	await ethers.getContractFactory('RequiemERC20Token');
 	// const req = await REQ.deploy();
 
-	// const MockBonding = await ethers.getContractFactory('RequiemUV2BondingCalculator');
+	// const MockBonding = await ethers.getContractFactory('RequiemQBondingCalculator');
 	// const mockBonding = await MockBonding.deploy(REQ.address);
 
-	const bondingCalculator = await deploy('RequiemUV2BondingCalculator', {
-		contract: 'RequiemUV2BondingCalculator',
+	const bondingCalculator = await deploy('RequiemQBondingCalculator', {
+		contract: 'RequiemQBondingCalculator',
 		from: localhost,
 		log: true,
 		args: [REQ.address],
 	});
 
-	const bondingCalculatorContract = await ethers.getContractAt('RequiemUV2BondingCalculator', bondingCalculator.address);
+	const bondingCalculatorContract = await ethers.getContractAt('RequiemQBondingCalculator', bondingCalculator.address);
 
 	const tV = await bondingCalculatorContract.getTotalValue(pairWeth)
 
@@ -563,7 +563,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	// const req = await REQ.deploy();
 
-	// const MockBonding = await ethers.getContractFactory('RequiemQBondingCalculator');
+	// const MockBonding = await ethers.getContractFactory('RequiemUV2BondingCalculator');
 	// const mockBonding = await MockBonding.deploy(REQ.address);
 
 
@@ -586,21 +586,21 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	// 	args: [],
 	// });
 
-	const bondingQCalculator = await deploy('RequiemQBondingCalculator', {
-		contract: 'RequiemQBondingCalculator',
+	const bondingQCalculator = await deploy('RequiemUV2BondingCalculator', {
+		contract: 'RequiemUV2BondingCalculator',
 		from: localhost,
 		log: true,
 		args: [REQ.address],
 	});
 
-	const bondingQCalculatorContract = await ethers.getContractAt('RequiemQBondingCalculator', bondingQCalculator.address);
+	const bondingUV2CalculatorContract = await ethers.getContractAt('RequiemUV2BondingCalculator', bondingQCalculator.address);
 
 
 	const testVal1 = await wpairContract.calculateSwapGivenIn(dai.address, REQ.address, daiShare);
-	const testVal0 = await bondingQCalculatorContract.valuation(pairREQT_DAI, inp1)
+	const testVal0 = await bondingUV2CalculatorContract.valuation(pairREQT_DAI, inp1)
 	console.log("act", testVal0.toString(), "real", testVal1.add(reqShare).toString())
 
-	// const priceData = await bondingQCalculatorContract.calculatePrice(
+	// const priceData = await bondingUV2CalculatorContract.calculatePrice(
 	// 	pairREQT_DAI
 	// )
 	// console.log("--- price data ---\n",
@@ -610,16 +610,16 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	// 	priceData[3].toString(),// uint256 denominatorInOther
 	// )
 
-	const testVal2 = await bondingQCalculatorContract.valuation(pairREQT_DAI, inp1)
+	const testVal2 = await bondingUV2CalculatorContract.valuation(pairREQT_DAI, inp1)
 
-	const totalQ = await bondingQCalculatorContract.getTotalValue(pairREQT_DAI)
+	const totalQ = await bondingUV2CalculatorContract.getTotalValue(pairREQT_DAI)
 	const totalU2 = await bondingCalculatorContract.getTotalValue(pairREQT_DAI)
 
 	console.log("U2", totalU2.toString())
 	console.log("QR", totalQ.toString())
 
 
-	// const kQ = await bondingQCalculatorContract.getKValue(pairREQT_DAI)
+	// const kQ = await bondingUV2CalculatorContract.getKValue(pairREQT_DAI)
 	// const kU2 = await bondingCalculatorContract.getKValue(pairREQT_DAI)
 
 
@@ -680,6 +680,21 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	)
 	console.log("bond price", bp.toString())
+
+
+	console.log("-- depositor queue add depository")
+
+	await treasuryContract.queue(MANAGING.LIQUIDITYDEPOSITOR, bondingDepository.address)
+
+	console.log("toggle depository")
+
+	const depDepository = await treasuryContract.toggle(
+		MANAGING.LIQUIDITYDEPOSITOR, // MANAGING _managing,
+		bondingDepository.address, // address _address,
+		bondingCalculator.address// address _calculator
+	)
+
+
 	// 149614588815
 	// console.log("value of ", 12132, val.toString())
 	await depositoryContract.deposit(
@@ -693,4 +708,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 };
 export default func;
-func.tags = ['bonding-localhost-uv2'];
+func.tags = ['bonding-localhost-wq'];
