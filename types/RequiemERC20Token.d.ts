@@ -22,7 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface RequiemERC20TokenInterface extends ethers.utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
-    "_burnFrom(address,uint256)": FunctionFragment;
+    "MAX_TOTAL_SUPPLY()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -32,18 +32,20 @@ interface RequiemERC20TokenInterface extends ethers.utils.Interface {
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
+    "minters(address)": FunctionFragment;
+    "minters_minted(address)": FunctionFragment;
     "name()": FunctionFragment;
     "nonces(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "setVault(address)": FunctionFragment;
+    "resetMaxTotalSupply(uint256)": FunctionFragment;
+    "setMinter(address,uint256)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "vault()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -51,8 +53,8 @@ interface RequiemERC20TokenInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "_burnFrom",
-    values: [string, BigNumberish]
+    functionFragment: "MAX_TOTAL_SUPPLY",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "allowance",
@@ -81,6 +83,11 @@ interface RequiemERC20TokenInterface extends ethers.utils.Interface {
     functionFragment: "mint",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "minters", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "minters_minted",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "nonces", values: [string]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -100,7 +107,14 @@ interface RequiemERC20TokenInterface extends ethers.utils.Interface {
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "setVault", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "resetMaxTotalSupply",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinter",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
@@ -118,13 +132,15 @@ interface RequiemERC20TokenInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "DOMAIN_SEPARATOR",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "_burnFrom", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "MAX_TOTAL_SUPPLY",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -140,6 +156,11 @@ interface RequiemERC20TokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "minters", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "minters_minted",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -148,7 +169,11 @@ interface RequiemERC20TokenInterface extends ethers.utils.Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setVault", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "resetMaxTotalSupply",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setMinter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
@@ -163,15 +188,18 @@ interface RequiemERC20TokenInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
+    "MaxTotalSupplyUpdated(uint256)": EventFragment;
+    "MinterUpdate(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MaxTotalSupplyUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MinterUpdate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
@@ -182,6 +210,14 @@ export type ApprovalEvent = TypedEvent<
     spender: string;
     value: BigNumber;
   }
+>;
+
+export type MaxTotalSupplyUpdatedEvent = TypedEvent<
+  [BigNumber] & { _newCap: BigNumber }
+>;
+
+export type MinterUpdateEvent = TypedEvent<
+  [string, BigNumber] & { account: string; cap: BigNumber }
 >;
 
 export type OwnershipTransferredEvent = TypedEvent<
@@ -238,11 +274,7 @@ export class RequiemERC20Token extends BaseContract {
   functions: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
-    _burnFrom(
-      account_: string,
-      amount_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    MAX_TOTAL_SUPPLY(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     allowance(
       owner: string,
@@ -264,8 +296,8 @@ export class RequiemERC20Token extends BaseContract {
     ): Promise<ContractTransaction>;
 
     burnFrom(
-      account_: string,
-      amount_: BigNumberish,
+      account: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -284,10 +316,17 @@ export class RequiemERC20Token extends BaseContract {
     ): Promise<ContractTransaction>;
 
     mint(
-      account_: string,
-      amount_: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    minters(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    minters_minted(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -310,8 +349,14 @@ export class RequiemERC20Token extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setVault(
-      vault_: string,
+    resetMaxTotalSupply(
+      _newCap: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMinter(
+      _account: string,
+      _minterCap: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -336,17 +381,11 @@ export class RequiemERC20Token extends BaseContract {
       newOwner_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    vault(overrides?: CallOverrides): Promise<[string]>;
   };
 
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
-  _burnFrom(
-    account_: string,
-    amount_: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  MAX_TOTAL_SUPPLY(overrides?: CallOverrides): Promise<BigNumber>;
 
   allowance(
     owner: string,
@@ -368,8 +407,8 @@ export class RequiemERC20Token extends BaseContract {
   ): Promise<ContractTransaction>;
 
   burnFrom(
-    account_: string,
-    amount_: BigNumberish,
+    account: string,
+    amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -388,10 +427,14 @@ export class RequiemERC20Token extends BaseContract {
   ): Promise<ContractTransaction>;
 
   mint(
-    account_: string,
-    amount_: BigNumberish,
+    _recipient: string,
+    _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  minters(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  minters_minted(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -414,8 +457,14 @@ export class RequiemERC20Token extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setVault(
-    vault_: string,
+  resetMaxTotalSupply(
+    _newCap: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinter(
+    _account: string,
+    _minterCap: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -441,16 +490,10 @@ export class RequiemERC20Token extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  vault(overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
-    _burnFrom(
-      account_: string,
-      amount_: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    MAX_TOTAL_SUPPLY(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
       owner: string,
@@ -469,8 +512,8 @@ export class RequiemERC20Token extends BaseContract {
     burn(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     burnFrom(
-      account_: string,
-      amount_: BigNumberish,
+      account: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -489,10 +532,14 @@ export class RequiemERC20Token extends BaseContract {
     ): Promise<boolean>;
 
     mint(
-      account_: string,
-      amount_: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    minters(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    minters_minted(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -513,7 +560,16 @@ export class RequiemERC20Token extends BaseContract {
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    setVault(vault_: string, overrides?: CallOverrides): Promise<boolean>;
+    resetMaxTotalSupply(
+      _newCap: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinter(
+      _account: string,
+      _minterCap: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -536,8 +592,6 @@ export class RequiemERC20Token extends BaseContract {
       newOwner_: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    vault(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -557,6 +611,30 @@ export class RequiemERC20Token extends BaseContract {
     ): TypedEventFilter<
       [string, string, BigNumber],
       { owner: string; spender: string; value: BigNumber }
+    >;
+
+    "MaxTotalSupplyUpdated(uint256)"(
+      _newCap?: null
+    ): TypedEventFilter<[BigNumber], { _newCap: BigNumber }>;
+
+    MaxTotalSupplyUpdated(
+      _newCap?: null
+    ): TypedEventFilter<[BigNumber], { _newCap: BigNumber }>;
+
+    "MinterUpdate(address,uint256)"(
+      account?: string | null,
+      cap?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { account: string; cap: BigNumber }
+    >;
+
+    MinterUpdate(
+      account?: string | null,
+      cap?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { account: string; cap: BigNumber }
     >;
 
     "OwnershipTransferred(address,address)"(
@@ -597,11 +675,7 @@ export class RequiemERC20Token extends BaseContract {
   estimateGas: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    _burnFrom(
-      account_: string,
-      amount_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    MAX_TOTAL_SUPPLY(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
       owner: string,
@@ -623,8 +697,8 @@ export class RequiemERC20Token extends BaseContract {
     ): Promise<BigNumber>;
 
     burnFrom(
-      account_: string,
-      amount_: BigNumberish,
+      account: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -643,10 +717,14 @@ export class RequiemERC20Token extends BaseContract {
     ): Promise<BigNumber>;
 
     mint(
-      account_: string,
-      amount_: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    minters(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    minters_minted(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -669,8 +747,14 @@ export class RequiemERC20Token extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setVault(
-      vault_: string,
+    resetMaxTotalSupply(
+      _newCap: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMinter(
+      _account: string,
+      _minterCap: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -695,18 +779,12 @@ export class RequiemERC20Token extends BaseContract {
       newOwner_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    vault(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _burnFrom(
-      account_: string,
-      amount_: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    MAX_TOTAL_SUPPLY(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     allowance(
       owner: string,
@@ -731,8 +809,8 @@ export class RequiemERC20Token extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     burnFrom(
-      account_: string,
-      amount_: BigNumberish,
+      account: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -751,9 +829,19 @@ export class RequiemERC20Token extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     mint(
-      account_: string,
-      amount_: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    minters(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    minters_minted(
+      arg0: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -780,8 +868,14 @@ export class RequiemERC20Token extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setVault(
-      vault_: string,
+    resetMaxTotalSupply(
+      _newCap: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinter(
+      _account: string,
+      _minterCap: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -806,7 +900,5 @@ export class RequiemERC20Token extends BaseContract {
       newOwner_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    vault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

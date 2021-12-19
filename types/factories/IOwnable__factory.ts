@@ -9,7 +9,7 @@ import type { IOwnable, IOwnableInterface } from "../IOwnable";
 const _abi = [
   {
     inputs: [],
-    name: "owner",
+    name: "manager",
     outputs: [
       {
         internalType: "address",
@@ -22,7 +22,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "renounceOwnership",
+    name: "pullManagement",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -35,7 +35,14 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "transferOwnership",
+    name: "pushManagement",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "renounceManagement",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

@@ -56,6 +56,7 @@ interface RequiemQBondDepositoryInterface extends ethers.utils.Interface {
     "totalDebt()": FunctionFragment;
     "treasury()": FunctionFragment;
     "useHelper()": FunctionFragment;
+    "viewBondData()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "DAO", values?: undefined): string;
@@ -161,6 +162,10 @@ interface RequiemQBondDepositoryInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "totalDebt", values?: undefined): string;
   encodeFunctionData(functionFragment: "treasury", values?: undefined): string;
   encodeFunctionData(functionFragment: "useHelper", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "viewBondData",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(functionFragment: "DAO", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "REQT", data: BytesLike): Result;
@@ -242,6 +247,10 @@ interface RequiemQBondDepositoryInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "totalDebt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "treasury", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "useHelper", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "viewBondData",
+    data: BytesLike
+  ): Result;
 
   events: {
     "BondCreated(uint256,uint256,uint256,uint256)": EventFragment;
@@ -505,6 +514,16 @@ export class RequiemQBondDepository extends BaseContract {
     treasury(overrides?: CallOverrides): Promise<[string]>;
 
     useHelper(overrides?: CallOverrides): Promise<[boolean]>;
+
+    viewBondData(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        _bondPrice_: BigNumber;
+        _bondPriceInUsd_: BigNumber;
+        _currentDebt_: BigNumber;
+      }
+    >;
   };
 
   DAO(overrides?: CallOverrides): Promise<string>;
@@ -659,6 +678,16 @@ export class RequiemQBondDepository extends BaseContract {
 
   useHelper(overrides?: CallOverrides): Promise<boolean>;
 
+  viewBondData(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      _bondPrice_: BigNumber;
+      _bondPriceInUsd_: BigNumber;
+      _currentDebt_: BigNumber;
+    }
+  >;
+
   callStatic: {
     DAO(overrides?: CallOverrides): Promise<string>;
 
@@ -804,6 +833,16 @@ export class RequiemQBondDepository extends BaseContract {
     treasury(overrides?: CallOverrides): Promise<string>;
 
     useHelper(overrides?: CallOverrides): Promise<boolean>;
+
+    viewBondData(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        _bondPrice_: BigNumber;
+        _bondPriceInUsd_: BigNumber;
+        _currentDebt_: BigNumber;
+      }
+    >;
   };
 
   filters: {
@@ -1057,6 +1096,8 @@ export class RequiemQBondDepository extends BaseContract {
     treasury(overrides?: CallOverrides): Promise<BigNumber>;
 
     useHelper(overrides?: CallOverrides): Promise<BigNumber>;
+
+    viewBondData(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1185,5 +1226,7 @@ export class RequiemQBondDepository extends BaseContract {
     treasury(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     useHelper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    viewBondData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

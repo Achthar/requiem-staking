@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-// File: interfaces/IRequiemFactory.sol
+// File: contracts/interfaces/IRequiemWeightedPairFactory.sol
 
-pragma solidity >=0.5.16;
+pragma solidity >=0.8.10;
 
-interface IRequiemFactory {
+interface IRequiemWeightedPairFactory {
   event PairCreated(
     address indexed token0,
     address indexed token1,
@@ -58,13 +58,13 @@ interface IRequiemFactory {
   function setProtocolFee(uint256) external;
 }
 
-// File: interfaces/IRequiemERC20.sol
+// File: contracts/interfaces/IRequiemPairERC20.sol
 
 pragma solidity ^0.8.10;
 
 // solhint-disable func-name-mixedcase
 
-interface IRequiemERC20 {
+interface IRequiemPairERC20 {
   event Approval(address indexed owner, address indexed spender, uint256 value);
   event Transfer(address indexed from, address indexed to, uint256 value);
 
@@ -110,13 +110,13 @@ interface IRequiemERC20 {
   ) external;
 }
 
-// File: interfaces/IRequiemPair.sol
+// File: contracts/interfaces/IRequiemWeightedPair.sol
 
 pragma solidity ^0.8.10;
 
 // solhint-disable func-name-mixedcase
 
-interface IRequiemPair is IRequiemERC20 {
+interface IRequiemWeightedPair is IRequiemPairERC20 {
   event PaidProtocolFee(uint112 collectedFee0, uint112 collectedFee1);
   event Mint(address indexed sender, uint256 amount0, uint256 amount1);
   event Burn(
@@ -191,7 +191,7 @@ interface IRequiemPair is IRequiemERC20 {
   ) external;
 }
 
-// File: interfaces/IRequiemFormula.sol
+// File: contracts/interfaces/IRequiemFormula.sol
 
 pragma solidity >=0.8.10;
 
@@ -328,7 +328,7 @@ interface IRequiemFormula {
   ) external view returns (uint256 amount);
 }
 
-// File: RequiemFormula.sol
+// File: contracts/RequiemFormula.sol
 
 pragma solidity >=0.8.10;
 
@@ -514,7 +514,7 @@ contract RequiemFormula is IRequiemFormula {
       );
     }
   }
-  
+
   /**
    * @dev computes log(x / FIXED_1) * FIXED_1.
    * This functions assumes that "x >= FIXED_1", because the output would be negative otherwise.
@@ -944,22 +944,23 @@ contract RequiemFormula is IRequiemFormula {
       uint32 swapFee
     )
   {
-    (uint256 reserve0, uint256 reserve1, ) = IRequiemPair(pair).getReserves();
+    (uint256 reserve0, uint256 reserve1, ) = IRequiemWeightedPair(pair)
+      .getReserves();
     uint32 tokenWeight0;
     uint32 tokenWeight1;
     (tokenWeight0, tokenWeight1, swapFee) = getWeightsAndSwapFee(pair);
 
-    if (tokenA == IRequiemPair(pair).token0()) {
+    if (tokenA == IRequiemWeightedPair(pair).token0()) {
       (tokenB, reserveA, reserveB, tokenWeightA, tokenWeightB) = (
-        IRequiemPair(pair).token1(),
+        IRequiemWeightedPair(pair).token1(),
         reserve0,
         reserve1,
         tokenWeight0,
         tokenWeight1
       );
-    } else if (tokenA == IRequiemPair(pair).token1()) {
+    } else if (tokenA == IRequiemWeightedPair(pair).token1()) {
       (tokenB, reserveA, reserveB, tokenWeightA, tokenWeightB) = (
-        IRequiemPair(pair).token0(),
+        IRequiemWeightedPair(pair).token0(),
         reserve1,
         reserve0,
         tokenWeight1,
@@ -987,7 +988,8 @@ contract RequiemFormula is IRequiemFormula {
       uint32 swapFee
     )
   {
-    (uint256 reserve0, uint256 reserve1, ) = IRequiemPair(pair).getReserves();
+    (uint256 reserve0, uint256 reserve1, ) = IRequiemWeightedPair(pair)
+      .getReserves();
     uint32 tokenWeight0;
     uint32 tokenWeight1;
     (tokenWeight0, tokenWeight1, swapFee) = getFactoryWeightsAndSwapFee(
@@ -995,17 +997,17 @@ contract RequiemFormula is IRequiemFormula {
       pair
     );
 
-    if (tokenA == IRequiemPair(pair).token0()) {
+    if (tokenA == IRequiemWeightedPair(pair).token0()) {
       (tokenB, reserveA, reserveB, tokenWeightA, tokenWeightB) = (
-        IRequiemPair(pair).token1(),
+        IRequiemWeightedPair(pair).token1(),
         reserve0,
         reserve1,
         tokenWeight0,
         tokenWeight1
       );
-    } else if (tokenA == IRequiemPair(pair).token1()) {
+    } else if (tokenA == IRequiemWeightedPair(pair).token1()) {
       (tokenB, reserveA, reserveB, tokenWeightA, tokenWeightB) = (
-        IRequiemPair(pair).token0(),
+        IRequiemWeightedPair(pair).token0(),
         reserve1,
         reserve0,
         tokenWeight1,
@@ -1312,11 +1314,15 @@ contract RequiemFormula is IRequiemFormula {
       uint32 swapFee
     )
   {
-    try IRequiemPair(pair).getTokenWeights() returns (
+    try IRequiemWeightedPair(pair).getTokenWeights() returns (
       uint32 _tokenWeight0,
       uint32 _tokenWeight1
     ) {
-      return (_tokenWeight0, _tokenWeight1, IRequiemPair(pair).getSwapFee());
+      return (
+        _tokenWeight0,
+        _tokenWeight1,
+        IRequiemWeightedPair(pair).getSwapFee()
+      );
     } catch Error(string memory reason) {
       revert(reason);
     } catch (
@@ -1335,7 +1341,7 @@ contract RequiemFormula is IRequiemFormula {
       uint32 swapFee
     )
   {
-    return IRequiemFactory(factory).getWeightsAndSwapFee(pair);
+    return IRequiemWeightedPairFactory(factory).getWeightsAndSwapFee(pair);
   }
 
   // Ensure constant value reserve0^(tokenWeight0/50) * reserve1^((100 - tokenWeight0)/50) <= balance0Adjusted^(tokenWeight0/50) * balance1Adjusted^((100 - tokenWeight0)/50)
@@ -1394,10 +1400,11 @@ contract RequiemFormula is IRequiemFormula {
     address tokenB
   ) external view override returns (uint256 reserveA, uint256 reserveB) {
     (address token0, address token1) = sortTokens(tokenA, tokenB);
-    (uint256 reserve0, uint256 reserve1, ) = IRequiemPair(pair).getReserves();
+    (uint256 reserve0, uint256 reserve1, ) = IRequiemWeightedPair(pair)
+      .getReserves();
     require(
-      token0 == IRequiemPair(pair).token0() &&
-        token1 == IRequiemPair(pair).token1(),
+      token0 == IRequiemWeightedPair(pair).token0() &&
+        token1 == IRequiemWeightedPair(pair).token1(),
       "RequiemFormula: Invalid token"
     );
     (reserveA, reserveB) = tokenA == token0
@@ -1411,8 +1418,8 @@ contract RequiemFormula is IRequiemFormula {
     override
     returns (address tokenB)
   {
-    address token0 = IRequiemPair(pair).token0();
-    address token1 = IRequiemPair(pair).token1();
+    address token0 = IRequiemWeightedPair(pair).token0();
+    address token1 = IRequiemWeightedPair(pair).token1();
     require(
       token0 == tokenA || token1 == tokenA,
       "RequiemFormula: Invalid tokenA"

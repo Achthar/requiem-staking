@@ -223,7 +223,6 @@ contract RequiemQBondDepository is Manageable {
     }
   }
 
-
   /* ======== USER FUNCTIONS ======== */
 
   /**
@@ -259,7 +258,7 @@ contract RequiemQBondDepository is Manageable {
     uint256 fee = (payout * terms.fee) / 10000;
     require(value > payout + fee, "VALUE is less than payout plus fee");
     uint256 profit = value - payout - fee;
-    
+
     /**
             principle is transferred in
             approved and
@@ -537,6 +536,32 @@ contract RequiemQBondDepository is Manageable {
       pendingPayout_ = payout;
     } else {
       pendingPayout_ = (payout * percentVested) / 10000;
+    }
+  }
+
+  // a view function that shows the full data at once
+  function viewBondData()
+    external
+    view
+    returns (
+      uint256 _bondPrice_,
+      uint256 _bondPriceInUsd_,
+      uint256 _currentDebt_
+    )
+  {
+    _currentDebt_ = totalDebt - debtDecay();
+
+    _bondPrice_ = (terms.controlVariable * debtRatio() + 1000000000) / 1e7;
+    if (_bondPrice_ < terms.minimumPrice) {
+      _bondPrice_ = terms.minimumPrice;
+    }
+
+    if (isLiquidityBond) {
+      _bondPriceInUsd_ =
+        (bondPrice() * IBondCalculator(bondCalculator).markdown(principle)) /
+        100;
+    } else {
+      _bondPriceInUsd_ = (bondPrice() * 10**IERC20(principle).decimals()) / 100;
     }
   }
 

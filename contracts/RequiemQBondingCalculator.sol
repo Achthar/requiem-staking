@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 
 import "./interfaces/IBondingCalculator.sol";
 import "./interfaces/ERC20/IERC20.sol";
-import "./interfaces/IRequiemPair.sol";
+import "./interfaces/IRequiemWeightedPair.sol";
 import "./interfaces/IRequiemSwap.sol";
 import "./libraries/math/FixedPoint.sol";
 import "./libraries/math/SqrtMath.sol";
@@ -38,11 +38,11 @@ contract RequiemQBondingCalculator is IBondingCalculator {
   *  - is consistent with the uniswapV2-type case 
  */
   function getTotalValue(address _pair) public view returns (uint256 _value) {
-    (uint256 reserve0, uint256 reserve1, ) = IRequiemPair(_pair).getReserves();
+    (uint256 reserve0, uint256 reserve1, ) = IRequiemWeightedPair(_pair).getReserves();
     (address otherToken, uint256 reservesOther) = REQT ==
-      IRequiemPair(_pair).token0()
-      ? (IRequiemPair(_pair).token1(), reserve1)
-      : (IRequiemPair(_pair).token0(), reserve0);
+      IRequiemWeightedPair(_pair).token0()
+      ? (IRequiemWeightedPair(_pair).token1(), reserve1)
+      : (IRequiemWeightedPair(_pair).token0(), reserve0);
 
     uint256 decimals = IERC20(otherToken).decimals() +
       IERC20(REQT).decimals() -
@@ -73,16 +73,16 @@ contract RequiemQBondingCalculator is IBondingCalculator {
     returns (uint256 _value)
   {
     uint256 totalValue = getTotalValue(_pair);
-    uint256 totalSupply = IRequiemPair(_pair).totalSupply();
+    uint256 totalSupply = IRequiemWeightedPair(_pair).totalSupply();
 
     _value = FullMath.mulDivRoundingUp(totalValue, amount_, totalSupply);
   }
 
   function markdown(address _pair) external view returns (uint256) {
-    (uint256 reserve0, uint256 reserve1, ) = IRequiemPair(_pair).getReserves();
+    (uint256 reserve0, uint256 reserve1, ) = IRequiemWeightedPair(_pair).getReserves();
 
     uint256 reserve;
-    if (IRequiemPair(_pair).token0() == REQT) {
+    if (IRequiemWeightedPair(_pair).token0() == REQT) {
       reserve = reserve1;
     } else {
       reserve = reserve0;

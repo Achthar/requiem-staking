@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.10;
 
-import "./IRequiemERC20.sol";
+import "./IRequiemPairERC20.sol";
 
 // solhint-disable func-name-mixedcase
 
-interface IRequiemPair is IRequiemERC20 {
+interface IRequiemWeightedPair is IRequiemPairERC20 {
   event PaidProtocolFee(uint112 collectedFee0, uint112 collectedFee1);
   event Mint(address indexed sender, uint256 amount0, uint256 amount1);
   event Burn(
@@ -57,7 +57,18 @@ interface IRequiemPair is IRequiemERC20 {
   function price0CumulativeLast() external view returns (uint256);
 
   function price1CumulativeLast() external view returns (uint256);
-  
+
+  function mint(address to) external returns (uint256 liquidity);
+
+  function burn(address to) external returns (uint256 amount0, uint256 amount1);
+
+  function swap(
+    uint256 amount0Out,
+    uint256 amount1Out,
+    address to,
+    bytes calldata data
+  ) external;
+
   function skim(address to) external;
 
   function sync() external;

@@ -103,8 +103,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		log: true,
 	});
 
-	const factory = await deploy("RequiemFactory", {
-		contract: "RequiemFactory",
+	const factory = await deploy("RequiemWeightedPairFactory", {
+		contract: "RequiemWeightedPairFactory",
 		skipIfAlreadyDeployed: true,
 		from: localhost,
 		args: [localhost, formula.address],
@@ -196,7 +196,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 
 
-	const factoryContract = await ethers.getContractAt('RequiemFactory', factory.address);
+	const factoryContract = await ethers.getContractAt('RequiemWeightedPairFactory', factory.address);
 	console.log("--- create t1 t2 pair ----")
 	await factoryContract.createPair(t1.address, t2.address, ethers.BigNumber.from(50), ethers.BigNumber.from(10))
 	const pair = await factoryContract.getPair(t1.address, t2.address, ethers.BigNumber.from(50), ethers.BigNumber.from(10))
@@ -243,7 +243,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		deadline);
 	console.log("LP received weth t2", 'liqWeth')
 
-	const pairWethContract = await ethers.getContractAt('RequiemPair', pairWeth);
+	const pairWethContract = await ethers.getContractAt('RequiemWeightedPair', pairWeth);
 
 	console.log("calc swap test")
 	const inT2 = await pairWethContract.calculateSwapGivenOut(weth.address, weth.address, 4321234)
@@ -286,7 +286,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	await reqtContract.approve(router.address, ethers.constants.MaxInt256)
 
-	await reqtContract.setVault(localhost)
+	await reqtContract.setMinter(localhost, ethers.constants.MaxInt256)
 	await reqtContract.mint(localhost, '1000000000098298432432')
 
 	const allow = await reqtContract.allowance(localhost, pairManager.address)
@@ -422,7 +422,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	});
 
 	console.log('set treasury as vault')
-	await reqtContract.setVault(treasury.address)
+	await reqtContract.setMinter(treasury.address, ethers.constants.MaxInt256)
 
 	const depositoryContract = await ethers.getContractAt('RequiemQBondDepository', bondingDepository.address);
 	const treasuryContract = await ethers.getContractAt('RequiemTreasury', treasury.address);
@@ -431,7 +431,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log("LIQ", lpTokens)
 
 	console.log("get pair data")
-	const pairContract = await ethers.getContractAt('RequiemERC20', pairREQT_DAI);
+	const pairContract = await ethers.getContractAt('RequiemPairERC20', pairREQT_DAI);
 	const lpBalante = await pairContract.balanceOf(localhost)
 	const ts = await pairContract.totalSupply()
 
@@ -576,7 +576,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	)
 	const bn2 = await ethers.provider.getBlockNumber()
 	console.log("block number", bn2)
-	const wpairContract = await ethers.getContractAt('RequiemPair', pairREQT_DAI);
+	const wpairContract = await ethers.getContractAt('RequiemWeightedPair', pairREQT_DAI);
 	const testVal = await wpairContract.calculateSwapGivenIn(dai.address, REQ.address, daiShare);
 
 	// const formulaLite = await deploy('RequiemFormulaLite', {

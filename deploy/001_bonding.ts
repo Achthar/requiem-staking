@@ -103,8 +103,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		log: true,
 	});
 
-	const factory = await deploy("RequiemFactory", {
-		contract: "RequiemFactory",
+	const factory = await deploy("RequiemWeightedPairFactory", {
+		contract: "RequiemWeightedPairFactory",
 		skipIfAlreadyDeployed: true,
 		from: localhost,
 		args: [localhost, formula.address],
@@ -196,7 +196,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 
 
-	const factoryContract = await ethers.getContractAt('RequiemFactory', factory.address);
+	const factoryContract = await ethers.getContractAt('RequiemWeightedPairFactory', factory.address);
 	console.log("--- create t1 t2 pair ----")
 	await factoryContract.createPair(t1.address, t2.address, ethers.BigNumber.from(50), ethers.BigNumber.from(10))
 	const pair = await factoryContract.getPair(t1.address, t2.address, ethers.BigNumber.from(50), ethers.BigNumber.from(10))
