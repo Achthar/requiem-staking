@@ -161,7 +161,7 @@ pragma solidity ^0.8.10;
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IERC20-approve}.
  */
-contract ERC20 is Context, IERC20, IERC20Metadata {
+contract ERC20Test is Context, IERC20, IERC20Metadata {
   mapping(address => uint256) private _balances;
 
   mapping(address => mapping(address => uint256)) private _allowances;
@@ -533,14 +533,14 @@ pragma solidity ^0.8.10;
 /**
  * @dev THIS CONTRACT IS FOR TESTING PURPOSES ONLY.
  */
-contract MockERC20 is ERC20 {
+contract MockERC20 is ERC20Test {
   uint8 internal decimals_;
 
   constructor(
     string memory _name,
     string memory _symbol,
     uint8 _decimals
-  ) ERC20(_name, _symbol) {
+  ) ERC20Test(_name, _symbol) {
     super._mint(msg.sender, 1e27);
     decimals_ = _decimals;
   }

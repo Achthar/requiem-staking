@@ -650,13 +650,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 
 	await depositoryContract.initializeBondTerms(
-		11233210,// uint256 _controlVariable,
-		1032432,// uint256 _vestingTerm,
-		4321,// uint256 _minimumPrice,
-		'1242144321443279897832',// uint256 _maxPayout,
-		21,// uint256 _fee,
-		21432432,// uint256 _maxDebt,
-		121,// uint256 _initialDebt
+		0,// uint256 _controlVariable,
+		1000,// uint256 _vestingTerm,
+		1000,// uint256 _minimumPrice,
+		'1000000000000000000000000',// uint256 _maxPayout,
+		25,// uint256 _fee,
+		'200000000000',// uint256 _maxDebt,
+		0,// uint256 _initialDebt
 	)
 
 	const payoutInp = lpBalante.div(10)

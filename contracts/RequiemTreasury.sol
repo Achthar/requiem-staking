@@ -105,7 +105,7 @@ contract RequiemTreasury is Manageable, ITreasury {
   constructor(
     address _REQT,
     address _DAI,
-    address _Frax,
+    address _TUSD,
     address _REQTDAI,
     uint256 _blocksNeededForQueue
   ) {
@@ -115,8 +115,8 @@ contract RequiemTreasury is Manageable, ITreasury {
     isReserveToken[_DAI] = true;
     reserveTokens.push(_DAI);
 
-    isReserveToken[_Frax] = true;
-    reserveTokens.push(_Frax);
+    isReserveToken[_TUSD] = true;
+    reserveTokens.push(_TUSD);
 
     isLiquidityToken[_REQTDAI] = true;
     liquidityTokens.push(_REQTDAI);
