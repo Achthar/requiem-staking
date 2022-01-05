@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.11;
 
 interface IBond {
     function redeem( address _recipient, bool _stake ) external returns ( uint );

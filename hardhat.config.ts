@@ -242,8 +242,19 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       // tags: ['staging'],
       // gasMultiplier: 4,
-      gas: 8000000,
-      gasPrice: 25000000000,
+      gas: 80000000,
+      gasPrice: 250000000000,
+    },
+    'oasis-test': {
+      url: 'https://testnet.emerald.oasis.dev',
+      accounts: [pk1, pk2],
+      chainId: 42261,
+      live: true,
+      saveDeployments: true,
+      // tags: ['staging'],
+      // gasMultiplier: 4,
+      gas: 800000,
+      gasPrice: 2500000000,
     },
     harmony: {
       url: 'https://api.s0.t.hmny.io',
@@ -336,11 +347,11 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.8.10',
+        version: '0.8.11',
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200,
+            runs: 1000,
           },
           evmVersion: 'london',
         },

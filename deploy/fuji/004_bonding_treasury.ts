@@ -93,6 +93,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log("set manager")
 	await treasuryContract.pushManagement(deployer)
 
+	await pairContract.connect(deployer)
+	
 	await pairContract.approve(treasuryContract.address, ethers.constants.MaxInt256)
 	console.log("approve spending of Depository")
 	await pairContract.approve(bondingDepository.address, ethers.constants.MaxInt256)

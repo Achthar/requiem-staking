@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.11;
 
 import "../interfaces/ERC20/IERC20.sol";
 import "../interfaces/ERC20/IERC20Metadata.sol";
@@ -86,7 +86,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      * {IERC20-balanceOf} and {IERC20-transfer}.
      */
     function decimals() public view virtual override(IERC20, IERC20Metadata) returns (uint8) {
-        return 18;
+        return _decimals;
     }
 
     /**

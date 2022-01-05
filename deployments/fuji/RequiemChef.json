@@ -1,0 +1,1120 @@
+{
+  "address": "0xD4864BA8C00Eda17eFcbd0163c3202b36E355007",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "_reward",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IFundDistributor",
+          "name": "_fund",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "Deposit",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "EmergencyWithdraw",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Harvest",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "allocPoint",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "contract IERC20",
+          "name": "lpToken",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "contract IRewarder",
+          "name": "rewarder",
+          "type": "address"
+        }
+      ],
+      "name": "LogPoolAddition",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "rewardPerSecond",
+          "type": "uint256"
+        }
+      ],
+      "name": "LogRewardPerSecond",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "allocPoint",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "contract IRewarder",
+          "name": "rewarder",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "overwrite",
+          "type": "bool"
+        }
+      ],
+      "name": "LogSetPool",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "lastRewardTime",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "lpSupply",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "accRewardPerShare",
+          "type": "uint256"
+        }
+      ],
+      "name": "LogUpdatePool",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "fund",
+          "type": "address"
+        }
+      ],
+      "name": "PoolFundChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "Withdraw",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "allocPoint",
+          "type": "uint256"
+        },
+        {
+          "internalType": "contract IERC20",
+          "name": "_lpToken",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IRewarder",
+          "name": "_rewarder",
+          "type": "address"
+        }
+      ],
+      "name": "add",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "deposit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "emergencyWithdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "fund",
+      "outputs": [
+        {
+          "internalType": "contract IFundDistributor",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "harvest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "harvestAllRewards",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "lpToken",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "pids",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "massUpdatePools",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_pid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "pendingReward",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "pending",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "poolInfo",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "accRewardPerShare",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastRewardTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "allocPoint",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "poolLength",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "pools",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "reward",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rewardPerSecond",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "rewarder",
+      "outputs": [
+        {
+          "internalType": "contract IRewarder",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_pid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_allocPoint",
+          "type": "uint256"
+        },
+        {
+          "internalType": "contract IRewarder",
+          "name": "_rewarder",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "overwrite",
+          "type": "bool"
+        }
+      ],
+      "name": "set",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IFundDistributor",
+          "name": "_fund",
+          "type": "address"
+        }
+      ],
+      "name": "setFund",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_rewardPerSecond",
+          "type": "uint256"
+        }
+      ],
+      "name": "setRewardPerSecond",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalAllocPoint",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner_",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        }
+      ],
+      "name": "updatePool",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "accRewardPerShare",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastRewardTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "allocPoint",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct RequiemChef.PoolInfo",
+          "name": "pool",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "userInfo",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "int256",
+          "name": "rewardDebt",
+          "type": "int256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "withdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "pid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        }
+      ],
+      "name": "withdrawAndHarvest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xd3b6e80d88000794e1d86a0832fe2539ed0705be6d3a001da436f58b7bdcb7fe",
+  "receipt": {
+    "to": null,
+    "from": "0x10E38dFfFCfdBaaf590D5A9958B01C9cfcF6A63B",
+    "contractAddress": "0xD4864BA8C00Eda17eFcbd0163c3202b36E355007",
+    "transactionIndex": 0,
+    "gasUsed": "1813124",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000001000000000000000000000000000000800000000010000000000000000000000000000000000000000000000000001000000000000000020000000000000000000020000000000000000000800000000000000000000000000000000400000000100000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x88821f70e2904164813b8a312a3ab99f99602c3b38cce19400b457215a77ce3b",
+    "transactionHash": "0xd3b6e80d88000794e1d86a0832fe2539ed0705be6d3a001da436f58b7bdcb7fe",
+    "logs": [
+      {
+        "transactionIndex": 0,
+        "blockNumber": 4437290,
+        "transactionHash": "0xd3b6e80d88000794e1d86a0832fe2539ed0705be6d3a001da436f58b7bdcb7fe",
+        "address": "0xD4864BA8C00Eda17eFcbd0163c3202b36E355007",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x00000000000000000000000010e38dfffcfdbaaf590d5a9958b01c9cfcf6a63b"
+        ],
+        "data": "0x",
+        "logIndex": 0,
+        "blockHash": "0x88821f70e2904164813b8a312a3ab99f99602c3b38cce19400b457215a77ce3b"
+      }
+    ],
+    "blockNumber": 4437290,
+    "cumulativeGasUsed": "1813124",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x2d90e6d9368b2838a9558B0a609750243C5C4679",
+    "0xEE771F8bda7958064F83d5b75A42D432B55155b4"
+  ],
+  "solcInputHash": "643d8d4b32e974e077b9271b9fa171b4",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.11+commit.d7f03943\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"_reward\",\"type\":\"address\"},{\"internalType\":\"contract IFundDistributor\",\"name\":\"_fund\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"Deposit\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"EmergencyWithdraw\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"Harvest\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"allocPoint\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"contract IERC20\",\"name\":\"lpToken\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"contract IRewarder\",\"name\":\"rewarder\",\"type\":\"address\"}],\"name\":\"LogPoolAddition\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"rewardPerSecond\",\"type\":\"uint256\"}],\"name\":\"LogRewardPerSecond\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"allocPoint\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"contract IRewarder\",\"name\":\"rewarder\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"overwrite\",\"type\":\"bool\"}],\"name\":\"LogSetPool\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"lastRewardTime\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"lpSupply\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"accRewardPerShare\",\"type\":\"uint256\"}],\"name\":\"LogUpdatePool\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"fund\",\"type\":\"address\"}],\"name\":\"PoolFundChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"Withdraw\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"allocPoint\",\"type\":\"uint256\"},{\"internalType\":\"contract IERC20\",\"name\":\"_lpToken\",\"type\":\"address\"},{\"internalType\":\"contract IRewarder\",\"name\":\"_rewarder\",\"type\":\"address\"}],\"name\":\"add\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"emergencyWithdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"fund\",\"outputs\":[{\"internalType\":\"contract IFundDistributor\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"harvest\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"harvestAllRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"lpToken\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"pids\",\"type\":\"uint256[]\"}],\"name\":\"massUpdatePools\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_pid\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"pendingReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"pending\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"poolInfo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"accRewardPerShare\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lastRewardTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"allocPoint\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"poolLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"pools\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"reward\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rewardPerSecond\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"rewarder\",\"outputs\":[{\"internalType\":\"contract IRewarder\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_pid\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_allocPoint\",\"type\":\"uint256\"},{\"internalType\":\"contract IRewarder\",\"name\":\"_rewarder\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"overwrite\",\"type\":\"bool\"}],\"name\":\"set\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract IFundDistributor\",\"name\":\"_fund\",\"type\":\"address\"}],\"name\":\"setFund\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_rewardPerSecond\",\"type\":\"uint256\"}],\"name\":\"setRewardPerSecond\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalAllocPoint\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner_\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"}],\"name\":\"updatePool\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"accRewardPerShare\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lastRewardTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"allocPoint\",\"type\":\"uint256\"}],\"internalType\":\"struct RequiemChef.PoolInfo\",\"name\":\"pool\",\"type\":\"tuple\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"userInfo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"int256\",\"name\":\"rewardDebt\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"pid\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"withdrawAndHarvest\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"add(uint256,address,address)\":{\"params\":{\"_lpToken\":\"Address of the LP ERC-20 token.\",\"_rewarder\":\"Address of the rewarder delegate.\",\"allocPoint\":\"AP of the new pool.\"}},\"deposit(uint256,uint256,address)\":{\"params\":{\"amount\":\"LP token amount to deposit.\",\"pid\":\"The index of the pool. See `poolInfo`.\",\"to\":\"The receiver of `amount` deposit benefit.\"}},\"emergencyWithdraw(uint256,address)\":{\"params\":{\"pid\":\"The index of the pool. See `poolInfo`.\",\"to\":\"Receiver of the LP tokens.\"}},\"harvest(uint256,address)\":{\"params\":{\"pid\":\"The index of the pool. See `poolInfo`.\",\"to\":\"Receiver of rewards.\"}},\"massUpdatePools(uint256[])\":{\"params\":{\"pids\":\"Pool IDs of all to be updated. Make sure to update all active pools.\"}},\"pendingReward(uint256,address)\":{\"params\":{\"_pid\":\"The index of the pool. See `poolInfo`.\",\"_user\":\"Address of user.\"},\"returns\":{\"pending\":\"reward for a given user.\"}},\"set(uint256,uint256,address,bool)\":{\"params\":{\"_allocPoint\":\"New AP of the pool.\",\"_pid\":\"The index of the pool. See `poolInfo`.\",\"_rewarder\":\"Address of the rewarder delegate.\",\"overwrite\":\"True if _rewarder should be `set`. Otherwise `_rewarder` is ignored.\"}},\"setFund(address)\":{\"params\":{\"_fund\":\"The address of new fund contract.\"}},\"setRewardPerSecond(uint256)\":{\"params\":{\"_rewardPerSecond\":\"The amount of reward to be distributed per second.\"}},\"updatePool(uint256)\":{\"params\":{\"pid\":\"The index of the pool. See `poolInfo`.\"},\"returns\":{\"pool\":\"Returns the pool that was updated.\"}},\"withdraw(uint256,uint256,address)\":{\"params\":{\"amount\":\"LP token amount to withdraw.\",\"pid\":\"The index of the pool. See `poolInfo`.\",\"to\":\"Receiver of the LP tokens.\"}},\"withdrawAndHarvest(uint256,uint256,address)\":{\"params\":{\"amount\":\"LP token amount to withdraw.\",\"pid\":\"The index of the pool. See `poolInfo`.\",\"to\":\"Receiver of the LP tokens and rewards.\"}}},\"stateVariables\":{\"totalAllocPoint\":{\"details\":\"Total allocation points. Must be the sum of all allocation points in all pools.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"add(uint256,address,address)\":{\"notice\":\"Add a new LP to the pool. Can only be called by the owner. DO NOT add the same LP token more than once. Rewards will be messed up if you do.\"},\"deposit(uint256,uint256,address)\":{\"notice\":\"Deposit LP tokens to MCV2 for reward allocation.\"},\"emergencyWithdraw(uint256,address)\":{\"notice\":\"Withdraw without caring about rewards. EMERGENCY ONLY.\"},\"harvest(uint256,address)\":{\"notice\":\"Harvest proceeds for transaction sender to `to`.\"},\"lpToken(uint256)\":{\"notice\":\"Address of the LP token for each MCV2 pool.\"},\"massUpdatePools(uint256[])\":{\"notice\":\"Update reward variables for all pools. Be careful of gas spending!\"},\"pendingReward(uint256,address)\":{\"notice\":\"View function to see pending reward on frontend.\"},\"poolInfo(uint256)\":{\"notice\":\"Info of each MCV2 pool.\"},\"poolLength()\":{\"notice\":\"Returns the number of MCV2 pools.\"},\"rewarder(uint256)\":{\"notice\":\"Address of each `IRewarder` contract in MCV2.\"},\"set(uint256,uint256,address,bool)\":{\"notice\":\"Update the given pool's reward allocation point and `IRewarder` contract. Can only be called by the owner.\"},\"setFund(address)\":{\"notice\":\"Set the new fund contract.\"},\"setRewardPerSecond(uint256)\":{\"notice\":\"Sets the reward per second to be distributed. Can only be called by the owner.\"},\"updatePool(uint256)\":{\"notice\":\"Update reward variables of the given pool.\"},\"userInfo(uint256,address)\":{\"notice\":\"Info of each user that stakes LP tokens.\"},\"withdraw(uint256,uint256,address)\":{\"notice\":\"Withdraw LP tokens from MCV2.\"},\"withdrawAndHarvest(uint256,uint256,address)\":{\"notice\":\"Withdraw LP tokens from MCV2 and harvest proceeds for transaction sender to `to`.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/RequiemChef.sol\":\"RequiemChef\"},\"evmVersion\":\"london\",\"libraries\":{\":__CACHE_BREAKER__\":\"0x00000000d41867734bbee4c6863d9255b2b06ac1\"},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"contracts/RequiemChef.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\n\\npragma solidity ^0.8.11;\\n\\nimport \\\"./libraries/Ownable.sol\\\";\\nimport \\\"./interfaces/ERC20/IERC20.sol\\\";\\nimport \\\"./interfaces/IRewarder.sol\\\";\\nimport \\\"./interfaces/IFundDistributor.sol\\\";\\nimport \\\"./libraries/SafeERC20.sol\\\";\\n\\n/*  RequiemChef is a fork from Sushi's MiniChef v2 with slightly modification.\\n    1.  Rewards will be transferred from a seperated contract so that it will be more flexible to switch between:\\n        [mint reward token directly] OR [transfer them instead]\\n    2.  Add a Harvest all function to quickly harvest rewards from all the deposited pools\\n*/\\ncontract RequiemChef is Ownable {\\n  using SafeERC20 for IERC20;\\n\\n  struct UserInfo {\\n    uint256 amount;\\n    int256 rewardDebt;\\n  }\\n\\n  struct PoolInfo {\\n    uint256 accRewardPerShare;\\n    uint256 lastRewardTime;\\n    uint256 allocPoint;\\n  }\\n\\n  IERC20 public reward;\\n  IFundDistributor public fund;\\n\\n  /// @notice Info of each MCV2 pool.\\n  PoolInfo[] public poolInfo;\\n  /// @notice Address of the LP token for each MCV2 pool.\\n  IERC20[] public lpToken;\\n  /// @notice Address of each `IRewarder` contract in MCV2.\\n  IRewarder[] public rewarder;\\n\\n  /// @notice Info of each user that stakes LP tokens.\\n  mapping(uint256 => mapping(address => UserInfo)) public userInfo;\\n  /// @dev Total allocation points. Must be the sum of all allocation points in all pools.\\n  uint256 public totalAllocPoint = 0;\\n\\n  uint256 public rewardPerSecond;\\n  uint256 private constant ACC_REWARD_PRECISION = 1e12;\\n\\n  constructor(IERC20 _reward, IFundDistributor _fund) {\\n    reward = _reward;\\n    fund = _fund;\\n  }\\n\\n  /* ========== PUBLIC FUNCTIONS ========== */\\n\\n  /// @notice Returns the number of MCV2 pools.\\n  function poolLength() public view returns (uint256 pools) {\\n    pools = poolInfo.length;\\n  }\\n\\n  /// @notice View function to see pending reward on frontend.\\n  /// @param _pid The index of the pool. See `poolInfo`.\\n  /// @param _user Address of user.\\n  /// @return pending reward for a given user.\\n  function pendingReward(uint256 _pid, address _user)\\n    external\\n    view\\n    returns (uint256 pending)\\n  {\\n    PoolInfo memory pool = poolInfo[_pid];\\n    UserInfo storage user = userInfo[_pid][_user];\\n    uint256 accRewardPerShare = pool.accRewardPerShare;\\n    uint256 lpSupply = lpToken[_pid].balanceOf(address(this));\\n    if (block.timestamp > pool.lastRewardTime && lpSupply != 0) {\\n      uint256 time = block.timestamp - pool.lastRewardTime;\\n      uint256 rewardAmount = (time * rewardPerSecond * pool.allocPoint) /\\n        totalAllocPoint;\\n      accRewardPerShare += (rewardAmount * ACC_REWARD_PRECISION) / lpSupply;\\n    }\\n    pending = uint256(\\n      int256((user.amount * accRewardPerShare) / ACC_REWARD_PRECISION) -\\n        user.rewardDebt\\n    );\\n  }\\n\\n  /// @notice Update reward variables of the given pool.\\n  /// @param pid The index of the pool. See `poolInfo`.\\n  /// @return pool Returns the pool that was updated.\\n  function updatePool(uint256 pid) public returns (PoolInfo memory pool) {\\n    pool = poolInfo[pid];\\n    if (block.timestamp > pool.lastRewardTime) {\\n      uint256 lpSupply = lpToken[pid].balanceOf(address(this));\\n      if (lpSupply > 0) {\\n        uint256 time = block.timestamp - pool.lastRewardTime;\\n        uint256 rewardAmount = (time * rewardPerSecond * pool.allocPoint) /\\n          totalAllocPoint;\\n        pool.accRewardPerShare +=\\n          (rewardAmount * ACC_REWARD_PRECISION) /\\n          lpSupply;\\n      }\\n      pool.lastRewardTime = block.timestamp;\\n      poolInfo[pid] = pool;\\n      emit LogUpdatePool(\\n        pid,\\n        pool.lastRewardTime,\\n        lpSupply,\\n        pool.accRewardPerShare\\n      );\\n    }\\n  }\\n\\n  /// @notice Update reward variables for all pools. Be careful of gas spending!\\n  /// @param pids Pool IDs of all to be updated. Make sure to update all active pools.\\n  function massUpdatePools(uint256[] calldata pids) external {\\n    uint256 len = pids.length;\\n    for (uint256 i = 0; i < len; ++i) {\\n      updatePool(pids[i]);\\n    }\\n  }\\n\\n  /// @notice Deposit LP tokens to MCV2 for reward allocation.\\n  /// @param pid The index of the pool. See `poolInfo`.\\n  /// @param amount LP token amount to deposit.\\n  /// @param to The receiver of `amount` deposit benefit.\\n  function deposit(\\n    uint256 pid,\\n    uint256 amount,\\n    address to\\n  ) public {\\n    PoolInfo memory pool = updatePool(pid);\\n    UserInfo storage user = userInfo[pid][to];\\n\\n    // Effects\\n    user.amount += amount;\\n    user.rewardDebt += int256(\\n      (amount * pool.accRewardPerShare) / ACC_REWARD_PRECISION\\n    );\\n\\n    // Interactions\\n    IRewarder _rewarder = rewarder[pid];\\n    if (address(_rewarder) != address(0)) {\\n      _rewarder.onReward(pid, to, to, 0, user.amount);\\n    }\\n\\n    lpToken[pid].safeTransferFrom(msg.sender, address(this), amount);\\n\\n    emit Deposit(msg.sender, pid, amount, to);\\n  }\\n\\n  /// @notice Withdraw LP tokens from MCV2.\\n  /// @param pid The index of the pool. See `poolInfo`.\\n  /// @param amount LP token amount to withdraw.\\n  /// @param to Receiver of the LP tokens.\\n  function withdraw(\\n    uint256 pid,\\n    uint256 amount,\\n    address to\\n  ) public {\\n    PoolInfo memory pool = updatePool(pid);\\n    UserInfo storage user = userInfo[pid][msg.sender];\\n\\n    // Effects\\n    user.rewardDebt -= int256(\\n      (amount * pool.accRewardPerShare) / ACC_REWARD_PRECISION\\n    );\\n    user.amount -= amount;\\n    // Interactions\\n    IRewarder _rewarder = rewarder[pid];\\n    if (address(_rewarder) != address(0)) {\\n      _rewarder.onReward(pid, msg.sender, to, 0, user.amount);\\n    }\\n\\n    lpToken[pid].safeTransfer(to, amount);\\n\\n    emit Withdraw(msg.sender, pid, amount, to);\\n  }\\n\\n  /// @notice Harvest proceeds for transaction sender to `to`.\\n  /// @param pid The index of the pool. See `poolInfo`.\\n  /// @param to Receiver of rewards.\\n  function harvest(uint256 pid, address to) public {\\n    PoolInfo memory pool = updatePool(pid);\\n    UserInfo storage user = userInfo[pid][msg.sender];\\n    int256 accumulatedReward = int256(\\n      (user.amount * pool.accRewardPerShare) / ACC_REWARD_PRECISION\\n    );\\n    uint256 _pendingReward = uint256(accumulatedReward - user.rewardDebt);\\n\\n    // Effects\\n    user.rewardDebt = accumulatedReward;\\n\\n    // Interactions\\n    fund.distributeTo(to, _pendingReward);\\n\\n    IRewarder _rewarder = rewarder[pid];\\n    if (address(_rewarder) != address(0)) {\\n      _rewarder.onReward(pid, msg.sender, to, _pendingReward, user.amount);\\n    }\\n\\n    emit Harvest(msg.sender, pid, _pendingReward);\\n  }\\n\\n  /// @notice Withdraw LP tokens from MCV2 and harvest proceeds for transaction sender to `to`.\\n  /// @param pid The index of the pool. See `poolInfo`.\\n  /// @param amount LP token amount to withdraw.\\n  /// @param to Receiver of the LP tokens and rewards.\\n  function withdrawAndHarvest(\\n    uint256 pid,\\n    uint256 amount,\\n    address to\\n  ) public {\\n    PoolInfo memory pool = updatePool(pid);\\n    UserInfo storage user = userInfo[pid][msg.sender];\\n    int256 accumulatedReward = int256(\\n      (user.amount * pool.accRewardPerShare) / ACC_REWARD_PRECISION\\n    );\\n    uint256 _pendingReward = uint256(accumulatedReward - user.rewardDebt);\\n\\n    // Effects\\n    user.rewardDebt =\\n      accumulatedReward -\\n      int256((amount * pool.accRewardPerShare) / ACC_REWARD_PRECISION);\\n    user.amount -= amount;\\n\\n    // Interactions\\n    fund.distributeTo(to, _pendingReward);\\n\\n    IRewarder _rewarder = rewarder[pid];\\n    if (address(_rewarder) != address(0)) {\\n      _rewarder.onReward(pid, msg.sender, to, _pendingReward, user.amount);\\n    }\\n\\n    lpToken[pid].safeTransfer(to, amount);\\n\\n    emit Withdraw(msg.sender, pid, amount, to);\\n    emit Harvest(msg.sender, pid, _pendingReward);\\n  }\\n\\n  /// @notice Withdraw without caring about rewards. EMERGENCY ONLY.\\n  /// @param pid The index of the pool. See `poolInfo`.\\n  /// @param to Receiver of the LP tokens.\\n  function emergencyWithdraw(uint256 pid, address to) public {\\n    UserInfo storage user = userInfo[pid][msg.sender];\\n    uint256 amount = user.amount;\\n    user.amount = 0;\\n    user.rewardDebt = 0;\\n\\n    IRewarder _rewarder = rewarder[pid];\\n    if (address(_rewarder) != address(0)) {\\n      _rewarder.onReward(pid, msg.sender, to, 0, 0);\\n    }\\n\\n    // Note: transfer can fail or succeed if `amount` is zero.\\n    lpToken[pid].safeTransfer(to, amount);\\n    emit EmergencyWithdraw(msg.sender, pid, amount, to);\\n  }\\n\\n  function harvestAllRewards(address to) external {\\n    uint256 length = poolInfo.length;\\n    for (uint256 pid = 0; pid < length; ++pid) {\\n      if (userInfo[pid][msg.sender].amount > 0) {\\n        harvest(pid, to);\\n      }\\n    }\\n  }\\n\\n  /* ========== INTERNAL FUNCTIONS ========== */\\n\\n  function checkPoolDuplicate(IERC20 _lpToken) internal view {\\n    uint256 length = poolInfo.length;\\n    for (uint256 pid = 0; pid < length; ++pid) {\\n      require(lpToken[pid] != _lpToken, \\\"add: existing pool?\\\");\\n    }\\n  }\\n\\n  /* ========== RESTRICTED FUNCTIONS ========== */\\n\\n  /// @notice Add a new LP to the pool. Can only be called by the owner.\\n  /// DO NOT add the same LP token more than once. Rewards will be messed up if you do.\\n  /// @param allocPoint AP of the new pool.\\n  /// @param _lpToken Address of the LP ERC-20 token.\\n  /// @param _rewarder Address of the rewarder delegate.\\n  function add(\\n    uint256 allocPoint,\\n    IERC20 _lpToken,\\n    IRewarder _rewarder\\n  ) public onlyOwner {\\n    checkPoolDuplicate(_lpToken);\\n\\n    totalAllocPoint += allocPoint;\\n    lpToken.push(_lpToken);\\n    rewarder.push(_rewarder);\\n\\n    poolInfo.push(\\n      PoolInfo({\\n        allocPoint: allocPoint,\\n        lastRewardTime: block.timestamp,\\n        accRewardPerShare: 0\\n      })\\n    );\\n    emit LogPoolAddition(lpToken.length - 1, allocPoint, _lpToken, _rewarder);\\n  }\\n\\n  /// @notice Update the given pool's reward allocation point and `IRewarder` contract. Can only be called by the owner.\\n  /// @param _pid The index of the pool. See `poolInfo`.\\n  /// @param _allocPoint New AP of the pool.\\n  /// @param _rewarder Address of the rewarder delegate.\\n  /// @param overwrite True if _rewarder should be `set`. Otherwise `_rewarder` is ignored.\\n  function set(\\n    uint256 _pid,\\n    uint256 _allocPoint,\\n    IRewarder _rewarder,\\n    bool overwrite\\n  ) public onlyOwner {\\n    totalAllocPoint = totalAllocPoint - poolInfo[_pid].allocPoint + _allocPoint;\\n    poolInfo[_pid].allocPoint = _allocPoint;\\n    if (overwrite) {\\n      rewarder[_pid] = _rewarder;\\n    }\\n    emit LogSetPool(\\n      _pid,\\n      _allocPoint,\\n      overwrite ? _rewarder : rewarder[_pid],\\n      overwrite\\n    );\\n  }\\n\\n  /// @notice Sets the reward per second to be distributed. Can only be called by the owner.\\n  /// @param _rewardPerSecond The amount of reward to be distributed per second.\\n  function setRewardPerSecond(uint256 _rewardPerSecond) public onlyOwner {\\n    rewardPerSecond = _rewardPerSecond;\\n    emit LogRewardPerSecond(_rewardPerSecond);\\n  }\\n\\n  /// @notice Set the new fund contract.\\n  /// @param _fund The address of new fund contract.\\n  function setFund(IFundDistributor _fund) public onlyOwner {\\n    fund = _fund;\\n    emit PoolFundChanged(address(_fund));\\n  }\\n\\n  /* =============== EVENTS ==================== */\\n\\n  event Deposit(\\n    address indexed user,\\n    uint256 indexed pid,\\n    uint256 amount,\\n    address indexed to\\n  );\\n  event Withdraw(\\n    address indexed user,\\n    uint256 indexed pid,\\n    uint256 amount,\\n    address indexed to\\n  );\\n  event EmergencyWithdraw(\\n    address indexed user,\\n    uint256 indexed pid,\\n    uint256 amount,\\n    address indexed to\\n  );\\n  event Harvest(address indexed user, uint256 indexed pid, uint256 amount);\\n  event LogPoolAddition(\\n    uint256 indexed pid,\\n    uint256 allocPoint,\\n    IERC20 indexed lpToken,\\n    IRewarder indexed rewarder\\n  );\\n  event LogSetPool(\\n    uint256 indexed pid,\\n    uint256 allocPoint,\\n    IRewarder indexed rewarder,\\n    bool overwrite\\n  );\\n  event LogUpdatePool(\\n    uint256 indexed pid,\\n    uint256 lastRewardTime,\\n    uint256 lpSupply,\\n    uint256 accRewardPerShare\\n  );\\n  event LogRewardPerSecond(uint256 rewardPerSecond);\\n  event PoolFundChanged(address indexed fund);\\n}\\n\",\"keccak256\":\"0x675abcfb921f32b58cfb726b0b671044a666272ddf40a911bfdef5dd34d6b0d1\",\"license\":\"UNLICENSED\"},\"contracts/interfaces/ERC20/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.11;\\n\\ninterface IERC20 {\\n    function decimals() external view returns (uint8);\\n\\n    function totalSupply() external view returns (uint256);\\n\\n    function balanceOf(address account) external view returns (uint256);\\n\\n    function transfer(address recipient, uint256 amount) external returns (bool);\\n\\n    function allowance(address owner, address spender) external view returns (uint256);\\n\\n    function approve(address spender, uint256 amount) external returns (bool);\\n\\n    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);\\n\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\n\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\n}\",\"keccak256\":\"0xc8de46b5781a713fd63eb204be9a9a821aab6468f5ca504ec90c1aec6b8a3bf1\",\"license\":\"MIT\"},\"contracts/interfaces/IFundDistributor.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.11;\\n\\ninterface IFundDistributor {\\n  function distributeTo(address _receiver, uint256 _amount) external;\\n}\\n\",\"keccak256\":\"0x64378a2c80e525053796cee161f9f948af7582b1b43b2b1da1e1496958075b27\",\"license\":\"MIT\"},\"contracts/interfaces/IOwnable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.11;\\n\\ninterface IOwnable {\\n  function owner() external view returns (address);\\n\\n  function renounceOwnership() external;\\n  \\n  function transferOwnership( address newOwner_ ) external;\\n}\",\"keccak256\":\"0xe13848b0135efed399cfcc5493b8d3cdf28a70d6c9e893bc93b4eb0f4ed66da8\",\"license\":\"MIT\"},\"contracts/interfaces/IRewarder.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.11;\\n\\nimport \\\"./ERC20/IERC20.sol\\\";\\n\\ninterface IRewarder {\\n  function onReward(\\n    uint256 pid,\\n    address user,\\n    address recipient,\\n    uint256 rewardAmount,\\n    uint256 newLpAmount\\n  ) external;\\n\\n  function pendingTokens(\\n    uint256 pid,\\n    address user,\\n    uint256 rewardAmount\\n  ) external view returns (IERC20[] memory, uint256[] memory);\\n}\\n\",\"keccak256\":\"0x28a6a04239ee16858a9d37be09cddf0a18ae050329c58b5a847daa90a71b546a\",\"license\":\"MIT\"},\"contracts/libraries/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.11;\\n\\nimport \\\"../interfaces/IOwnable.sol\\\";\\n\\ncontract Ownable is IOwnable {\\n    \\n  address internal _owner;\\n\\n  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n  constructor () {\\n    _owner = msg.sender;\\n    emit OwnershipTransferred( address(0), _owner );\\n  }\\n\\n  function owner() public view override returns (address) {\\n    return _owner;\\n  }\\n\\n  modifier onlyOwner() {\\n    require( _owner == msg.sender, \\\"Ownable: caller is not the owner\\\" );\\n    _;\\n  }\\n\\n  function renounceOwnership() public virtual override onlyOwner() {\\n    emit OwnershipTransferred( _owner, address(0) );\\n    _owner = address(0);\\n  }\\n\\n  function transferOwnership( address newOwner_ ) public virtual override onlyOwner() {\\n    require( newOwner_ != address(0), \\\"Ownable: new owner is the zero address\\\");\\n    emit OwnershipTransferred( _owner, newOwner_ );\\n    _owner = newOwner_;\\n  }\\n}\",\"keccak256\":\"0xc237d4d7d8e2cd332a34e0a8766a5fe3bc911e3fdce1523d0b6c8f4fd166151f\",\"license\":\"MIT\"},\"contracts/libraries/SafeERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\n// Based on the ReentrancyGuard library from OpenZeppelin Contracts, altered to reduce gas costs.\\n// The `safeTransfer` and `safeTransferFrom` functions assume that `token` is a contract (an account with code), and\\n// work differently from the OpenZeppelin version if it is not.\\n\\npragma solidity ^0.8.11;\\n\\nimport \\\"./helpers/RequiemErrors.sol\\\";\\n\\nimport \\\"../interfaces/ERC20/IERC20.sol\\\";\\n\\n/**\\n * @title SafeERC20\\n * @dev Wrappers around ERC20 operations that throw on failure (when the token\\n * contract returns false). Tokens that return no value (and instead revert or\\n * throw on failure) are also supported, non-reverting calls are assumed to be\\n * successful.\\n * To use this library you can add a `using SafeERC20 for IERC20;` statement to your contract,\\n * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.\\n */\\nlibrary SafeERC20 {\\n  function safeTransfer(\\n    IERC20 token,\\n    address to,\\n    uint256 value\\n  ) internal {\\n    _callOptionalReturn(\\n      address(token),\\n      abi.encodeWithSelector(token.transfer.selector, to, value)\\n    );\\n  }\\n\\n  function safeTransferFrom(\\n    IERC20 token,\\n    address from,\\n    address to,\\n    uint256 value\\n  ) internal {\\n    _callOptionalReturn(\\n      address(token),\\n      abi.encodeWithSelector(token.transferFrom.selector, from, to, value)\\n    );\\n  }\\n\\n  function safeIncreaseAllowance(\\n    IERC20 token,\\n    address spender,\\n    uint256 value\\n  ) internal {\\n    uint256 newAllowance = token.allowance(address(this), spender) + value;\\n    _callOptionalReturn(\\n      address(token),\\n      abi.encodeWithSelector(token.approve.selector, spender, newAllowance)\\n    );\\n  }\\n\\n  /**\\n   * @dev Imitates a Solidity high-level call (i.e. a regular function call to a contract), relaxing the requirement\\n   * on the return value: the return value is optional (but if data is returned, it must not be false).\\n   *\\n   * WARNING: `token` is assumed to be a contract: calls to EOAs will *not* revert.\\n   */\\n  function _callOptionalReturn(address token, bytes memory data) private {\\n    // We need to perform a low level call here, to bypass Solidity's return data size checking mechanism, since\\n    // we're implementing it ourselves.\\n    (bool success, bytes memory returndata) = token.call(data);\\n\\n    // If the low-level call didn't succeed we return whatever was returned from it.\\n    assembly {\\n      if eq(success, 0) {\\n        returndatacopy(0, 0, returndatasize())\\n        revert(0, returndatasize())\\n      }\\n    }\\n\\n    // Finally we check the returndata size is either zero or true - note that this check will always pass for EOAs\\n    RequiemErrors._require(\\n      returndata.length == 0 || abi.decode(returndata, (bool)),\\n      Errors.SAFE_ERC20_CALL_FAILED\\n    );\\n  }\\n}\\n\",\"keccak256\":\"0xc2deaa0858d31692b977c478b7139e60fd3084eff4ed832ba55f6c8d890ec489\",\"license\":\"MIT\"},\"contracts/libraries/helpers/RequiemErrors.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-or-later\\n// This program is free software: you can redistribute it and/or modify\\n// it under the terms of the GNU General Public License as published by\\n// the Free Software Foundation, either version 3 of the License, or\\n// (at your option) any later version.\\n\\n// This program is distributed in the hope that it will be useful,\\n// but WITHOUT ANY WARRANTY; without even the implied warranty of\\n// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\\n// GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <http://www.gnu.org/licenses/>.\\n\\npragma solidity ^0.8.11;\\n\\n// solhint-disable\\nlibrary RequiemErrors {\\n    /**\\n     * @dev Reverts if `condition` is false, with a revert reason containing `errorCode`. Only codes up to 999 are\\n     * supported.\\n     */\\n    function _require(bool condition, uint256 errorCode) internal pure {\\n        if (!condition) RequiemErrors._revert(errorCode);\\n    }\\n\\n    /**\\n     * @dev Reverts with a revert reason containing `errorCode`. Only codes up to 999 are supported.\\n     */\\n    function _revert(uint256 errorCode) internal pure {\\n        // We're going to dynamically create a revert string based on the error code, with the following format:\\n        // 'REQ#{errorCode}'\\n        // where the code is left-padded with zeroes to three digits (so they range from 000 to 999).\\n        //\\n        // We don't have revert strings embedded in the contract to save bytecode size: it takes much less space to store a\\n        // number (8 to 16 bits) than the individual string characters.\\n        //\\n        // The dynamic string creation algorithm that follows could be implemented in Solidity, but assembly allows for a\\n        // much denser implementation, again saving bytecode size. Given this function unconditionally reverts, this is a\\n        // safe place to rely on it without worrying about how its usage might affect e.g. memory contents.\\n        assembly {\\n            // First, we need to compute the ASCII representation of the error code. We assume that it is in the 0-999\\n            // range, so we only need to convert three digits. To convert the digits to ASCII, we add 0x30, the value for\\n            // the '0' character.\\n\\n            let units := add(mod(errorCode, 10), 0x30)\\n\\n            errorCode := div(errorCode, 10)\\n            let tenths := add(mod(errorCode, 10), 0x30)\\n\\n            errorCode := div(errorCode, 10)\\n            let hundreds := add(mod(errorCode, 10), 0x30)\\n\\n            // With the individual characters, we can now construct the full string. The \\\"REQ#\\\" part is a known constant\\n            // (0x52455123): we simply shift this by 24 (to provide space for the 3 bytes of the error code), and add the\\n            // characters to it, each shifted by a multiple of 8.\\n            // The revert reason is then shifted left by 200 bits (256 minus the length of the string, 7 characters * 8 bits\\n            // per character = 56) to locate it in the most significant part of the 256 slot (the beginning of a byte\\n            // array).\\n\\n            let revertReason := shl(200, add(0x52455123000000, add(add(units, shl(8, tenths)), shl(16, hundreds))))\\n\\n            // We can now encode the reason in memory, which can be safely overwritten as we're about to revert. The encoded\\n            // message will have the following layout:\\n            // [ revert reason identifier ] [ string location offset ] [ string length ] [ string contents ]\\n\\n            // The Solidity revert reason identifier is 0x08c739a0, the function selector of the Error(string) function. We\\n            // also write zeroes to the next 28 bytes of memory, but those are about to be overwritten.\\n            mstore(0x0, 0x08c379a000000000000000000000000000000000000000000000000000000000)\\n            // Next is the offset to the location of the string, which will be placed immediately after (20 bytes away).\\n            mstore(0x04, 0x0000000000000000000000000000000000000000000000000000000000000020)\\n            // The string length is fixed: 7 characters.\\n            mstore(0x24, 7)\\n            // Finally, the string itself is stored.\\n            mstore(0x44, revertReason)\\n\\n            // Even if the string is only 7 bytes long, we need to return a full 32 byte slot containing it. The length of\\n            // the encoded message is therefore 4 + 32 + 32 + 32 = 100.\\n            revert(0, 100)\\n        }\\n    }\\n}\\n\\nlibrary Errors {\\n    // Math\\n    uint256 internal constant ADD_OVERFLOW = 0;\\n    uint256 internal constant SUB_OVERFLOW = 1;\\n    uint256 internal constant SUB_UNDERFLOW = 2;\\n    uint256 internal constant MUL_OVERFLOW = 3;\\n    uint256 internal constant ZERO_DIVISION = 4;\\n    uint256 internal constant DIV_INTERNAL = 5;\\n    uint256 internal constant X_OUT_OF_BOUNDS = 6;\\n    uint256 internal constant Y_OUT_OF_BOUNDS = 7;\\n    uint256 internal constant PRODUCT_OUT_OF_BOUNDS = 8;\\n    uint256 internal constant INVALID_EXPONENT = 9;\\n\\n    // Input\\n    uint256 internal constant OUT_OF_BOUNDS = 100;\\n    uint256 internal constant UNSORTED_ARRAY = 101;\\n    uint256 internal constant UNSORTED_TOKENS = 102;\\n    uint256 internal constant INPUT_LENGTH_MISMATCH = 103;\\n    uint256 internal constant ZERO_TOKEN = 104;\\n\\n    // Shared pools\\n    uint256 internal constant MIN_TOKENS = 200;\\n    uint256 internal constant MAX_TOKENS = 201;\\n    uint256 internal constant MAX_SWAP_FEE_PERCENTAGE = 202;\\n    uint256 internal constant MIN_SWAP_FEE_PERCENTAGE = 203;\\n    uint256 internal constant MINIMUM_BPT = 204;\\n    uint256 internal constant CALLER_NOT_VAULT = 205;\\n    uint256 internal constant UNINITIALIZED = 206;\\n    uint256 internal constant BPT_IN_MAX_AMOUNT = 207;\\n    uint256 internal constant BPT_OUT_MIN_AMOUNT = 208;\\n    uint256 internal constant EXPIRED_PERMIT = 209;\\n    uint256 internal constant NOT_TWO_TOKENS = 210;\\n\\n    // Pools\\n    uint256 internal constant MIN_AMP = 300;\\n    uint256 internal constant MAX_AMP = 301;\\n    uint256 internal constant MIN_WEIGHT = 302;\\n    uint256 internal constant MAX_STABLE_TOKENS = 303;\\n    uint256 internal constant MAX_IN_RATIO = 304;\\n    uint256 internal constant MAX_OUT_RATIO = 305;\\n    uint256 internal constant MIN_BPT_IN_FOR_TOKEN_OUT = 306;\\n    uint256 internal constant MAX_OUT_BPT_FOR_TOKEN_IN = 307;\\n    uint256 internal constant NORMALIZED_WEIGHT_INVARIANT = 308;\\n    uint256 internal constant INVALID_TOKEN = 309;\\n    uint256 internal constant UNHANDLED_JOIN_KIND = 310;\\n    uint256 internal constant ZERO_INVARIANT = 311;\\n    uint256 internal constant ORACLE_INVALID_SECONDS_QUERY = 312;\\n    uint256 internal constant ORACLE_NOT_INITIALIZED = 313;\\n    uint256 internal constant ORACLE_QUERY_TOO_OLD = 314;\\n    uint256 internal constant ORACLE_INVALID_INDEX = 315;\\n    uint256 internal constant ORACLE_BAD_SECS = 316;\\n    uint256 internal constant AMP_END_TIME_TOO_CLOSE = 317;\\n    uint256 internal constant AMP_ONGOING_UPDATE = 318;\\n    uint256 internal constant AMP_RATE_TOO_HIGH = 319;\\n    uint256 internal constant AMP_NO_ONGOING_UPDATE = 320;\\n    uint256 internal constant STABLE_INVARIANT_DIDNT_CONVERGE = 321;\\n    uint256 internal constant STABLE_GET_BALANCE_DIDNT_CONVERGE = 322;\\n    uint256 internal constant RELAYER_NOT_CONTRACT = 323;\\n    uint256 internal constant BASE_POOL_RELAYER_NOT_CALLED = 324;\\n    uint256 internal constant REBALANCING_RELAYER_REENTERED = 325;\\n    uint256 internal constant GRADUAL_UPDATE_TIME_TRAVEL = 326;\\n    uint256 internal constant SWAPS_DISABLED = 327;\\n    uint256 internal constant CALLER_IS_NOT_LBP_OWNER = 328;\\n    uint256 internal constant PRICE_RATE_OVERFLOW = 329;\\n    uint256 internal constant INVALID_JOIN_EXIT_KIND_WHILE_SWAPS_DISABLED = 330;\\n    uint256 internal constant WEIGHT_CHANGE_TOO_FAST = 331;\\n    uint256 internal constant LOWER_GREATER_THAN_UPPER_TARGET = 332;\\n    uint256 internal constant UPPER_TARGET_TOO_HIGH = 333;\\n    uint256 internal constant UNHANDLED_BY_LINEAR_POOL = 334;\\n    uint256 internal constant OUT_OF_TARGET_RANGE = 335;\\n    uint256 internal constant UNHANDLED_EXIT_KIND = 336;\\n    uint256 internal constant UNAUTHORIZED_EXIT = 337;\\n    uint256 internal constant MAX_MANAGEMENT_SWAP_FEE_PERCENTAGE = 338;\\n    uint256 internal constant UNHANDLED_BY_MANAGED_POOL = 339;\\n    uint256 internal constant UNHANDLED_BY_PHANTOM_POOL = 340;\\n    uint256 internal constant TOKEN_DOES_NOT_HAVE_RATE_PROVIDER = 341;\\n    uint256 internal constant INVALID_INITIALIZATION = 342;\\n\\n    // Lib\\n    uint256 internal constant REENTRANCY = 400;\\n    uint256 internal constant SENDER_NOT_ALLOWED = 401;\\n    uint256 internal constant PAUSED = 402;\\n    uint256 internal constant PAUSE_WINDOW_EXPIRED = 403;\\n    uint256 internal constant MAX_PAUSE_WINDOW_DURATION = 404;\\n    uint256 internal constant MAX_BUFFER_PERIOD_DURATION = 405;\\n    uint256 internal constant INSUFFICIENT_BALANCE = 406;\\n    uint256 internal constant INSUFFICIENT_ALLOWANCE = 407;\\n    uint256 internal constant ERC20_TRANSFER_FROM_ZERO_ADDRESS = 408;\\n    uint256 internal constant ERC20_TRANSFER_TO_ZERO_ADDRESS = 409;\\n    uint256 internal constant ERC20_MINT_TO_ZERO_ADDRESS = 410;\\n    uint256 internal constant ERC20_BURN_FROM_ZERO_ADDRESS = 411;\\n    uint256 internal constant ERC20_APPROVE_FROM_ZERO_ADDRESS = 412;\\n    uint256 internal constant ERC20_APPROVE_TO_ZERO_ADDRESS = 413;\\n    uint256 internal constant ERC20_TRANSFER_EXCEEDS_ALLOWANCE = 414;\\n    uint256 internal constant ERC20_DECREASED_ALLOWANCE_BELOW_ZERO = 415;\\n    uint256 internal constant ERC20_TRANSFER_EXCEEDS_BALANCE = 416;\\n    uint256 internal constant ERC20_BURN_EXCEEDS_ALLOWANCE = 417;\\n    uint256 internal constant SAFE_ERC20_CALL_FAILED = 418;\\n    uint256 internal constant ADDRESS_INSUFFICIENT_BALANCE = 419;\\n    uint256 internal constant ADDRESS_CANNOT_SEND_VALUE = 420;\\n    uint256 internal constant SAFE_CAST_VALUE_CANT_FIT_INT256 = 421;\\n    uint256 internal constant GRANT_SENDER_NOT_ADMIN = 422;\\n    uint256 internal constant REVOKE_SENDER_NOT_ADMIN = 423;\\n    uint256 internal constant RENOUNCE_SENDER_NOT_ALLOWED = 424;\\n    uint256 internal constant BUFFER_PERIOD_EXPIRED = 425;\\n    uint256 internal constant CALLER_IS_NOT_OWNER = 426;\\n    uint256 internal constant NEW_OWNER_IS_ZERO = 427;\\n    uint256 internal constant CODE_DEPLOYMENT_FAILED = 428;\\n    uint256 internal constant CALL_TO_NON_CONTRACT = 429;\\n    uint256 internal constant LOW_LEVEL_CALL_FAILED = 430;\\n    uint256 internal constant NOT_PAUSED = 431;\\n\\n    // Vault\\n    uint256 internal constant INVALID_POOL_ID = 500;\\n    uint256 internal constant CALLER_NOT_POOL = 501;\\n    uint256 internal constant SENDER_NOT_ASSET_MANAGER = 502;\\n    uint256 internal constant USER_DOESNT_ALLOW_RELAYER = 503;\\n    uint256 internal constant INVALID_SIGNATURE = 504;\\n    uint256 internal constant EXIT_BELOW_MIN = 505;\\n    uint256 internal constant JOIN_ABOVE_MAX = 506;\\n    uint256 internal constant SWAP_LIMIT = 507;\\n    uint256 internal constant SWAP_DEADLINE = 508;\\n    uint256 internal constant CANNOT_SWAP_SAME_TOKEN = 509;\\n    uint256 internal constant UNKNOWN_AMOUNT_IN_FIRST_SWAP = 510;\\n    uint256 internal constant MALCONSTRUCTED_MULTIHOP_SWAP = 511;\\n    uint256 internal constant INTERNAL_BALANCE_OVERFLOW = 512;\\n    uint256 internal constant INSUFFICIENT_INTERNAL_BALANCE = 513;\\n    uint256 internal constant INVALID_ETH_INTERNAL_BALANCE = 514;\\n    uint256 internal constant INVALID_POST_LOAN_BALANCE = 515;\\n    uint256 internal constant INSUFFICIENT_ETH = 516;\\n    uint256 internal constant UNALLOCATED_ETH = 517;\\n    uint256 internal constant ETH_TRANSFER = 518;\\n    uint256 internal constant CANNOT_USE_ETH_SENTINEL = 519;\\n    uint256 internal constant TOKENS_MISMATCH = 520;\\n    uint256 internal constant TOKEN_NOT_REGISTERED = 521;\\n    uint256 internal constant TOKEN_ALREADY_REGISTERED = 522;\\n    uint256 internal constant TOKENS_ALREADY_SET = 523;\\n    uint256 internal constant TOKENS_LENGTH_MUST_BE_2 = 524;\\n    uint256 internal constant NONZERO_TOKEN_BALANCE = 525;\\n    uint256 internal constant BALANCE_TOTAL_OVERFLOW = 526;\\n    uint256 internal constant POOL_NO_TOKENS = 527;\\n    uint256 internal constant INSUFFICIENT_FLASH_LOAN_BALANCE = 528;\\n\\n    // Fees\\n    uint256 internal constant SWAP_FEE_PERCENTAGE_TOO_HIGH = 600;\\n    uint256 internal constant FLASH_LOAN_FEE_PERCENTAGE_TOO_HIGH = 601;\\n    uint256 internal constant INSUFFICIENT_FLASH_LOAN_FEE_AMOUNT = 602;\\n}\\n\",\"keccak256\":\"0x06e0c46c8b401ecc77c5da33f1c35e81f723df817ecbc3529ecb2cceb60f1612\",\"license\":\"GPL-3.0-or-later\"}},\"version\":1}",
+  "bytecode": "0x608060405260006007553480156200001657600080fd5b5060405162001f9538038062001f958339810160408190526200003991620000c3565b600080546001600160a01b0319163390811782556040519091907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908290a3600180546001600160a01b039384166001600160a01b0319918216179091556002805492909316911617905562000102565b6001600160a01b0381168114620000c057600080fd5b50565b60008060408385031215620000d757600080fd5b8251620000e481620000aa565b6020840151909250620000f781620000aa565b809150509250929050565b611e8380620001126000396000f3fe608060405234801561001057600080fd5b50600436106101a35760003560e01c806378ed5d1f116100ee57806398969e8211610097578063c346253d11610071578063c346253d146103a5578063d1abb907146103b8578063f2fde38b146103cb578063fbe6cf6a146103de57600080fd5b806398969e821461036c578063ab7de0981461037f578063b60d42881461039257600080fd5b80638dbdbe6d116100c85780638dbdbe6d146103095780638f10369a1461031c57806393f1a40b1461032557600080fd5b806378ed5d1f146102d257806388bba42f146102e55780638da5cb5b146102f857600080fd5b8063228cb7331161015057806357a5b58c1161012a57806357a5b58c146102a457806366da5815146102b7578063715018a6146102ca57600080fd5b8063228cb733146102315780632f940c701461025c57806351eb05a61461026f57600080fd5b80631526fe27116101815780631526fe27146101e757806317caf6f11461021557806318fccc761461021e57600080fd5b8063081e3eda146101a85780630ad58d2f146101bf5780630e21750f146101d4575b600080fd5b6003545b6040519081526020015b60405180910390f35b6101d26101cd366004611acb565b6103f1565b005b6101d26101e2366004611b04565b6105a0565b6101fa6101f5366004611b28565b610656565b604080519384526020840192909252908201526060016101b6565b6101ac60075481565b6101d261022c366004611b41565b610689565b600154610244906001600160a01b031681565b6040516001600160a01b0390911681526020016101b6565b6101d261026a366004611b41565b610840565b61028261027d366004611b28565b61097e565b60408051825181526020808401519082015291810151908201526060016101b6565b6101d26102b2366004611b71565b610b89565b6101d26102c5366004611b28565b610bcd565b6101d2610c62565b6102446102e0366004611b28565b610d13565b6101d26102f3366004611bf4565b610d3d565b6000546001600160a01b0316610244565b6101d2610317366004611acb565b610ed4565b6101ac60085481565b610357610333366004611b41565b60066020908152600092835260408084209091529082529020805460019091015482565b604080519283526020830191909152016101b6565b6101ac61037a366004611b41565b61107c565b6101d261038d366004611c3e565b61122f565b600254610244906001600160a01b031681565b6102446103b3366004611b28565b611425565b6101d26103c6366004611acb565b611435565b6101d26103d9366004611b04565b611692565b6101d26103ec366004611b04565b6117d0565b60006103fc8461097e565b6000858152600660209081526040808320338452909152902081519192509064e8d4a510009061042c9086611c8b565b6104369190611caa565b8160010160008282546104499190611ccc565b9091555050805484908290600090610462908490611d24565b9250508190555060006005868154811061047e5761047e611d3b565b6000918252602090912001546001600160a01b0316905080156105165781546040516344af0fa760e01b8152600481018890523360248201526001600160a01b038681166044830152600060648301526084820192909252908216906344af0fa79060a401600060405180830381600087803b1580156104fd57600080fd5b505af1158015610511573d6000803e3d6000fd5b505050505b61054a84866004898154811061052e5761052e611d3b565b6000918252602090912001546001600160a01b0316919061181c565b836001600160a01b031686336001600160a01b03167f8166bf25f8a2b7ed3c85049207da4358d16edbed977d23fa2ee6f0dde3ec21328860405161059091815260200190565b60405180910390a4505050505050565b6000546001600160a01b031633146105ff5760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064015b60405180910390fd5b6002805473ffffffffffffffffffffffffffffffffffffffff19166001600160a01b0383169081179091556040517f1bbced6cc5125dba763681b1a276a950f551621431f63fdb5b2b180da1aa2ae390600090a250565b6003818154811061066657600080fd5b600091825260209091206003909102018054600182015460029092015490925083565b60006106948361097e565b6000848152600660209081526040808320338452909152812082518154939450909264e8d4a51000916106c691611c8b565b6106d09190611caa565b905060008260010154826106e49190611ccc565b6001840183905560025460405163d66e57cd60e01b81526001600160a01b0388811660048301526024820184905292935091169063d66e57cd90604401600060405180830381600087803b15801561073b57600080fd5b505af115801561074f573d6000803e3d6000fd5b5050505060006005878154811061076857610768611d3b565b6000918252602090912001546001600160a01b0316905080156108005783546040516344af0fa760e01b8152600481018990523360248201526001600160a01b038881166044830152606482018590526084820192909252908216906344af0fa79060a401600060405180830381600087803b1580156107e757600080fd5b505af11580156107fb573d6000803e3d6000fd5b505050505b604051828152879033907f71bab65ced2e5750775a0613be067df48ef06cf92a496ebf7663ae06609249549060200160405180910390a350505050505050565b6000828152600660209081526040808320338452909152812080548282556001820183905560058054929391928690811061087d5761087d611d3b565b6000918252602090912001546001600160a01b031690508015610911576040516344af0fa760e01b8152600481018690523360248201526001600160a01b03858116604483015260006064830181905260848301528216906344af0fa79060a401600060405180830381600087803b1580156108f857600080fd5b505af115801561090c573d6000803e3d6000fd5b505050505b61092984836004888154811061052e5761052e611d3b565b836001600160a01b031685336001600160a01b03167f2cac5e20e1541d836381527a43f651851e302817b71dc8e810284e69210c1c6b8560405161096f91815260200190565b60405180910390a45050505050565b6109a260405180606001604052806000815260200160008152602001600081525090565b600382815481106109b5576109b5611d3b565b600091825260209182902060408051606081018252600390930290910180548352600181015493830184905260020154908201529150421115610b8457600060048381548110610a0757610a07611d3b565b6000918252602090912001546040516370a0823160e01b81523060048201526001600160a01b03909116906370a0823190602401602060405180830381865afa158015610a58573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610a7c9190611d51565b90508015610af5576000826020015142610a969190611d24565b90506000600754846040015160085484610ab09190611c8b565b610aba9190611c8b565b610ac49190611caa565b905082610ad664e8d4a5100083611c8b565b610ae09190611caa565b84518590610aef908390611d6a565b90525050505b4260208301526003805483919085908110610b1257610b12611d3b565b600091825260209182902083516003929092020190815582820151600182015560409283015160029091015583810151845183519182529181018490529182015283907fcb7325664a4a3b7c7223eefc492a97ca4fdf94d46884621e5a8fae5a04b2b9d29060600160405180910390a2505b919050565b8060005b81811015610bc757610bb6848483818110610baa57610baa611d3b565b9050602002013561097e565b50610bc081611d82565b9050610b8d565b50505050565b6000546001600160a01b03163314610c275760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105f6565b60088190556040518181527fde89cb17ac7f58f94792b3e91e086ed85403819c24ceea882491f960ccb1a2789060200160405180910390a150565b6000546001600160a01b03163314610cbc5760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105f6565b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a36000805473ffffffffffffffffffffffffffffffffffffffff19169055565b60048181548110610d2357600080fd5b6000918252602090912001546001600160a01b0316905081565b6000546001600160a01b03163314610d975760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105f6565b8260038581548110610dab57610dab611d3b565b906000526020600020906003020160020154600754610dca9190611d24565b610dd49190611d6a565b6007819055508260038581548110610dee57610dee611d3b565b9060005260206000209060030201600201819055508015610e4c578160058581548110610e1d57610e1d611d3b565b9060005260206000200160006101000a8154816001600160a01b0302191690836001600160a01b031602179055505b80610e7e5760058481548110610e6457610e64611d3b565b6000918252602090912001546001600160a01b0316610e80565b815b6001600160a01b0316847f95895a6ab1df54420d241b55243258a33e61b2194db66c1179ec521aae8e18658584604051610ec69291909182521515602082015260400190565b60405180910390a350505050565b6000610edf8461097e565b60008581526006602090815260408083206001600160a01b0387168452909152812080549293509185918391610f16908490611d6a565b9091555050815164e8d4a5100090610f2e9086611c8b565b610f389190611caa565b816001016000828254610f4b9190611d9d565b92505081905550600060058681548110610f6757610f67611d3b565b6000918252602090912001546001600160a01b0316905080156110005781546040516344af0fa760e01b8152600481018890526001600160a01b03868116602483018190526044830152600060648301526084820192909252908216906344af0fa79060a401600060405180830381600087803b158015610fe757600080fd5b505af1158015610ffb573d6000803e3d6000fd5b505050505b61103633308760048a8154811061101957611019611d3b565b6000918252602090912001546001600160a01b03169291906118c5565b836001600160a01b031686336001600160a01b03167f02d7e648dd130fc184d383e55bb126ac4c9c60e8f94bf05acdf557ba2d540b478860405161059091815260200190565b6000806003848154811061109257611092611d3b565b60009182526020808320604080516060810182526003909402909101805484526001810154848401526002015483820152878452600682528084206001600160a01b0388168552909152822081516004805493955091939092909190889081106110fe576110fe611d3b565b6000918252602090912001546040516370a0823160e01b81523060048201526001600160a01b03909116906370a0823190602401602060405180830381865afa15801561114f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906111739190611d51565b905083602001514211801561118757508015155b156111f757600084602001514261119e9190611d24565b905060006007548660400151600854846111b89190611c8b565b6111c29190611c8b565b6111cc9190611caa565b9050826111de64e8d4a5100083611c8b565b6111e89190611caa565b6111f29085611d6a565b935050505b6001830154835464e8d4a5100090611210908590611c8b565b61121a9190611caa565b6112249190611ccc565b979650505050505050565b6000546001600160a01b031633146112895760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105f6565b61129282611916565b82600760008282546112a49190611d6a565b909155505060048054600181810183557f8a35acfbc15ff81a39ae7d344fd709f28e8600b4aa8c65c6b64bfe7fe36bd19b90910180546001600160a01b0380871673ffffffffffffffffffffffffffffffffffffffff199283168117909355600580548086019091557f036b6384b5eca791c62761152d0c79bb0604c104a5fb6f4eb0703f3154bb3db001805491871691909216811790915560408051606081018252600080825242602083019081529282018a8152600380548089018255928190529251919092027fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b81019190915591517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85c830155517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85d90910155925490916113ed91611d24565b6040518681527f81ee0f8c5c46e2cb41984886f77a84181724abb86c32a5f6de539b07509d45e59060200160405180910390a4505050565b60058181548110610d2357600080fd5b60006114408461097e565b6000858152600660209081526040808320338452909152812082518154939450909264e8d4a510009161147291611c8b565b61147c9190611caa565b905060008260010154826114909190611ccc565b845190915064e8d4a51000906114a69088611c8b565b6114b09190611caa565b6114ba9083611ccc565b60018401558254869084906000906114d3908490611d24565b909155505060025460405163d66e57cd60e01b81526001600160a01b038781166004830152602482018490529091169063d66e57cd90604401600060405180830381600087803b15801561152657600080fd5b505af115801561153a573d6000803e3d6000fd5b5050505060006005888154811061155357611553611d3b565b6000918252602090912001546001600160a01b0316905080156115eb5783546040516344af0fa760e01b8152600481018a90523360248201526001600160a01b038881166044830152606482018590526084820192909252908216906344af0fa79060a401600060405180830381600087803b1580156115d257600080fd5b505af11580156115e6573d6000803e3d6000fd5b505050505b611603868860048b8154811061052e5761052e611d3b565b856001600160a01b031688336001600160a01b03167f8166bf25f8a2b7ed3c85049207da4358d16edbed977d23fa2ee6f0dde3ec21328a60405161164991815260200190565b60405180910390a4604051828152889033907f71bab65ced2e5750775a0613be067df48ef06cf92a496ebf7663ae06609249549060200160405180910390a35050505050505050565b6000546001600160a01b031633146116ec5760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105f6565b6001600160a01b0381166117685760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f646472657373000000000000000000000000000000000000000000000000000060648201526084016105f6565b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a36000805473ffffffffffffffffffffffffffffffffffffffff19166001600160a01b0392909216919091179055565b60035460005b8181101561181757600081815260066020908152604080832033845290915290205415611807576118078184610689565b61181081611d82565b90506117d6565b505050565b6040516001600160a01b0383166024820152604481018290526118179084907fa9059cbb00000000000000000000000000000000000000000000000000000000906064015b60408051601f198184030181529190526020810180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff167fffffffff00000000000000000000000000000000000000000000000000000000909316929092179091526119b4565b6040516001600160a01b0380851660248301528316604482015260648101829052610bc79085907f23b872dd0000000000000000000000000000000000000000000000000000000090608401611861565b60035460005b8181101561181757826001600160a01b03166004828154811061194157611941611d3b565b6000918252602090912001546001600160a01b031614156119a45760405162461bcd60e51b815260206004820152601360248201527f6164643a206578697374696e6720706f6f6c3f0000000000000000000000000060448201526064016105f6565b6119ad81611d82565b905061191c565b600080836001600160a01b0316836040516119cf9190611df5565b6000604051808303816000865af19150503d8060008114611a0c576040519150601f19603f3d011682016040523d82523d6000602084013e611a11565b606091505b50915091506000821415611a29573d6000803e3d6000fd5b610bc7815160001480611a4b575081806020019051810190611a4b9190611e30565b6101a281611a5c57611a5c81611a60565b5050565b62461bcd60e51b6000908152602060045260076024526652455123000030600a808404818106603090810160081b95839006959095019082900491820690940160101b939093010160c81b604452606490fd5b6001600160a01b0381168114611ac857600080fd5b50565b600080600060608486031215611ae057600080fd5b83359250602084013591506040840135611af981611ab3565b809150509250925092565b600060208284031215611b1657600080fd5b8135611b2181611ab3565b9392505050565b600060208284031215611b3a57600080fd5b5035919050565b60008060408385031215611b5457600080fd5b823591506020830135611b6681611ab3565b809150509250929050565b60008060208385031215611b8457600080fd5b823567ffffffffffffffff80821115611b9c57600080fd5b818501915085601f830112611bb057600080fd5b813581811115611bbf57600080fd5b8660208260051b8501011115611bd457600080fd5b60209290920196919550909350505050565b8015158114611ac857600080fd5b60008060008060808587031215611c0a57600080fd5b84359350602085013592506040850135611c2381611ab3565b91506060850135611c3381611be6565b939692955090935050565b600080600060608486031215611c5357600080fd5b833592506020840135611c6581611ab3565b91506040840135611af981611ab3565b634e487b7160e01b600052601160045260246000fd5b6000816000190483118215151615611ca557611ca5611c75565b500290565b600082611cc757634e487b7160e01b600052601260045260246000fd5b500490565b600080831283600160ff1b01831281151615611cea57611cea611c75565b837f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff018313811615611d1e57611d1e611c75565b50500390565b600082821015611d3657611d36611c75565b500390565b634e487b7160e01b600052603260045260246000fd5b600060208284031215611d6357600080fd5b5051919050565b60008219821115611d7d57611d7d611c75565b500190565b6000600019821415611d9657611d96611c75565b5060010190565b6000808212827f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03841381151615611dd757611dd7611c75565b82600160ff1b038412811615611def57611def611c75565b50500190565b6000825160005b81811015611e165760208186018101518583015201611dfc565b81811115611e25576000828501525b509190910192915050565b600060208284031215611e4257600080fd5b8151611b2181611be656fea2646970667358221220b67ce7ecd2267bb219d8fc1fc39c705078ee09b9bcee952db3958f3e209a6e8d64736f6c634300080b0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106101a35760003560e01c806378ed5d1f116100ee57806398969e8211610097578063c346253d11610071578063c346253d146103a5578063d1abb907146103b8578063f2fde38b146103cb578063fbe6cf6a146103de57600080fd5b806398969e821461036c578063ab7de0981461037f578063b60d42881461039257600080fd5b80638dbdbe6d116100c85780638dbdbe6d146103095780638f10369a1461031c57806393f1a40b1461032557600080fd5b806378ed5d1f146102d257806388bba42f146102e55780638da5cb5b146102f857600080fd5b8063228cb7331161015057806357a5b58c1161012a57806357a5b58c146102a457806366da5815146102b7578063715018a6146102ca57600080fd5b8063228cb733146102315780632f940c701461025c57806351eb05a61461026f57600080fd5b80631526fe27116101815780631526fe27146101e757806317caf6f11461021557806318fccc761461021e57600080fd5b8063081e3eda146101a85780630ad58d2f146101bf5780630e21750f146101d4575b600080fd5b6003545b6040519081526020015b60405180910390f35b6101d26101cd366004611acb565b6103f1565b005b6101d26101e2366004611b04565b6105a0565b6101fa6101f5366004611b28565b610656565b604080519384526020840192909252908201526060016101b6565b6101ac60075481565b6101d261022c366004611b41565b610689565b600154610244906001600160a01b031681565b6040516001600160a01b0390911681526020016101b6565b6101d261026a366004611b41565b610840565b61028261027d366004611b28565b61097e565b60408051825181526020808401519082015291810151908201526060016101b6565b6101d26102b2366004611b71565b610b89565b6101d26102c5366004611b28565b610bcd565b6101d2610c62565b6102446102e0366004611b28565b610d13565b6101d26102f3366004611bf4565b610d3d565b6000546001600160a01b0316610244565b6101d2610317366004611acb565b610ed4565b6101ac60085481565b610357610333366004611b41565b60066020908152600092835260408084209091529082529020805460019091015482565b604080519283526020830191909152016101b6565b6101ac61037a366004611b41565b61107c565b6101d261038d366004611c3e565b61122f565b600254610244906001600160a01b031681565b6102446103b3366004611b28565b611425565b6101d26103c6366004611acb565b611435565b6101d26103d9366004611b04565b611692565b6101d26103ec366004611b04565b6117d0565b60006103fc8461097e565b6000858152600660209081526040808320338452909152902081519192509064e8d4a510009061042c9086611c8b565b6104369190611caa565b8160010160008282546104499190611ccc565b9091555050805484908290600090610462908490611d24565b9250508190555060006005868154811061047e5761047e611d3b565b6000918252602090912001546001600160a01b0316905080156105165781546040516344af0fa760e01b8152600481018890523360248201526001600160a01b038681166044830152600060648301526084820192909252908216906344af0fa79060a401600060405180830381600087803b1580156104fd57600080fd5b505af1158015610511573d6000803e3d6000fd5b505050505b61054a84866004898154811061052e5761052e611d3b565b6000918252602090912001546001600160a01b0316919061181c565b836001600160a01b031686336001600160a01b03167f8166bf25f8a2b7ed3c85049207da4358d16edbed977d23fa2ee6f0dde3ec21328860405161059091815260200190565b60405180910390a4505050505050565b6000546001600160a01b031633146105ff5760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064015b60405180910390fd5b6002805473ffffffffffffffffffffffffffffffffffffffff19166001600160a01b0383169081179091556040517f1bbced6cc5125dba763681b1a276a950f551621431f63fdb5b2b180da1aa2ae390600090a250565b6003818154811061066657600080fd5b600091825260209091206003909102018054600182015460029092015490925083565b60006106948361097e565b6000848152600660209081526040808320338452909152812082518154939450909264e8d4a51000916106c691611c8b565b6106d09190611caa565b905060008260010154826106e49190611ccc565b6001840183905560025460405163d66e57cd60e01b81526001600160a01b0388811660048301526024820184905292935091169063d66e57cd90604401600060405180830381600087803b15801561073b57600080fd5b505af115801561074f573d6000803e3d6000fd5b5050505060006005878154811061076857610768611d3b565b6000918252602090912001546001600160a01b0316905080156108005783546040516344af0fa760e01b8152600481018990523360248201526001600160a01b038881166044830152606482018590526084820192909252908216906344af0fa79060a401600060405180830381600087803b1580156107e757600080fd5b505af11580156107fb573d6000803e3d6000fd5b505050505b604051828152879033907f71bab65ced2e5750775a0613be067df48ef06cf92a496ebf7663ae06609249549060200160405180910390a350505050505050565b6000828152600660209081526040808320338452909152812080548282556001820183905560058054929391928690811061087d5761087d611d3b565b6000918252602090912001546001600160a01b031690508015610911576040516344af0fa760e01b8152600481018690523360248201526001600160a01b03858116604483015260006064830181905260848301528216906344af0fa79060a401600060405180830381600087803b1580156108f857600080fd5b505af115801561090c573d6000803e3d6000fd5b505050505b61092984836004888154811061052e5761052e611d3b565b836001600160a01b031685336001600160a01b03167f2cac5e20e1541d836381527a43f651851e302817b71dc8e810284e69210c1c6b8560405161096f91815260200190565b60405180910390a45050505050565b6109a260405180606001604052806000815260200160008152602001600081525090565b600382815481106109b5576109b5611d3b565b600091825260209182902060408051606081018252600390930290910180548352600181015493830184905260020154908201529150421115610b8457600060048381548110610a0757610a07611d3b565b6000918252602090912001546040516370a0823160e01b81523060048201526001600160a01b03909116906370a0823190602401602060405180830381865afa158015610a58573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610a7c9190611d51565b90508015610af5576000826020015142610a969190611d24565b90506000600754846040015160085484610ab09190611c8b565b610aba9190611c8b565b610ac49190611caa565b905082610ad664e8d4a5100083611c8b565b610ae09190611caa565b84518590610aef908390611d6a565b90525050505b4260208301526003805483919085908110610b1257610b12611d3b565b600091825260209182902083516003929092020190815582820151600182015560409283015160029091015583810151845183519182529181018490529182015283907fcb7325664a4a3b7c7223eefc492a97ca4fdf94d46884621e5a8fae5a04b2b9d29060600160405180910390a2505b919050565b8060005b81811015610bc757610bb6848483818110610baa57610baa611d3b565b9050602002013561097e565b50610bc081611d82565b9050610b8d565b50505050565b6000546001600160a01b03163314610c275760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105f6565b60088190556040518181527fde89cb17ac7f58f94792b3e91e086ed85403819c24ceea882491f960ccb1a2789060200160405180910390a150565b6000546001600160a01b03163314610cbc5760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105f6565b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a36000805473ffffffffffffffffffffffffffffffffffffffff19169055565b60048181548110610d2357600080fd5b6000918252602090912001546001600160a01b0316905081565b6000546001600160a01b03163314610d975760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105f6565b8260038581548110610dab57610dab611d3b565b906000526020600020906003020160020154600754610dca9190611d24565b610dd49190611d6a565b6007819055508260038581548110610dee57610dee611d3b565b9060005260206000209060030201600201819055508015610e4c578160058581548110610e1d57610e1d611d3b565b9060005260206000200160006101000a8154816001600160a01b0302191690836001600160a01b031602179055505b80610e7e5760058481548110610e6457610e64611d3b565b6000918252602090912001546001600160a01b0316610e80565b815b6001600160a01b0316847f95895a6ab1df54420d241b55243258a33e61b2194db66c1179ec521aae8e18658584604051610ec69291909182521515602082015260400190565b60405180910390a350505050565b6000610edf8461097e565b60008581526006602090815260408083206001600160a01b0387168452909152812080549293509185918391610f16908490611d6a565b9091555050815164e8d4a5100090610f2e9086611c8b565b610f389190611caa565b816001016000828254610f4b9190611d9d565b92505081905550600060058681548110610f6757610f67611d3b565b6000918252602090912001546001600160a01b0316905080156110005781546040516344af0fa760e01b8152600481018890526001600160a01b03868116602483018190526044830152600060648301526084820192909252908216906344af0fa79060a401600060405180830381600087803b158015610fe757600080fd5b505af1158015610ffb573d6000803e3d6000fd5b505050505b61103633308760048a8154811061101957611019611d3b565b6000918252602090912001546001600160a01b03169291906118c5565b836001600160a01b031686336001600160a01b03167f02d7e648dd130fc184d383e55bb126ac4c9c60e8f94bf05acdf557ba2d540b478860405161059091815260200190565b6000806003848154811061109257611092611d3b565b60009182526020808320604080516060810182526003909402909101805484526001810154848401526002015483820152878452600682528084206001600160a01b0388168552909152822081516004805493955091939092909190889081106110fe576110fe611d3b565b6000918252602090912001546040516370a0823160e01b81523060048201526001600160a01b03909116906370a0823190602401602060405180830381865afa15801561114f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906111739190611d51565b905083602001514211801561118757508015155b156111f757600084602001514261119e9190611d24565b905060006007548660400151600854846111b89190611c8b565b6111c29190611c8b565b6111cc9190611caa565b9050826111de64e8d4a5100083611c8b565b6111e89190611caa565b6111f29085611d6a565b935050505b6001830154835464e8d4a5100090611210908590611c8b565b61121a9190611caa565b6112249190611ccc565b979650505050505050565b6000546001600160a01b031633146112895760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105f6565b61129282611916565b82600760008282546112a49190611d6a565b909155505060048054600181810183557f8a35acfbc15ff81a39ae7d344fd709f28e8600b4aa8c65c6b64bfe7fe36bd19b90910180546001600160a01b0380871673ffffffffffffffffffffffffffffffffffffffff199283168117909355600580548086019091557f036b6384b5eca791c62761152d0c79bb0604c104a5fb6f4eb0703f3154bb3db001805491871691909216811790915560408051606081018252600080825242602083019081529282018a8152600380548089018255928190529251919092027fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b81019190915591517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85c830155517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85d90910155925490916113ed91611d24565b6040518681527f81ee0f8c5c46e2cb41984886f77a84181724abb86c32a5f6de539b07509d45e59060200160405180910390a4505050565b60058181548110610d2357600080fd5b60006114408461097e565b6000858152600660209081526040808320338452909152812082518154939450909264e8d4a510009161147291611c8b565b61147c9190611caa565b905060008260010154826114909190611ccc565b845190915064e8d4a51000906114a69088611c8b565b6114b09190611caa565b6114ba9083611ccc565b60018401558254869084906000906114d3908490611d24565b909155505060025460405163d66e57cd60e01b81526001600160a01b038781166004830152602482018490529091169063d66e57cd90604401600060405180830381600087803b15801561152657600080fd5b505af115801561153a573d6000803e3d6000fd5b5050505060006005888154811061155357611553611d3b565b6000918252602090912001546001600160a01b0316905080156115eb5783546040516344af0fa760e01b8152600481018a90523360248201526001600160a01b038881166044830152606482018590526084820192909252908216906344af0fa79060a401600060405180830381600087803b1580156115d257600080fd5b505af11580156115e6573d6000803e3d6000fd5b505050505b611603868860048b8154811061052e5761052e611d3b565b856001600160a01b031688336001600160a01b03167f8166bf25f8a2b7ed3c85049207da4358d16edbed977d23fa2ee6f0dde3ec21328a60405161164991815260200190565b60405180910390a4604051828152889033907f71bab65ced2e5750775a0613be067df48ef06cf92a496ebf7663ae06609249549060200160405180910390a35050505050505050565b6000546001600160a01b031633146116ec5760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e657260448201526064016105f6565b6001600160a01b0381166117685760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201527f646472657373000000000000000000000000000000000000000000000000000060648201526084016105f6565b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a36000805473ffffffffffffffffffffffffffffffffffffffff19166001600160a01b0392909216919091179055565b60035460005b8181101561181757600081815260066020908152604080832033845290915290205415611807576118078184610689565b61181081611d82565b90506117d6565b505050565b6040516001600160a01b0383166024820152604481018290526118179084907fa9059cbb00000000000000000000000000000000000000000000000000000000906064015b60408051601f198184030181529190526020810180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff167fffffffff00000000000000000000000000000000000000000000000000000000909316929092179091526119b4565b6040516001600160a01b0380851660248301528316604482015260648101829052610bc79085907f23b872dd0000000000000000000000000000000000000000000000000000000090608401611861565b60035460005b8181101561181757826001600160a01b03166004828154811061194157611941611d3b565b6000918252602090912001546001600160a01b031614156119a45760405162461bcd60e51b815260206004820152601360248201527f6164643a206578697374696e6720706f6f6c3f0000000000000000000000000060448201526064016105f6565b6119ad81611d82565b905061191c565b600080836001600160a01b0316836040516119cf9190611df5565b6000604051808303816000865af19150503d8060008114611a0c576040519150601f19603f3d011682016040523d82523d6000602084013e611a11565b606091505b50915091506000821415611a29573d6000803e3d6000fd5b610bc7815160001480611a4b575081806020019051810190611a4b9190611e30565b6101a281611a5c57611a5c81611a60565b5050565b62461bcd60e51b6000908152602060045260076024526652455123000030600a808404818106603090810160081b95839006959095019082900491820690940160101b939093010160c81b604452606490fd5b6001600160a01b0381168114611ac857600080fd5b50565b600080600060608486031215611ae057600080fd5b83359250602084013591506040840135611af981611ab3565b809150509250925092565b600060208284031215611b1657600080fd5b8135611b2181611ab3565b9392505050565b600060208284031215611b3a57600080fd5b5035919050565b60008060408385031215611b5457600080fd5b823591506020830135611b6681611ab3565b809150509250929050565b60008060208385031215611b8457600080fd5b823567ffffffffffffffff80821115611b9c57600080fd5b818501915085601f830112611bb057600080fd5b813581811115611bbf57600080fd5b8660208260051b8501011115611bd457600080fd5b60209290920196919550909350505050565b8015158114611ac857600080fd5b60008060008060808587031215611c0a57600080fd5b84359350602085013592506040850135611c2381611ab3565b91506060850135611c3381611be6565b939692955090935050565b600080600060608486031215611c5357600080fd5b833592506020840135611c6581611ab3565b91506040840135611af981611ab3565b634e487b7160e01b600052601160045260246000fd5b6000816000190483118215151615611ca557611ca5611c75565b500290565b600082611cc757634e487b7160e01b600052601260045260246000fd5b500490565b600080831283600160ff1b01831281151615611cea57611cea611c75565b837f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff018313811615611d1e57611d1e611c75565b50500390565b600082821015611d3657611d36611c75565b500390565b634e487b7160e01b600052603260045260246000fd5b600060208284031215611d6357600080fd5b5051919050565b60008219821115611d7d57611d7d611c75565b500190565b6000600019821415611d9657611d96611c75565b5060010190565b6000808212827f7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff03841381151615611dd757611dd7611c75565b82600160ff1b038412811615611def57611def611c75565b50500190565b6000825160005b81811015611e165760208186018101518583015201611dfc565b81811115611e25576000828501525b509190910192915050565b600060208284031215611e4257600080fd5b8151611b2181611be656fea2646970667358221220b67ce7ecd2267bb219d8fc1fc39c705078ee09b9bcee952db3958f3e209a6e8d64736f6c634300080b0033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "add(uint256,address,address)": {
+        "params": {
+          "_lpToken": "Address of the LP ERC-20 token.",
+          "_rewarder": "Address of the rewarder delegate.",
+          "allocPoint": "AP of the new pool."
+        }
+      },
+      "deposit(uint256,uint256,address)": {
+        "params": {
+          "amount": "LP token amount to deposit.",
+          "pid": "The index of the pool. See `poolInfo`.",
+          "to": "The receiver of `amount` deposit benefit."
+        }
+      },
+      "emergencyWithdraw(uint256,address)": {
+        "params": {
+          "pid": "The index of the pool. See `poolInfo`.",
+          "to": "Receiver of the LP tokens."
+        }
+      },
+      "harvest(uint256,address)": {
+        "params": {
+          "pid": "The index of the pool. See `poolInfo`.",
+          "to": "Receiver of rewards."
+        }
+      },
+      "massUpdatePools(uint256[])": {
+        "params": {
+          "pids": "Pool IDs of all to be updated. Make sure to update all active pools."
+        }
+      },
+      "pendingReward(uint256,address)": {
+        "params": {
+          "_pid": "The index of the pool. See `poolInfo`.",
+          "_user": "Address of user."
+        },
+        "returns": {
+          "pending": "reward for a given user."
+        }
+      },
+      "set(uint256,uint256,address,bool)": {
+        "params": {
+          "_allocPoint": "New AP of the pool.",
+          "_pid": "The index of the pool. See `poolInfo`.",
+          "_rewarder": "Address of the rewarder delegate.",
+          "overwrite": "True if _rewarder should be `set`. Otherwise `_rewarder` is ignored."
+        }
+      },
+      "setFund(address)": {
+        "params": {
+          "_fund": "The address of new fund contract."
+        }
+      },
+      "setRewardPerSecond(uint256)": {
+        "params": {
+          "_rewardPerSecond": "The amount of reward to be distributed per second."
+        }
+      },
+      "updatePool(uint256)": {
+        "params": {
+          "pid": "The index of the pool. See `poolInfo`."
+        },
+        "returns": {
+          "pool": "Returns the pool that was updated."
+        }
+      },
+      "withdraw(uint256,uint256,address)": {
+        "params": {
+          "amount": "LP token amount to withdraw.",
+          "pid": "The index of the pool. See `poolInfo`.",
+          "to": "Receiver of the LP tokens."
+        }
+      },
+      "withdrawAndHarvest(uint256,uint256,address)": {
+        "params": {
+          "amount": "LP token amount to withdraw.",
+          "pid": "The index of the pool. See `poolInfo`.",
+          "to": "Receiver of the LP tokens and rewards."
+        }
+      }
+    },
+    "stateVariables": {
+      "totalAllocPoint": {
+        "details": "Total allocation points. Must be the sum of all allocation points in all pools."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "add(uint256,address,address)": {
+        "notice": "Add a new LP to the pool. Can only be called by the owner. DO NOT add the same LP token more than once. Rewards will be messed up if you do."
+      },
+      "deposit(uint256,uint256,address)": {
+        "notice": "Deposit LP tokens to MCV2 for reward allocation."
+      },
+      "emergencyWithdraw(uint256,address)": {
+        "notice": "Withdraw without caring about rewards. EMERGENCY ONLY."
+      },
+      "harvest(uint256,address)": {
+        "notice": "Harvest proceeds for transaction sender to `to`."
+      },
+      "lpToken(uint256)": {
+        "notice": "Address of the LP token for each MCV2 pool."
+      },
+      "massUpdatePools(uint256[])": {
+        "notice": "Update reward variables for all pools. Be careful of gas spending!"
+      },
+      "pendingReward(uint256,address)": {
+        "notice": "View function to see pending reward on frontend."
+      },
+      "poolInfo(uint256)": {
+        "notice": "Info of each MCV2 pool."
+      },
+      "poolLength()": {
+        "notice": "Returns the number of MCV2 pools."
+      },
+      "rewarder(uint256)": {
+        "notice": "Address of each `IRewarder` contract in MCV2."
+      },
+      "set(uint256,uint256,address,bool)": {
+        "notice": "Update the given pool's reward allocation point and `IRewarder` contract. Can only be called by the owner."
+      },
+      "setFund(address)": {
+        "notice": "Set the new fund contract."
+      },
+      "setRewardPerSecond(uint256)": {
+        "notice": "Sets the reward per second to be distributed. Can only be called by the owner."
+      },
+      "updatePool(uint256)": {
+        "notice": "Update reward variables of the given pool."
+      },
+      "userInfo(uint256,address)": {
+        "notice": "Info of each user that stakes LP tokens."
+      },
+      "withdraw(uint256,uint256,address)": {
+        "notice": "Withdraw LP tokens from MCV2."
+      },
+      "withdrawAndHarvest(uint256,uint256,address)": {
+        "notice": "Withdraw LP tokens from MCV2 and harvest proceeds for transaction sender to `to`."
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 11789,
+        "contract": "contracts/RequiemChef.sol:RequiemChef",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 3512,
+        "contract": "contracts/RequiemChef.sol:RequiemChef",
+        "label": "reward",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(IERC20)9666"
+      },
+      {
+        "astId": 3515,
+        "contract": "contracts/RequiemChef.sol:RequiemChef",
+        "label": "fund",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_contract(IFundDistributor)9869"
+      },
+      {
+        "astId": 3520,
+        "contract": "contracts/RequiemChef.sol:RequiemChef",
+        "label": "poolInfo",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_array(t_struct(PoolInfo)3509_storage)dyn_storage"
+      },
+      {
+        "astId": 3525,
+        "contract": "contracts/RequiemChef.sol:RequiemChef",
+        "label": "lpToken",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_array(t_contract(IERC20)9666)dyn_storage"
+      },
+      {
+        "astId": 3530,
+        "contract": "contracts/RequiemChef.sol:RequiemChef",
+        "label": "rewarder",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_array(t_contract(IRewarder)10557)dyn_storage"
+      },
+      {
+        "astId": 3538,
+        "contract": "contracts/RequiemChef.sol:RequiemChef",
+        "label": "userInfo",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_mapping(t_uint256,t_mapping(t_address,t_struct(UserInfo)3502_storage))"
+      },
+      {
+        "astId": 3542,
+        "contract": "contracts/RequiemChef.sol:RequiemChef",
+        "label": "totalAllocPoint",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 3544,
+        "contract": "contracts/RequiemChef.sol:RequiemChef",
+        "label": "rewardPerSecond",
+        "offset": 0,
+        "slot": "8",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_contract(IERC20)9666)dyn_storage": {
+        "base": "t_contract(IERC20)9666",
+        "encoding": "dynamic_array",
+        "label": "contract IERC20[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_contract(IRewarder)10557)dyn_storage": {
+        "base": "t_contract(IRewarder)10557",
+        "encoding": "dynamic_array",
+        "label": "contract IRewarder[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_struct(PoolInfo)3509_storage)dyn_storage": {
+        "base": "t_struct(PoolInfo)3509_storage",
+        "encoding": "dynamic_array",
+        "label": "struct RequiemChef.PoolInfo[]",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IERC20)9666": {
+        "encoding": "inplace",
+        "label": "contract IERC20",
+        "numberOfBytes": "20"
+      },
+      "t_contract(IFundDistributor)9869": {
+        "encoding": "inplace",
+        "label": "contract IFundDistributor",
+        "numberOfBytes": "20"
+      },
+      "t_contract(IRewarder)10557": {
+        "encoding": "inplace",
+        "label": "contract IRewarder",
+        "numberOfBytes": "20"
+      },
+      "t_int256": {
+        "encoding": "inplace",
+        "label": "int256",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_address,t_struct(UserInfo)3502_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct RequiemChef.UserInfo)",
+        "numberOfBytes": "32",
+        "value": "t_struct(UserInfo)3502_storage"
+      },
+      "t_mapping(t_uint256,t_mapping(t_address,t_struct(UserInfo)3502_storage))": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => mapping(address => struct RequiemChef.UserInfo))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_struct(UserInfo)3502_storage)"
+      },
+      "t_struct(PoolInfo)3509_storage": {
+        "encoding": "inplace",
+        "label": "struct RequiemChef.PoolInfo",
+        "members": [
+          {
+            "astId": 3504,
+            "contract": "contracts/RequiemChef.sol:RequiemChef",
+            "label": "accRewardPerShare",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3506,
+            "contract": "contracts/RequiemChef.sol:RequiemChef",
+            "label": "lastRewardTime",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3508,
+            "contract": "contracts/RequiemChef.sol:RequiemChef",
+            "label": "allocPoint",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "96"
+      },
+      "t_struct(UserInfo)3502_storage": {
+        "encoding": "inplace",
+        "label": "struct RequiemChef.UserInfo",
+        "members": [
+          {
+            "astId": 3499,
+            "contract": "contracts/RequiemChef.sol:RequiemChef",
+            "label": "amount",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3501,
+            "contract": "contracts/RequiemChef.sol:RequiemChef",
+            "label": "rewardDebt",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_int256"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}
