@@ -50,6 +50,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 		});
 
+	const rewarder = await deploy('ComplexRewarderTime',
+		{
+			from: deployer,
+			args: [
+				reqtAddress, // IERC20 _rewardToken,
+				BigNumber.from('100000000000000000'), // = 0.1 // uint256 _rewardPerSecond,
+				requiemChef.address // address _REQUIEM_CHEF
+			],
+			log: true,
+
+		});
+
 
 
 };
