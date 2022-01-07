@@ -24,48 +24,82 @@ contract RequiemQBondingCalculator is IBondingCalculator {
   }
 
   /**
-  * note for general pairs the price does not necessarily satisfy the conditon
-  * that the lp value consists 50% of the one and the other token since the mid
-  * price is the quotient of the reserves. That is not necessarily the case for
-  * general pairs, therefore, we have to calculate the price separately and apply it
-  * to the reserve amount for conversion
-  * - calculates the total liquidity value denominated in the provided token
-  * - uses the 1bps ouytput reserves for that calculation to avoid slippage to
-  *   have a too large impact
-  * - the sencond token input argument is ignored when using pools with only 2 tokens
-  * @param _pair general pair that has the RequiemSwap interface implemented
-  *  - the value is calculated as the geometric average of input and output
-  *  - is consistent with the uniswapV2-type case 
- */
+   * note for general pairs the price does not necessarily satisfy the conditon
+   * that the lp value consists 50% of the one and the other token since the mid
+   * price is the quotient of the reserves. That is not necessarily the case for
+   * general pairs, therefore, we have to calculate the price separately and apply it
+   * to the reserve amount for conversion
+   * - calculates the total liquidity value denominated in the provided token
+   * - uses the 1bps ouytput reserves for that calculation to avoid slippage to
+   *   have a too large impact
+   * - the sencond token input argument is ignored when using pools with only 2 tokens
+   * @param _pair general pair that has the RequiemSwap interface implemented
+   *  - the value is calculated as the geometric average of input and output
+   *  - is consistent with the uniswapV2-type case
+   */
   function getTotalValue(address _pair) public view returns (uint256 _value) {
-    (uint256 reserve0, uint256 reserve1, ) = IRequiemWeightedPair(_pair).getReserves();
-    (address otherToken, uint256 reservesOther) = REQT ==
-      IRequiemWeightedPair(_pair).token0()
-      ? (IRequiemWeightedPair(_pair).token1(), reserve1)
-      : (IRequiemWeightedPair(_pair).token0(), reserve0);
+    (uint256 reserve0, uint256 reserve1, ) = IRequiemWeightedPair(_pair)
+      .getReserves();
+    (uint32 weight0, uint32 weight1) = IRequiemWeightedPair(_pair)
+      .getTokenWeights();
+
+    (
+      address otherToken,
+      uint256 reservesOther,
+      uint256 reserveReqt,
+      uint32 weightOther,
+      uint32 weightReqt
+    ) = REQT == IRequiemWeightedPair(_pair).token0()
+        ? (
+          IRequiemWeightedPair(_pair).token1(),
+          reserve1,
+          reserve0,
+          weight1,
+          weight0
+        )
+        : (
+          IRequiemWeightedPair(_pair).token0(),
+          reserve0,
+          reserve1,
+          weight0,
+          weight1
+        );
 
     uint256 decimals = IERC20(otherToken).decimals() +
       IERC20(REQT).decimals() -
-      IERC20(_pair).decimals() -
-      4;
+      IERC20(_pair).decimals();
 
-    uint256 syntReserveREQT = IRequiemSwap(_pair).calculateSwapGivenIn(
-      otherToken,
-      address(0),
-      reservesOther / 10000
-    );
-
-    _value =
-      SqrtMath.sqrrt((syntReserveREQT * reservesOther) / (10**decimals)) *
-      2;
+    // In case of both weights being 50, it is equivalent to
+    // the UniswapV2 variant. If the weights are different, we define the valuation by
+    // scaling the reqt reserve up or down dependent on the weights and the use the product as
+    // adjusted constant product. We will use the conservative estimation of the price - we upscale
+    // such that the reflected equivalent pool is a uniswapV2 with the higher liquidity that pruduces
+    // the same price of the Requiem token as the weighted pool.
+    if (weightReqt >= weightOther) {
+      _value =
+        SqrtMath.sqrrt(
+          (reservesOther * weightReqt * reserveReqt) /
+            weightOther /
+            (10**decimals)
+        ) *
+        2;
+    } else {
+      _value =
+        SqrtMath.sqrrt(
+          (reservesOther * weightOther * reserveReqt) /
+            weightReqt /
+            (10**decimals)
+        ) *
+        2;
+    }
   }
 
-    /**
-  * - calculates the value in reqt of the input LP amount provided
-  * @param _pair general pair that has the RequiemSwap interface implemented
-  * @param amount_ the amount of LP to price in REQT
-  *  - is consistent with the uniswapV2-type case 
- */
+  /**
+   * - calculates the value in reqt of the input LP amount provided
+   * @param _pair general pair that has the RequiemSwap interface implemented
+   * @param amount_ the amount of LP to price in REQT
+   *  - is consistent with the uniswapV2-type case
+   */
   function valuation(address _pair, uint256 amount_)
     external
     view
@@ -79,15 +113,20 @@ contract RequiemQBondingCalculator is IBondingCalculator {
   }
 
   function markdown(address _pair) external view returns (uint256) {
-    (uint256 reserve0, uint256 reserve1, ) = IRequiemWeightedPair(_pair).getReserves();
+    (uint256 reserve0, uint256 reserve1, ) = IRequiemWeightedPair(_pair)
+      .getReserves();
+    (uint32 weight0, uint32 weight1) = IRequiemWeightedPair(_pair)
+      .getTokenWeights();
 
-    uint256 reserve;
-    if (IRequiemWeightedPair(_pair).token0() == REQT) {
-      reserve = reserve1;
-    } else {
-      reserve = reserve0;
-    }
+    (uint256 reservesOther, uint32 weightOther, uint32 weightReqt) = REQT ==
+      IRequiemWeightedPair(_pair).token0()
+      ? (reserve1, weight1, weight0)
+      : (reserve0, weight0, weight1);
+
+    // adjusted markdown scaling up the reserve as the trading mechnism allows
+    // higher or lower valuation for reqt reserve
     return
-      (reserve * (2 * (10**IERC20(REQT).decimals()))) / (getTotalValue(_pair));
+      ((reservesOther + (weightReqt * reservesOther) / weightOther) *
+        10**(18 - IERC20(REQT).decimals())) / getTotalValue(_pair);
   }
 }

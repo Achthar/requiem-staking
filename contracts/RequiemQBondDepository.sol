@@ -459,8 +459,12 @@ contract RequiemQBondDepository is Manageable {
    */
   function debtRatio() public view returns (uint256 debtRatio_) {
     uint256 supply = IERC20(REQT).totalSupply();
+    // we have to add the decimals that are eventually missing if reqt has less than
+    // 18 decimals as the weighted pair lp tokens always have 18 decimals
     debtRatio_ =
-      FixedPoint.fraction(currentDebt() * 1e9, supply).decode112with18() /
+      FixedPoint
+        .fraction(currentDebt() * (10**(18 - IERC20(REQT).decimals())), supply)
+        .decode112with18() /
       1e18;
   }
 
@@ -470,9 +474,11 @@ contract RequiemQBondDepository is Manageable {
    */
   function standardizedDebtRatio() external view returns (uint256) {
     if (isLiquidityBond) {
+      // adjustment of the case if reqt and LP token decimals deviate
+      // the latter usually has 18
       return
         (debtRatio() * IBondCalculator(bondCalculator).markdown(principle)) /
-        1e9;
+        (10**(18 - IERC20(REQT).decimals()));
     } else {
       return debtRatio();
     }
