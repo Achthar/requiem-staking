@@ -156,6 +156,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		],
 	});
 
+	// ---- create actual weighted pair
+
 	await factoryContract.createPair(REQ.address, dai.address, ethers.BigNumber.from(80), ethers.BigNumber.from(25))
 	const pairREQT_DAI = await factoryContract.getPair(REQ.address, dai.address, ethers.BigNumber.from(80), ethers.BigNumber.from(25))
 	console.log("deposit dai reqt", pairREQT_DAI)
@@ -179,6 +181,34 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	const pairContract = await ethers.getContractAt('RequiemWeightedPair', pairREQT_DAI);
 	const priceReqt = await pairContract.calculateSwapGivenIn(reqtContract.address, dai.address, BigNumber.from('1000000000000000000'))
 	console.log("price of reqt in DAI", priceReqt.toString())
+
+	// ---- create U2 actual weighted pair
+
+	await factoryContract.createPair(REQ.address, dai.address, ethers.BigNumber.from(50), ethers.BigNumber.from(25))
+	const pairREQT_DAI5 = await factoryContract.getPair(REQ.address, dai.address, ethers.BigNumber.from(50), ethers.BigNumber.from(25))
+	console.log("deposit dai reqt", pairREQT_DAI)
+	// await execute('TestWETH', { from: localhost, value: BigNumber.from('10000000000000') }, 'deposit')
+	// console.log("addWETH Liquidity")
+
+	// _reserve0|uint112 :  904707959878549431082261
+	// _reserve1|uint112 :  1494497389348623915251951
+	const reqAmountinLPU2 = reqAmountinLP.mul(BigNumber.from(20)).div(BigNumber.from(80))
+	const daiAmountinLPU2 = daiAmountinLP
+
+	const liqDaiREQT50 = await execute('RequiemQPairManager', { from: localhost }, 'addLiquidity', pairREQT_DAI5, REQ.address, dai.address,
+		reqAmountinLPU2,
+		daiAmountinLPU2,
+		reqAmountinLPU2,
+		daiAmountinLPU2,
+		localhost,
+		'99999999999999999999');
+
+
+	const pairContract50 = await ethers.getContractAt('RequiemWeightedPair', pairREQT_DAI);
+	const priceReqt50 = await pairContract50.calculateSwapGivenIn(reqtContract.address, dai.address, BigNumber.from('1000000000000000000'))
+	console.log("price of reqt in DAI", priceReqt50.toString())
+
+
 	const tV4 = await bondingCalculatorContract.getTotalValue(pairREQT_DAI)
 
 	console.log("indexValue DAI", tV4.toString())
@@ -366,15 +396,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	const testVal0 = await bondingUV2CalculatorContract.valuation(pairREQT_DAI, inp1)
 	console.log("act", testVal0.toString(), "real", testVal1.add(reqShare).toString())
 
-	// const priceData = await bondingUV2CalculatorContract.calculatePrice(
-	// 	pairREQT_DAI
-	// )
-	// console.log("--- price data ---\n",
-	// 	priceData[0].toString(),// uint256 reservesREQT,
-	// 	priceData[1].toString(),// uint256 numeratorInREQT,
-	// 	priceData[2].toString(),// uint256 reservesOther,
-	// 	priceData[3].toString(),// uint256 denominatorInOther
-	// )
 
 	const testVal2 = await bondingUV2CalculatorContract.valuation(pairREQT_DAI, inp1)
 
@@ -384,13 +405,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log("U2", totalU2.toString())
 	console.log("QR", totalQ.toString())
 
-
-	// const kQ = await bondingUV2CalculatorContract.getKValue(pairREQT_DAI)
-	// const kU2 = await bondingCalculatorContract.getKValue(pairREQT_DAI)
-
-
-	// console.log("K2", kU2.toString())
-	// console.log("KR", kQ.toString())
 
 	console.log("test of Treasury", inp1.toString(), val.toString())
 	console.log("test value of CS", inp1.toString(), testVal.toString())
@@ -402,25 +416,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	)
 
 	console.log("value of dai", inp1, val2.toString())
-	// console.log("val of call")
-	//  let val = await execute('RequiemTreasury', { from: localhost }, 'valueOf',
-	// 	pairREQT_DAI,
-	// 	'123321'
-	// );
-
-	// const valparams1 = await treasuryContract['deposit(uint256,address,uint256)'](
-	// 	inp1,// uint256 _amount,
-	// 	pairREQT_DAI,// address _token,
-	// 	321// uint256 _profit
-	// )
 
 
 	await depositoryContract.initializeBondTerms(
-		1000,// uint256 _controlVariable,
+		1,// uint256 _controlVariable,
 		10000,// uint256 _vestingTerm,
 		10000,// uint256 _minimumPrice,
 		'1000000000000000000000000',// uint256 _maxPayout,
-		25,// uint256 _fee,
+		0,// uint256 _fee,
 		'200000000000000000',// uint256 _maxDebt,
 		0,// uint256 _initialDebt
 	)
@@ -461,11 +464,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	)
 
 
+	const mU2 = await bondingUV2CalculatorContract.markdown(pairREQT_DAI)
+	const mQ = await bondingCalculatorContract.markdown(pairREQT_DAI)
+	const mQ1 = await bondingCalculatorContract.markdown(pairREQT_DAI5)
+	console.log("markdown U2", mU2.toString())
+	console.log("markdown Q", mQ.toString())
+	console.log("markdown Q 50 50 pair", mQ1.toString())
 	// 149614588815
 	// console.log("value of ", 12132, val.toString())
 	await depositoryContract.deposit(
 		payoutInp,// uint256 _amount,
-		'10000',// uint256 _maxPrice,
+		'1000000',// uint256 _maxPrice,
 		localhost// address _depositor
 	)
 
@@ -473,14 +482,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	const priceUSD = await depositoryContract.bondPriceInUSD()
 	const price = await depositoryContract.bondPrice()
+	const debtR = await depositoryContract.debtRatio()
 	console.log("resulting price USD", priceUSD.toString())
 	console.log("resulting price", price.toString())
+
+	console.log("debt ratio", debtR.toString())
 
 	// 149614588815
 	// console.log("value of ", 12132, val.toString())
 	await depositoryContract.deposit(
 		payoutInp,// uint256 _amount,
-		'10000',// uint256 _maxPrice,
+		'1000000',// uint256 _maxPrice,
 		localhost// address _depositor
 	)
 
@@ -488,8 +500,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	const price2USD = await depositoryContract.bondPriceInUSD()
 	const price2 = await depositoryContract.bondPrice()
+	const debtR2 = await depositoryContract.debtRatio()
 	console.log("resulting price2 USD", price2USD.toString())
 	console.log("resulting price2", price2.toString())
+
+	console.log("debt ratio", debtR2.toString())
 
 
 };

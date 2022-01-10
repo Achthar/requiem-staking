@@ -127,6 +127,6 @@ contract RequiemQBondingCalculator is IBondingCalculator {
     // higher or lower valuation for reqt reserve
     return
       ((reservesOther + (weightReqt * reservesOther) / weightOther) *
-        10**(18 - IERC20(REQT).decimals())) / getTotalValue(_pair);
+        10**IERC20(REQT).decimals()) / getTotalValue(_pair);
   }
 }
