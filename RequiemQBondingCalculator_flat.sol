@@ -395,6 +395,8 @@ pragma solidity 0.8.11;
 contract RequiemQBondingCalculator is IBondingCalculator {
   using FixedPoint for *;
 
+  // 20 decimal sqrt 2
+  uint256 private immutable SQRT2x100 = 141421356237309504880;
   address public immutable REQT;
 
   constructor(address _REQT) {
@@ -422,31 +424,10 @@ contract RequiemQBondingCalculator is IBondingCalculator {
     (uint32 weight0, uint32 weight1) = IRequiemWeightedPair(_pair)
       .getTokenWeights();
 
-    (
-      address otherToken,
-      uint256 reservesOther,
-      uint256 reserveReqt,
-      uint32 weightOther,
-      uint32 weightReqt
-    ) = REQT == IRequiemWeightedPair(_pair).token0()
-        ? (
-          IRequiemWeightedPair(_pair).token1(),
-          reserve1,
-          reserve0,
-          weight1,
-          weight0
-        )
-        : (
-          IRequiemWeightedPair(_pair).token0(),
-          reserve0,
-          reserve1,
-          weight0,
-          weight1
-        );
-
-    uint256 decimals = IERC20(otherToken).decimals() +
-      IERC20(REQT).decimals() -
-      IERC20(_pair).decimals();
+    (uint256 reservesOther, , uint32 weightOther, uint32 weightReqt) = REQT ==
+      IRequiemWeightedPair(_pair).token0()
+      ? (reserve1, reserve0, weight1, weight0)
+      : (reserve0, reserve1, weight0, weight1);
 
     // In case of both weights being 50, it is equivalent to
     // the UniswapV2 variant. If the weights are different, we define the valuation by
@@ -454,23 +435,10 @@ contract RequiemQBondingCalculator is IBondingCalculator {
     // adjusted constant product. We will use the conservative estimation of the price - we upscale
     // such that the reflected equivalent pool is a uniswapV2 with the higher liquidity that pruduces
     // the same price of the Requiem token as the weighted pool.
-    if (weightReqt >= weightOther) {
-      _value =
-        SqrtMath.sqrrt(
-          (reservesOther * weightReqt * reserveReqt) /
-            weightOther /
-            (10**decimals)
-        ) *
-        2;
-    } else {
-      _value =
-        SqrtMath.sqrrt(
-          (reservesOther * weightOther * reserveReqt) /
-            weightReqt /
-            (10**decimals)
-        ) *
-        2;
-    }
+    _value =
+      (SQRT2x100 * reservesOther) /
+      SqrtMath.sqrrt(weightOther * weightOther + weightReqt * weightReqt) /
+      1e18;
   }
 
   /**
@@ -491,6 +459,7 @@ contract RequiemQBondingCalculator is IBondingCalculator {
     _value = FullMath.mulDivRoundingUp(totalValue, amount_, totalSupply);
   }
 
+  // markdown function for bond valuation
   function markdown(address _pair) external view returns (uint256) {
     (uint256 reserve0, uint256 reserve1, ) = IRequiemWeightedPair(_pair)
       .getReserves();
@@ -505,7 +474,7 @@ contract RequiemQBondingCalculator is IBondingCalculator {
     // adjusted markdown scaling up the reserve as the trading mechnism allows
     // higher or lower valuation for reqt reserve
     return
-      ((reservesOther + (weightReqt * reservesOther) / weightOther) *
-        10**(18 - IERC20(REQT).decimals())) / getTotalValue(_pair);
+      ((reservesOther + (weightOther * reservesOther) / weightReqt) *
+        (10**IERC20(REQT).decimals())) / getTotalValue(_pair);
   }
 }

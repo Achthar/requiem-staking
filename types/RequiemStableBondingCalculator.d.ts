@@ -21,12 +21,14 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface RequiemStableBondingCalculatorInterface
   extends ethers.utils.Interface {
   functions: {
+    "QUOTE()": FunctionFragment;
     "REQT()": FunctionFragment;
     "getTotalValue(address)": FunctionFragment;
     "markdown(address)": FunctionFragment;
     "valuation(address,uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "QUOTE", values?: undefined): string;
   encodeFunctionData(functionFragment: "REQT", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getTotalValue",
@@ -38,6 +40,7 @@ interface RequiemStableBondingCalculatorInterface
     values: [string, BigNumberish]
   ): string;
 
+  decodeFunctionResult(functionFragment: "QUOTE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "REQT", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTotalValue",
@@ -93,43 +96,61 @@ export class RequiemStableBondingCalculator extends BaseContract {
   interface: RequiemStableBondingCalculatorInterface;
 
   functions: {
+    QUOTE(overrides?: CallOverrides): Promise<[string]>;
+
     REQT(overrides?: CallOverrides): Promise<[string]>;
 
     getTotalValue(
-      _pair: string,
+      _stablePool: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { _value: BigNumber }>;
 
-    markdown(_pair: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    markdown(
+      _stablePool: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     valuation(
-      _pair: string,
+      _stablePool: string,
       amount_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { _value: BigNumber }>;
   };
 
+  QUOTE(overrides?: CallOverrides): Promise<string>;
+
   REQT(overrides?: CallOverrides): Promise<string>;
 
-  getTotalValue(_pair: string, overrides?: CallOverrides): Promise<BigNumber>;
+  getTotalValue(
+    _stablePool: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  markdown(_pair: string, overrides?: CallOverrides): Promise<BigNumber>;
+  markdown(_stablePool: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   valuation(
-    _pair: string,
+    _stablePool: string,
     amount_: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   callStatic: {
+    QUOTE(overrides?: CallOverrides): Promise<string>;
+
     REQT(overrides?: CallOverrides): Promise<string>;
 
-    getTotalValue(_pair: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getTotalValue(
+      _stablePool: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    markdown(_pair: string, overrides?: CallOverrides): Promise<BigNumber>;
+    markdown(
+      _stablePool: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     valuation(
-      _pair: string,
+      _stablePool: string,
       amount_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -138,34 +159,44 @@ export class RequiemStableBondingCalculator extends BaseContract {
   filters: {};
 
   estimateGas: {
+    QUOTE(overrides?: CallOverrides): Promise<BigNumber>;
+
     REQT(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getTotalValue(_pair: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getTotalValue(
+      _stablePool: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    markdown(_pair: string, overrides?: CallOverrides): Promise<BigNumber>;
+    markdown(
+      _stablePool: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     valuation(
-      _pair: string,
+      _stablePool: string,
       amount_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    QUOTE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     REQT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTotalValue(
-      _pair: string,
+      _stablePool: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     markdown(
-      _pair: string,
+      _stablePool: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     valuation(
-      _pair: string,
+      _stablePool: string,
       amount_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

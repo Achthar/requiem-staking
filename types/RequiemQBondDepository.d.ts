@@ -40,7 +40,7 @@ interface RequiemQBondDepositoryInterface extends ethers.utils.Interface {
     "pendingPayoutFor(address)": FunctionFragment;
     "percentVestedFor(address)": FunctionFragment;
     "policy()": FunctionFragment;
-    "principle()": FunctionFragment;
+    "principal()": FunctionFragment;
     "pullManagement()": FunctionFragment;
     "pushManagement(address)": FunctionFragment;
     "recoverLostToken(address)": FunctionFragment;
@@ -116,7 +116,7 @@ interface RequiemQBondDepositoryInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "policy", values?: undefined): string;
-  encodeFunctionData(functionFragment: "principle", values?: undefined): string;
+  encodeFunctionData(functionFragment: "principal", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "pullManagement",
     values?: undefined
@@ -207,7 +207,7 @@ interface RequiemQBondDepositoryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "policy", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "principle", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "principal", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "pullManagement",
     data: BytesLike
@@ -444,7 +444,7 @@ export class RequiemQBondDepository extends BaseContract {
 
     policy(overrides?: CallOverrides): Promise<[string]>;
 
-    principle(overrides?: CallOverrides): Promise<[string]>;
+    principal(overrides?: CallOverrides): Promise<[string]>;
 
     pullManagement(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -607,7 +607,7 @@ export class RequiemQBondDepository extends BaseContract {
 
   policy(overrides?: CallOverrides): Promise<string>;
 
-  principle(overrides?: CallOverrides): Promise<string>;
+  principal(overrides?: CallOverrides): Promise<string>;
 
   pullManagement(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -770,7 +770,7 @@ export class RequiemQBondDepository extends BaseContract {
 
     policy(overrides?: CallOverrides): Promise<string>;
 
-    principle(overrides?: CallOverrides): Promise<string>;
+    principal(overrides?: CallOverrides): Promise<string>;
 
     pullManagement(overrides?: CallOverrides): Promise<void>;
 
@@ -1037,7 +1037,7 @@ export class RequiemQBondDepository extends BaseContract {
 
     policy(overrides?: CallOverrides): Promise<BigNumber>;
 
-    principle(overrides?: CallOverrides): Promise<BigNumber>;
+    principal(overrides?: CallOverrides): Promise<BigNumber>;
 
     pullManagement(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1165,7 +1165,7 @@ export class RequiemQBondDepository extends BaseContract {
 
     policy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    principle(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    principal(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pullManagement(
       overrides?: Overrides & { from?: string | Promise<string> }

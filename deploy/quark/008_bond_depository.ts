@@ -52,13 +52,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	const treasuryFactory = await ethers.getContractFactory('RequiemTreasury');
 	console.log("deploy treasury")
-	const treasury = await treasuryFactory.deploy(
-		reqtAddress,	// address _reqtT,
-		dai.address, // address _DAI,
-		tusd.address,// address _Frax,
-		pairreqtT_DAI,// address _reqtTDAI,
-		0,// uint256 _blocksNeededForQueue
-	);
+	const treasury = await deploy('RequiemTreasury', {
+		contract: 'RequiemTreasury',
+		from: deployer,
+		log: true,
+		args: [
+			reqtAddress,	// address _reqtT,
+			dai.address, // address _DAI,
+			tusd.address,// address _Frax,
+			pairreqtT_DAI,// address _reqtTDAI,
+			0,// uint256 _blocksNeededForQueue
+		]
+	});
 
 	const bondingDepository = await deploy('RequiemQBondDepository', {
 		contract: 'RequiemQBondDepository',
@@ -79,8 +84,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	const depositoryContract = await ethers.getContractAt('RequiemQBondDepository', bondingDepository.address);
 	const treasuryContract = await ethers.getContractAt('RequiemTreasury', treasury.address);
 
-	const lpTokens = await treasuryContract.liquidityTokens(0)
-	console.log("LIQ", lpTokens)
+	// const lpTokens = await treasuryContract.liquidityTokens(0)
+	// console.log("LIQ", lpTokens)
 
 	console.log("get pair data")
 	const pairContract = await ethers.getContractAt('RequiemPairERC20', pairreqtT_DAI);
@@ -94,7 +99,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	await treasuryContract.pushManagement(deployer)
 
 	await pairContract.connect(deployer)
-	
+
 	await pairContract.approve(treasuryContract.address, ethers.constants.MaxInt256)
 	console.log("approve spending of Depository")
 	await pairContract.approve(bondingDepository.address, ethers.constants.MaxInt256)

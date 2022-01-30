@@ -34,9 +34,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	const reqtAddress = '0x2d90e6d9368b2838a9558B0a609750243C5C4679'
 
-	const sReqtAddress = ''
+	const sReqtAddress = '0x586462c336822F245AAee1da53fdeB49FBfa825c'
 
-	const stakingAddress = ''
+	const stakingAddress = '0xa897b72505C39E2e43523966659E959827ac5C11'
 
 	const bondingCalculator = await deploy('RequiemQBondingCalculator', {
 		contract: 'RequiemQBondingCalculator',

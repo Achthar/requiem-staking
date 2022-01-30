@@ -49,7 +49,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		args: [
 			reqtAddress, //address _reqtT,
 			sreqt.address, // address _sreqtT,
-			10000,// uint256 _epochLength,
+			100000,// uint256 _epochLength,
 			0,// uint256 _firstEpochNumber,
 			0// uint256 _firstEpochBlock
 		],

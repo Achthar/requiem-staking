@@ -224,23 +224,23 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		0,// uint256 _blocksNeededForQueue
 	);
 
-	const bondingDepository = await deploy('RequiemQBondDepository', {
-		contract: 'RequiemQBondDepository',
+	const bondingDepository = await deploy('RequiemCVXBondDepository', {
+		contract: 'RequiemCVXBondDepository',
 		from: localhost,
 		log: true,
 		args: [
 			REQ.address, // address _REQT,
 			pairREQT_DAI, // address _principle,
 			treasury.address, // address _treasury,
-			localhost, // address _DAO,
-			bondingCalculator.address// address _bondCalculator
+			localhost, // address _DAO
 		],
 	});
-
+	// 401645953926992720
+	// 81287425753622
 	console.log('set treasury as vault')
 	await reqtContract.setMinter(treasury.address, ethers.constants.MaxInt256)
 
-	const depositoryContract = await ethers.getContractAt('RequiemQBondDepository', bondingDepository.address);
+	const depositoryContract = await ethers.getContractAt('RequiemCVXBondDepository', bondingDepository.address);
 	const treasuryContract = await ethers.getContractAt('RequiemTreasury', treasury.address);
 
 
@@ -293,11 +293,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		SREQT
 	}
 
-	console.log("depositor queue")
+	console.log("depositor queue localhost")
 
 	await treasuryContract.queue(MANAGING.LIQUIDITYDEPOSITOR, localhost)
 
-	console.log("toggle depositor")
+	console.log("toggle depositor localhost")
 
 	const dep = await treasuryContract.toggle(
 		MANAGING.LIQUIDITYDEPOSITOR, // MANAGING _managing,
@@ -306,11 +306,23 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	)
 
 
+	console.log("lp queue dai reqt")
+
+	await treasuryContract.queue(MANAGING.LIQUIDITYTOKEN, pairREQT_DAI)
+
+	console.log("toggle lp dai reqt")
+
+	const depLp = await treasuryContract.toggle(
+		MANAGING.LIQUIDITYTOKEN, // MANAGING _managing,
+		pairREQT_DAI, // address _address,
+		bondingCalculator.address// address _calculator
+	)
+
 	const isLP = await treasuryContract.isLiquidityToken(pairREQT_DAI)
-	console.log("is lp", isLP)
+	console.log("--- is lp", isLP)
 
 	const bc = await treasuryContract.bondCalculator(pairREQT_DAI)
-	console.log("is bc", bc)
+	console.log("--- is bc", bc)
 
 	const bn = await ethers.provider.getBlockNumber()
 	console.log("block number", bn)
@@ -323,7 +335,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	)
 
 	const queue = await treasuryContract.LiquidityTokenQueue(pairREQT_DAI)
-	console.log("token queue", queue.toString())
+	console.log("--- token queue", queue.toString())
 
 	console.log("queue token pairREQT_DAI")
 	await treasuryContract.queue(MANAGING.LIQUIDITYTOKEN, pairREQT_DAI)
@@ -421,10 +433,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	await depositoryContract.initializeBondTerms(
 		1,// uint256 _controlVariable,
 		10000,// uint256 _vestingTerm,
-		10000,// uint256 _minimumPrice,
+		1000,// uint256 _minimumPrice,
 		'1000000000000000000000000',// uint256 _maxPayout,
-		0,// uint256 _fee,
-		'200000000000000000',// uint256 _maxDebt,
+		'200000000000000000000000000000',// uint256 _maxDebt,
 		0,// uint256 _initialDebt
 	)
 
@@ -436,7 +447,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		payoutInp// uint256 _amount
 	)
 
-	console.log("inp", payoutInp, "valued at", valForPayout.toString())
+	console.log("inp", payoutInp.toString(), "valued at", valForPayout.toString())
 
 
 	const x = await depositoryContract.payoutFor(
@@ -470,11 +481,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log("markdown U2", mU2.toString())
 	console.log("markdown Q", mQ.toString())
 	console.log("markdown Q 50 50 pair", mQ1.toString())
+
+	const x2 = await depositoryContract.payoutFor(
+		payoutInp// uint256 _value
+	)
+	console.log("payoutFor before depo", x2.toString())
+
+
 	// 149614588815
 	// console.log("value of ", 12132, val.toString())
 	await depositoryContract.deposit(
 		payoutInp,// uint256 _amount,
-		'1000000',// uint256 _maxPrice,
+		'100000',// uint256 _maxPrice,
 		localhost// address _depositor
 	)
 
@@ -488,11 +506,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	console.log("debt ratio", debtR.toString())
 
+
 	// 149614588815
 	// console.log("value of ", 12132, val.toString())
 	await depositoryContract.deposit(
 		payoutInp,// uint256 _amount,
-		'1000000',// uint256 _maxPrice,
+		'100000',// uint256 _maxPrice,
 		localhost// address _depositor
 	)
 
@@ -505,8 +524,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log("resulting price2", price2.toString())
 
 	console.log("debt ratio", debtR2.toString())
+	console.log("REQT price", priceReqt.toString())
 
 
 };
 export default func;
-func.tags = ['bonding-calc-localhost-wq'];
+func.tags = ['bonding-calc-2-localhost-wq'];

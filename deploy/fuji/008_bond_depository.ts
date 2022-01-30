@@ -52,13 +52,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	const treasuryFactory = await ethers.getContractFactory('RequiemTreasury');
 	console.log("deploy treasury")
-	const treasury = await treasuryFactory.deploy(
-		reqtAddress,	// address _reqtT,
-		dai.address, // address _DAI,
-		tusd.address,// address _Frax,
-		pairreqtT_DAI,// address _reqtTDAI,
-		0,// uint256 _blocksNeededForQueue
-	);
+	const treasury = await deploy('RequiemTreasury', {
+		contract: 'RequiemTreasury',
+		from: deployer,
+		log: true,
+		args: [
+			reqtAddress,	// address _reqtT,
+			dai.address, // address _DAI,
+			tusd.address,// address _Frax,
+			pairreqtT_DAI,// address _reqtTDAI,
+			0,// uint256 _blocksNeededForQueue
+		]
+	});
 
 	const bondingDepository = await deploy('RequiemQBondDepository', {
 		contract: 'RequiemQBondDepository',
@@ -79,8 +84,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	const depositoryContract = await ethers.getContractAt('RequiemQBondDepository', bondingDepository.address);
 	const treasuryContract = await ethers.getContractAt('RequiemTreasury', treasury.address);
 
-	const lpTokens = await treasuryContract.liquidityTokens(0)
-	console.log("LIQ", lpTokens)
+	// const lpTokens = await treasuryContract.liquidityTokens(0)
+	// console.log("LIQ", lpTokens)
 
 	console.log("get pair data")
 	const pairContract = await ethers.getContractAt('RequiemPairERC20', pairreqtT_DAI);
@@ -195,12 +200,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log("start intializing bond terms")
 
 	await depositoryContract.initializeBondTerms(
-		0,// uint256 _controlVariable,
-		1000,// uint256 _vestingTerm,
-		1000,// uint256 _minimumPrice,
-		'1000000000000000000000000',// uint256 _maxPayout,
-		25,// uint256 _fee,
-		'200000000000',// uint256 _maxDebt,
+		30000,// uint256 _controlVariable,
+		10000,// uint256 _vestingTerm,
+		500,// uint256 _minimumPrice,
+		'100000000000000000000000',// uint256 _maxPayout,
+		0,// uint256 _fee,
+		'200000000000000000000000000',// uint256 _maxDebt,
 		0,// uint256 _initialDebt
 	)
 

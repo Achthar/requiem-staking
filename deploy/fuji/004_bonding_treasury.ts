@@ -47,23 +47,28 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 	const reqtContract = await ethers.getContractAt('RequiemERC20Token', reqtAddress);
 
-	const bondingCalculatorAddress = '0x2A03A0B4e33B922d381B9f7DF16111cd2C77b4b3'
-
+	const bondingCalculatorAddress = '0xB9Ec202978450F962C7EA17A852F84b72e3C4AF4'
 
 	const treasuryFactory = await ethers.getContractFactory('RequiemTreasury');
 	console.log("deploy treasury")
-	const treasury = await treasuryFactory.deploy(
-		reqtAddress,	// address _reqtT,
-		dai.address, // address _DAI,
-		tusd.address,// address _Frax,
-		pairreqtT_DAI,// address _reqtTDAI,
-		0,// uint256 _blocksNeededForQueue
-	);
-
+	const treasury = await deploy('RequiemTreasury', {
+		contract: 'RequiemTreasury',
+		from: deployer,
+		skipIfAlreadyDeployed: true,
+		log: true,
+		args: [
+			reqtAddress,	// address _reqtT,
+			dai.address, // address _DAI,
+			tusd.address,// address _Frax,
+			pairreqtT_DAI,// address _reqtTDAI,
+			0,// uint256 _blocksNeededForQueue
+		]
+	});
 	const bondingDepository = await deploy('RequiemQBondDepository', {
 		contract: 'RequiemQBondDepository',
 		from: deployer,
 		log: true,
+		skipIfAlreadyDeployed: true,
 		args: [
 			reqtAddress, // address _reqtT,
 			pairreqtT_DAI, // address _principle,
@@ -74,16 +79,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	});
 
 	console.log('set treasury as minter, allow am as limit')
+	await reqtContract.connect(deployer)
 	await reqtContract.setMinter(treasury.address, '1000000000000000000000000')
 
 	const depositoryContract = await ethers.getContractAt('RequiemQBondDepository', bondingDepository.address);
 	const treasuryContract = await ethers.getContractAt('RequiemTreasury', treasury.address);
 
+	 treasuryContract.connect(deployer)
 	const lpTokens = await treasuryContract.liquidityTokens(0)
 	console.log("LIQ", lpTokens)
 
 	console.log("get pair data")
 	const pairContract = await ethers.getContractAt('RequiemPairERC20', pairreqtT_DAI);
+	pairContract.connect(deployer)
 	const lpBalante = await pairContract.balanceOf(deployer)
 	const ts = await pairContract.totalSupply()
 	console.log("balante", lpBalante.toString(), "total supply ", ts.toString())
@@ -93,8 +101,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log("set manager")
 	await treasuryContract.pushManagement(deployer)
 
-	await pairContract.connect(deployer)
-	
+	console.log("approve spending of treasury")
+	// await pairContract.connect(deployer)o
+
 	await pairContract.approve(treasuryContract.address, ethers.constants.MaxInt256)
 	console.log("approve spending of Depository")
 	await pairContract.approve(bondingDepository.address, ethers.constants.MaxInt256)
@@ -195,12 +204,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log("start intializing bond terms")
 
 	await depositoryContract.initializeBondTerms(
-		0,// uint256 _controlVariable,
-		1000,// uint256 _vestingTerm,
-		1000,// uint256 _minimumPrice,
-		'1000000000000000000000000',// uint256 _maxPayout,
-		25,// uint256 _fee,
-		'200000000000',// uint256 _maxDebt,
+		30000,// uint256 _controlVariable,
+		10000,// uint256 _vestingTerm,
+		500,// uint256 _minimumPrice,
+		'100000000000000000000000',// uint256 _maxPayout,
+		0,// uint256 _fee,
+		'200000000000000000000000000',// uint256 _maxDebt,
 		0,// uint256 _initialDebt
 	)
 

@@ -6,8 +6,6 @@
 
 pragma solidity ^0.8.11;
 
-import "./helpers/RequiemErrors.sol";
-
 import "../interfaces/ERC20/IERC20.sol";
 
 /**
@@ -75,9 +73,9 @@ library SafeERC20 {
     }
 
     // Finally we check the returndata size is either zero or true - note that this check will always pass for EOAs
-    RequiemErrors._require(
+    require(
       returndata.length == 0 || abi.decode(returndata, (bool)),
-      Errors.SAFE_ERC20_CALL_FAILED
+      "SAFE_ERC20_CALL_FAILED"
     );
   }
 }

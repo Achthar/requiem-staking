@@ -697,8 +697,8 @@ contract RequiemQBondDepository is Manageable {
   /* ======== STATE VARIABLES ======== */
 
   address public immutable REQT; // token given as payment for bond
-  address public immutable principle; // token used to create bond
-  address public immutable treasury; // mints REQT when receives principle
+  address public immutable principal; // token used to create bond
+  address public immutable treasury; // mints REQT when receives principal
   address public immutable DAO; // receives profit share from bond
 
   bool public immutable isLiquidityBond; // LP and Reserve bonds are treated slightly different
@@ -722,7 +722,7 @@ contract RequiemQBondDepository is Manageable {
   struct Terms {
     uint256 controlVariable; // scaling variable for price
     uint256 vestingTerm; // in blocks
-    uint256 minimumPrice; // vs principle value
+    uint256 minimumPrice; // vs principal value
     uint256 maxPayout; // in thousandths of a %. i.e. 500 = 0.5%
     uint256 fee; // as % of bond payout, in hundreths. ( 500 = 5% = 0.05 for every 1 paid)
     uint256 maxDebt; // 9 decimal debt ratio, max % total supply created as debt
@@ -749,15 +749,15 @@ contract RequiemQBondDepository is Manageable {
 
   constructor(
     address _REQT,
-    address _principle,
+    address _principal,
     address _treasury,
     address _DAO,
     address _bondCalculator
   ) {
     require(_REQT != address(0));
     REQT = _REQT;
-    require(_principle != address(0));
-    principle = _principle;
+    require(_principal != address(0));
+    principal = _principal;
     require(_treasury != address(0));
     treasury = _treasury;
     require(_DAO != address(0));
@@ -902,26 +902,26 @@ contract RequiemQBondDepository is Manageable {
 
     require(_maxPrice >= nativePrice, "Slippage limit: more than max price"); // slippage protection
 
-    uint256 value = ITreasury(treasury).valueOf(principle, _amount);
+    uint256 value = ITreasury(treasury).valueOf(principal, _amount);
 
     uint256 payout = payoutFor(value); // payout to bonder is computed
 
-    require(payout >= 10000000, "Bond too small"); // must be > 0.01 REQT ( underflow protection )
+    require(payout >= 1e16, "Bond too small"); // must be > 0.01 REQT ( underflow protection )
     require(payout <= maxPayout(), "Bond too large"); // size protection because there is no slippage
 
     // profits are calculated
     uint256 fee = (payout * terms.fee) / 10000;
-    require(value > payout + fee, "VALUE is less than payout plus fee");
-    uint256 profit = value - payout - fee;
+    require(value >= payout, "payout to large");
+    uint256 profit = (value - payout) - fee;
 
     /**
-            principle is transferred in
+            principal is transferred in
             approved and
             deposited into the treasury, returning (_amount - profit) REQT
          */
-    IERC20(principle).safeTransferFrom(msg.sender, address(this), _amount);
-    IERC20(principle).approve(address(treasury), _amount);
-    ITreasury(treasury).deposit(_amount, principle, profit);
+    IERC20(principal).safeTransferFrom(msg.sender, address(this), _amount);
+    IERC20(principal).approve(address(treasury), _amount);
+    ITreasury(treasury).deposit(_amount, principal, profit);
 
     if (fee != 0) {
       // fee is transferred to dao
@@ -1075,7 +1075,7 @@ contract RequiemQBondDepository is Manageable {
    *  @return price_ uint
    */
   function bondPrice() public view returns (uint256 price_) {
-    price_ = (terms.controlVariable * debtRatio() + 1000000000) / 1e7;
+    price_ = (terms.controlVariable * debtRatio() + 1e18) / 1e16;
     if (price_ < terms.minimumPrice) {
       price_ = terms.minimumPrice;
     }
@@ -1086,7 +1086,7 @@ contract RequiemQBondDepository is Manageable {
    *  @return price_ uint
    */
   function _bondPrice() internal returns (uint256 price_) {
-    price_ = (terms.controlVariable * debtRatio() + 1000000000) / 1e7;
+    price_ = (terms.controlVariable * debtRatio() + 1e18) / 1e16;
     if (price_ < terms.minimumPrice) {
       price_ = terms.minimumPrice;
     } else if (terms.minimumPrice != 0) {
@@ -1101,10 +1101,10 @@ contract RequiemQBondDepository is Manageable {
   function bondPriceInUSD() public view returns (uint256 price_) {
     if (isLiquidityBond) {
       price_ =
-        (bondPrice() * IBondCalculator(bondCalculator).markdown(principle)) /
+        (bondPrice() * IBondCalculator(bondCalculator).markdown(principal)) /
         100;
     } else {
-      price_ = (bondPrice() * 10**IERC20(principle).decimals()) / 100;
+      price_ = (bondPrice() * 10**IERC20(principal).decimals()) / 100;
     }
   }
 
@@ -1126,8 +1126,8 @@ contract RequiemQBondDepository is Manageable {
   function standardizedDebtRatio() external view returns (uint256) {
     if (isLiquidityBond) {
       return
-        (debtRatio() * IBondCalculator(bondCalculator).markdown(principle)) /
-        1e9;
+        (debtRatio() * IBondCalculator(bondCalculator).markdown(principal)) /
+        10**IERC20(principal).decimals();
     } else {
       return debtRatio();
     }
@@ -1213,22 +1213,22 @@ contract RequiemQBondDepository is Manageable {
 
     if (isLiquidityBond) {
       _bondPriceInUsd_ =
-        (bondPrice() * IBondCalculator(bondCalculator).markdown(principle)) /
+        (bondPrice() * IBondCalculator(bondCalculator).markdown(principal)) /
         100;
     } else {
-      _bondPriceInUsd_ = (bondPrice() * 10**IERC20(principle).decimals()) / 100;
+      _bondPriceInUsd_ = (bondPrice() * 10**IERC20(principal).decimals()) / 100;
     }
   }
 
   /* ======= AUXILLIARY ======= */
 
   /**
-   *  @notice allow anyone to send lost tokens (excluding principle or REQT) to the DAO
+   *  @notice allow anyone to send lost tokens (excluding principal or REQT) to the DAO
    *  @return bool
    */
   function recoverLostToken(address _token) external returns (bool) {
     require(_token != REQT);
-    require(_token != principle);
+    require(_token != principal);
     IERC20(_token).safeTransfer(DAO, IERC20(_token).balanceOf(address(this)));
     return true;
   }
