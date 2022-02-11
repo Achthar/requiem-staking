@@ -12,6 +12,7 @@ import {
   BaseContract,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -19,46 +20,44 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface IOwnableInterface extends ethers.utils.Interface {
+interface UUPSUpgradeableInterface extends ethers.utils.Interface {
   functions: {
-    "policy()": FunctionFragment;
-    "pullManagement()": FunctionFragment;
-    "pushManagement(address)": FunctionFragment;
-    "renounceManagement()": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "policy", values?: undefined): string;
+  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "pullManagement",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "pushManagement",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceManagement",
-    values?: undefined
+    functionFragment: "upgradeToAndCall",
+    values: [string, BytesLike]
   ): string;
 
-  decodeFunctionResult(functionFragment: "policy", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "pullManagement",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "pushManagement",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceManagement",
+    functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "AdminChanged(address,address)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
+    "Upgraded(address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export class IOwnable extends BaseContract {
+export type AdminChangedEvent = TypedEvent<
+  [string, string] & { previousAdmin: string; newAdmin: string }
+>;
+
+export type BeaconUpgradedEvent = TypedEvent<[string] & { beacon: string }>;
+
+export type UpgradedEvent = TypedEvent<[string] & { implementation: string }>;
+
+export class UUPSUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -99,83 +98,102 @@ export class IOwnable extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IOwnableInterface;
+  interface: UUPSUpgradeableInterface;
 
   functions: {
-    policy(overrides?: CallOverrides): Promise<[string]>;
-
-    pullManagement(
+    upgradeTo(
+      newImplementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    pushManagement(
-      newOwner_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    renounceManagement(
-      overrides?: Overrides & { from?: string | Promise<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  policy(overrides?: CallOverrides): Promise<string>;
-
-  pullManagement(
+  upgradeTo(
+    newImplementation: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  pushManagement(
-    newOwner_: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  renounceManagement(
-    overrides?: Overrides & { from?: string | Promise<string> }
+  upgradeToAndCall(
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    policy(overrides?: CallOverrides): Promise<string>;
+    upgradeTo(
+      newImplementation: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    pullManagement(overrides?: CallOverrides): Promise<void>;
-
-    pushManagement(newOwner_: string, overrides?: CallOverrides): Promise<void>;
-
-    renounceManagement(overrides?: CallOverrides): Promise<void>;
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): TypedEventFilter<
+      [string, string],
+      { previousAdmin: string; newAdmin: string }
+    >;
+
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): TypedEventFilter<
+      [string, string],
+      { previousAdmin: string; newAdmin: string }
+    >;
+
+    "BeaconUpgraded(address)"(
+      beacon?: string | null
+    ): TypedEventFilter<[string], { beacon: string }>;
+
+    BeaconUpgraded(
+      beacon?: string | null
+    ): TypedEventFilter<[string], { beacon: string }>;
+
+    "Upgraded(address)"(
+      implementation?: string | null
+    ): TypedEventFilter<[string], { implementation: string }>;
+
+    Upgraded(
+      implementation?: string | null
+    ): TypedEventFilter<[string], { implementation: string }>;
+  };
 
   estimateGas: {
-    policy(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pullManagement(
+    upgradeTo(
+      newImplementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    pushManagement(
-      newOwner_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    renounceManagement(
-      overrides?: Overrides & { from?: string | Promise<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    policy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pullManagement(
+    upgradeTo(
+      newImplementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    pushManagement(
-      newOwner_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    renounceManagement(
-      overrides?: Overrides & { from?: string | Promise<string> }
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

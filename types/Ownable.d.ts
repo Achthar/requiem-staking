@@ -21,39 +21,54 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface OwnableInterface extends ethers.utils.Interface {
   functions: {
-    "owner()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
+    "policy()": FunctionFragment;
+    "pullManagement()": FunctionFragment;
+    "pushManagement(address)": FunctionFragment;
+    "renounceManagement()": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "policy", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
+    functionFragment: "pullManagement",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "transferOwnership",
+    functionFragment: "pushManagement",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "renounceManagement",
+    values?: undefined
+  ): string;
 
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "policy", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "renounceOwnership",
+    functionFragment: "pullManagement",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "transferOwnership",
+    functionFragment: "pushManagement",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceManagement",
     data: BytesLike
   ): Result;
 
   events: {
-    "OwnershipTransferred(address,address)": EventFragment;
+    "OwnershipPulled(address,address)": EventFragment;
+    "OwnershipPushed(address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipPulled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipPushed"): EventFragment;
 }
 
-export type OwnershipTransferredEvent = TypedEvent<
+export type OwnershipPulledEvent = TypedEvent<
+  [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type OwnershipPushedEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
@@ -101,42 +116,49 @@ export class Ownable extends BaseContract {
   interface: OwnableInterface;
 
   functions: {
-    owner(overrides?: CallOverrides): Promise<[string]>;
+    policy(overrides?: CallOverrides): Promise<[string]>;
 
-    renounceOwnership(
+    pullManagement(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    transferOwnership(
-      newOwner: string,
+    pushManagement(
+      newOwner_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    renounceManagement(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  owner(overrides?: CallOverrides): Promise<string>;
+  policy(overrides?: CallOverrides): Promise<string>;
 
-  renounceOwnership(
+  pullManagement(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  transferOwnership(
-    newOwner: string,
+  pushManagement(
+    newOwner_: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  renounceManagement(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    owner(overrides?: CallOverrides): Promise<string>;
+    policy(overrides?: CallOverrides): Promise<string>;
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+    pullManagement(overrides?: CallOverrides): Promise<void>;
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    pushManagement(newOwner_: string, overrides?: CallOverrides): Promise<void>;
+
+    renounceManagement(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
-    "OwnershipTransferred(address,address)"(
+    "OwnershipPulled(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null
     ): TypedEventFilter<
@@ -144,7 +166,23 @@ export class Ownable extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
-    OwnershipTransferred(
+    OwnershipPulled(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string],
+      { previousOwner: string; newOwner: string }
+    >;
+
+    "OwnershipPushed(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string],
+      { previousOwner: string; newOwner: string }
+    >;
+
+    OwnershipPushed(
       previousOwner?: string | null,
       newOwner?: string | null
     ): TypedEventFilter<
@@ -154,27 +192,35 @@ export class Ownable extends BaseContract {
   };
 
   estimateGas: {
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+    policy(overrides?: CallOverrides): Promise<BigNumber>;
 
-    renounceOwnership(
+    pullManagement(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    transferOwnership(
-      newOwner: string,
+    pushManagement(
+      newOwner_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    renounceManagement(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    policy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    renounceOwnership(
+    pullManagement(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    transferOwnership(
-      newOwner: string,
+    pushManagement(
+      newOwner_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    renounceManagement(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

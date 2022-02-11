@@ -11,6 +11,7 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
+  Overrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -18,34 +19,45 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface IRequiemSwapInterface extends ethers.utils.Interface {
+interface OwnableUpgradeableInterface extends ethers.utils.Interface {
   functions: {
-    "calculateSwapGivenIn(address,address,uint256)": FunctionFragment;
-    "calculateSwapGivenOut(address,address,uint256)": FunctionFragment;
+    "owner()": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "calculateSwapGivenIn",
-    values: [string, string, BigNumberish]
+    functionFragment: "renounceOwnership",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "calculateSwapGivenOut",
-    values: [string, string, BigNumberish]
+    functionFragment: "transferOwnership",
+    values: [string]
   ): string;
 
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "calculateSwapGivenIn",
+    functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "calculateSwapGivenOut",
+    functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "OwnershipTransferred(address,address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
-export class IRequiemSwap extends BaseContract {
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export class OwnableUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -86,85 +98,84 @@ export class IRequiemSwap extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IRequiemSwapInterface;
+  interface: OwnableUpgradeableInterface;
 
   functions: {
-    calculateSwapGivenIn(
-      tokenIn: string,
-      tokenOut: string,
-      amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    owner(overrides?: CallOverrides): Promise<[string]>;
 
-    calculateSwapGivenOut(
-      tokenIn: string,
-      tokenOut: string,
-      amountOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  calculateSwapGivenIn(
-    tokenIn: string,
-    tokenOut: string,
-    amountIn: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  owner(overrides?: CallOverrides): Promise<string>;
 
-  calculateSwapGivenOut(
-    tokenIn: string,
-    tokenOut: string,
-    amountOut: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  transferOwnership(
+    newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    calculateSwapGivenIn(
-      tokenIn: string,
-      tokenOut: string,
-      amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    owner(overrides?: CallOverrides): Promise<string>;
 
-    calculateSwapGivenOut(
-      tokenIn: string,
-      tokenOut: string,
-      amountOut: BigNumberish,
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    transferOwnership(
+      newOwner: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string],
+      { previousOwner: string; newOwner: string }
+    >;
+
+    OwnershipTransferred(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string],
+      { previousOwner: string; newOwner: string }
+    >;
+  };
 
   estimateGas: {
-    calculateSwapGivenIn(
-      tokenIn: string,
-      tokenOut: string,
-      amountIn: BigNumberish,
-      overrides?: CallOverrides
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    calculateSwapGivenOut(
-      tokenIn: string,
-      tokenOut: string,
-      amountOut: BigNumberish,
-      overrides?: CallOverrides
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    calculateSwapGivenIn(
-      tokenIn: string,
-      tokenOut: string,
-      amountIn: BigNumberish,
-      overrides?: CallOverrides
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    calculateSwapGivenOut(
-      tokenIn: string,
-      tokenOut: string,
-      amountOut: BigNumberish,
-      overrides?: CallOverrides
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

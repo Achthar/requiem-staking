@@ -18,34 +18,25 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface IRequiemSwapInterface extends ethers.utils.Interface {
+interface IBeaconUpgradeableInterface extends ethers.utils.Interface {
   functions: {
-    "calculateSwapGivenIn(address,address,uint256)": FunctionFragment;
-    "calculateSwapGivenOut(address,address,uint256)": FunctionFragment;
+    "implementation()": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "calculateSwapGivenIn",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "calculateSwapGivenOut",
-    values: [string, string, BigNumberish]
+    functionFragment: "implementation",
+    values?: undefined
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "calculateSwapGivenIn",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "calculateSwapGivenOut",
+    functionFragment: "implementation",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export class IRequiemSwap extends BaseContract {
+export class IBeaconUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -86,85 +77,25 @@ export class IRequiemSwap extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IRequiemSwapInterface;
+  interface: IBeaconUpgradeableInterface;
 
   functions: {
-    calculateSwapGivenIn(
-      tokenIn: string,
-      tokenOut: string,
-      amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    calculateSwapGivenOut(
-      tokenIn: string,
-      tokenOut: string,
-      amountOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    implementation(overrides?: CallOverrides): Promise<[string]>;
   };
 
-  calculateSwapGivenIn(
-    tokenIn: string,
-    tokenOut: string,
-    amountIn: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  calculateSwapGivenOut(
-    tokenIn: string,
-    tokenOut: string,
-    amountOut: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  implementation(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
-    calculateSwapGivenIn(
-      tokenIn: string,
-      tokenOut: string,
-      amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    calculateSwapGivenOut(
-      tokenIn: string,
-      tokenOut: string,
-      amountOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    implementation(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
-    calculateSwapGivenIn(
-      tokenIn: string,
-      tokenOut: string,
-      amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    calculateSwapGivenOut(
-      tokenIn: string,
-      tokenOut: string,
-      amountOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    implementation(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    calculateSwapGivenIn(
-      tokenIn: string,
-      tokenOut: string,
-      amountIn: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    calculateSwapGivenOut(
-      tokenIn: string,
-      tokenOut: string,
-      amountOut: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    implementation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

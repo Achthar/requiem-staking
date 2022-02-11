@@ -11,32 +11,35 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
-  CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface IBondCalculatorInterface extends ethers.utils.Interface {
-  functions: {
-    "markdown(address)": FunctionFragment;
-    "valuation(address,uint256)": FunctionFragment;
+interface ERC1967UpgradeUpgradeableInterface extends ethers.utils.Interface {
+  functions: {};
+
+  events: {
+    "AdminChanged(address,address)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
+    "Upgraded(address)": EventFragment;
   };
 
-  encodeFunctionData(functionFragment: "markdown", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "valuation",
-    values: [string, BigNumberish]
-  ): string;
-
-  decodeFunctionResult(functionFragment: "markdown", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "valuation", data: BytesLike): Result;
-
-  events: {};
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export class IBondCalculator extends BaseContract {
+export type AdminChangedEvent = TypedEvent<
+  [string, string] & { previousAdmin: string; newAdmin: string }
+>;
+
+export type BeaconUpgradedEvent = TypedEvent<[string] & { beacon: string }>;
+
+export type UpgradedEvent = TypedEvent<[string] & { implementation: string }>;
+
+export class ERC1967UpgradeUpgradeable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -77,58 +80,47 @@ export class IBondCalculator extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IBondCalculatorInterface;
+  interface: ERC1967UpgradeUpgradeableInterface;
 
-  functions: {
-    markdown(_LP: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+  functions: {};
 
-    valuation(
-      _LP: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  callStatic: {};
+
+  filters: {
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): TypedEventFilter<
+      [string, string],
+      { previousAdmin: string; newAdmin: string }
+    >;
+
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): TypedEventFilter<
+      [string, string],
+      { previousAdmin: string; newAdmin: string }
+    >;
+
+    "BeaconUpgraded(address)"(
+      beacon?: string | null
+    ): TypedEventFilter<[string], { beacon: string }>;
+
+    BeaconUpgraded(
+      beacon?: string | null
+    ): TypedEventFilter<[string], { beacon: string }>;
+
+    "Upgraded(address)"(
+      implementation?: string | null
+    ): TypedEventFilter<[string], { implementation: string }>;
+
+    Upgraded(
+      implementation?: string | null
+    ): TypedEventFilter<[string], { implementation: string }>;
   };
 
-  markdown(_LP: string, overrides?: CallOverrides): Promise<BigNumber>;
+  estimateGas: {};
 
-  valuation(
-    _LP: string,
-    _amount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  callStatic: {
-    markdown(_LP: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    valuation(
-      _LP: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  filters: {};
-
-  estimateGas: {
-    markdown(_LP: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    valuation(
-      _LP: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    markdown(
-      _LP: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    valuation(
-      _LP: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
+  populateTransaction: {};
 }

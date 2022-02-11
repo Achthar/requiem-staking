@@ -6,7 +6,6 @@ import "./interfaces/IBondingCalculator.sol";
 import "./interfaces/ERC20/IERC20.sol";
 import "./interfaces/IRequiemStableSwap.sol";
 import "./interfaces/IRequiemSwap.sol";
-import "./libraries/math/SafeMath.sol";
 import "./libraries/math/FixedPoint.sol";
 
 /**
@@ -14,16 +13,10 @@ import "./libraries/math/FixedPoint.sol";
  */
 contract RequiemStableBondingCalculator is IBondingCalculator {
   using FixedPoint for *;
-  using SafeMath for uint256;
-  using SafeMath for uint112;
-
-  address public immutable REQT;
   address public immutable QUOTE;
 
-  constructor(address _REQT, address _QUOTE) {
-    require(_REQT != address(0));
+  constructor(address _QUOTE) {
     require(_QUOTE != address(0));
-    REQT = _REQT;
     QUOTE = _QUOTE;
   }
 
@@ -54,9 +47,7 @@ contract RequiemStableBondingCalculator is IBondingCalculator {
     uint256 totalValue = getTotalValue(_stablePool);
     uint256 totalSupply = IRequiemStableSwap(_stablePool).getLpToken().totalSupply();
 
-    _value = totalValue
-      .mul(FixedPoint.fraction(amount_, totalSupply).decode112with18())
-      .div(1e18);
+    _value = totalValue * FixedPoint.fraction(amount_, totalSupply).decode112with18() / 1e18;
   }
 
   function markdown(address _stablePool) external view returns (uint256) {

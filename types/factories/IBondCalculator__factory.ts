@@ -14,12 +14,31 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "pair_",
+        name: "_LP",
+        type: "address",
+      },
+    ],
+    name: "markdown",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_LP",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "amount_",
+        name: "_amount",
         type: "uint256",
       },
     ],
@@ -27,7 +46,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "_value",
+        name: "",
         type: "uint256",
       },
     ],
