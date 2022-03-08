@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 interface IGovernanceToken {
     function locked__of(address _addr) external view returns (uint256);

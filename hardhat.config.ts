@@ -253,8 +253,8 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       // tags: ['staging'],
       // gasMultiplier: 4,
-      gas: 800000,
-      gasPrice: 2500000000,
+      gas: 80000000,
+      gasPrice: 250000000000,
     },
     'quarkchain-dev-s0': {
       url: 'http://eth-jrpc.devnet.quarkchain.io:39900',
@@ -358,7 +358,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.8.11',
+        version: '0.8.12',
         settings: {
           optimizer: {
             enabled: true,

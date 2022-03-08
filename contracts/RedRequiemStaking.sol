@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.11;
+pragma solidity 0.8.12;
 
 import "./interfaces/ERC20/IERC20.sol";
 import "./libraries/SafeERC20.sol";
@@ -21,7 +21,7 @@ contract RedRequiemStaking is Initializable, OwnableUpgradeable, UUPSUpgradeable
     }
 
     IERC20 public usdc;
-    IERC20 public blueICE;
+    IERC20 public redRequiem;
 
     // governance
     address public reserveFund;
@@ -49,12 +49,12 @@ contract RedRequiemStaking is Initializable, OwnableUpgradeable, UUPSUpgradeable
 
     function initialize(
         IERC20 _usdc,
-        IERC20 _blueICE
+        IERC20 _redRequiem
     ) external initializer {
         __Ownable_init();
         __ReentrancyGuard_init();
         usdc = _usdc;
-        blueICE = _blueICE;
+        redRequiem = _redRequiem;
         lastRewardTime = block.timestamp;
         startRewardTime = block.timestamp;
     }
@@ -83,7 +83,7 @@ contract RedRequiemStaking is Initializable, OwnableUpgradeable, UUPSUpgradeable
     /// @return pending reward for a given user.
     function pendingReward(address _user) external view returns (uint256 pending) {
         UserInfo storage user = userInfo[_user];
-        uint256 supply = blueICE.balanceOf(address(this));
+        uint256 supply = redRequiem.balanceOf(address(this));
         uint256 _accRewardPerShare = accRewardPerShare;
         if (block.timestamp > lastRewardTime && supply != 0) {
             uint256 rewardAmount = getRewardForDuration(lastRewardTime, block.timestamp);
@@ -95,7 +95,7 @@ contract RedRequiemStaking is Initializable, OwnableUpgradeable, UUPSUpgradeable
     /// @notice Update reward variables of the given pool.
     function updatePool() public {
         if (block.timestamp > lastRewardTime) {
-            uint256 supply = blueICE.balanceOf(address(this));
+            uint256 supply = redRequiem.balanceOf(address(this));
             if (supply > 0) {
                 uint256 rewardAmount = getRewardForDuration(lastRewardTime, block.timestamp);
                 accRewardPerShare += rewardAmount * ACC_REWARD_PRECISION / supply;
@@ -116,7 +116,7 @@ contract RedRequiemStaking is Initializable, OwnableUpgradeable, UUPSUpgradeable
         user.amount += amount;
         user.rewardDebt += int256(amount * accRewardPerShare / ACC_REWARD_PRECISION);
 
-        blueICE.safeTransferFrom(msg.sender, address(this), amount);
+        redRequiem.safeTransferFrom(msg.sender, address(this), amount);
 
         emit Deposit(msg.sender, amount, to);
     }
@@ -132,7 +132,7 @@ contract RedRequiemStaking is Initializable, OwnableUpgradeable, UUPSUpgradeable
         user.rewardDebt -= int256(amount * accRewardPerShare / ACC_REWARD_PRECISION);
         user.amount -= amount;
 
-        blueICE.safeTransfer(to, amount);
+        redRequiem.safeTransfer(to, amount);
 
         emit Withdraw(msg.sender, amount, to);
     }
@@ -174,7 +174,7 @@ contract RedRequiemStaking is Initializable, OwnableUpgradeable, UUPSUpgradeable
             usdc.safeTransfer(to, _pendingReward);
         }
 
-        blueICE.safeTransfer(to, amount);
+        redRequiem.safeTransfer(to, amount);
 
         emit Withdraw(msg.sender, amount, to);
         emit Harvest(msg.sender, _pendingReward);
@@ -189,7 +189,7 @@ contract RedRequiemStaking is Initializable, OwnableUpgradeable, UUPSUpgradeable
         user.rewardDebt = 0;
 
         // Note: transfer can fail or succeed if `amount` is zero.
-        blueICE.safeTransfer(to, amount);
+        redRequiem.safeTransfer(to, amount);
         emit EmergencyWithdraw(msg.sender, amount, to);
     }
 

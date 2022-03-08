@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 // solhint-disable
 library RequiemErrors {
@@ -237,7 +237,7 @@ library Errors {
 
 
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -261,7 +261,7 @@ abstract contract Context {
 // File: contracts/interfaces/ERC20/IERC20.sol
 
 
-pragma solidity 0.8.11;
+pragma solidity 0.8.12;
 
 interface IERC20 {
     function decimals() external view returns (uint8);
@@ -286,7 +286,7 @@ interface IERC20 {
 
 
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.12;
 
 
 interface IRewardToken is IERC20 {
@@ -301,7 +301,7 @@ interface IRewardToken is IERC20 {
 // The `safeTransfer` and `safeTransferFrom` functions assume that `token` is a contract (an account with code), and
 // work differently from the OpenZeppelin version if it is not.
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 
 
@@ -381,7 +381,7 @@ library SafeERC20 {
 
 
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 
 /**
@@ -409,7 +409,7 @@ interface IERC20Metadata is IERC20 {
 
 
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 
 
@@ -830,7 +830,7 @@ abstract contract Initializable {
 // File: contracts/interfaces/IOwnable.sol
 
 
-pragma solidity 0.8.11;
+pragma solidity 0.8.12;
 
 interface IOwnable {
   function owner() external view returns (address);
@@ -842,7 +842,7 @@ interface IOwnable {
 // File: contracts/libraries/Ownable.sol
 
 
-pragma solidity 0.8.11;
+pragma solidity 0.8.12;
 
 
 contract Ownable is IOwnable {
@@ -880,7 +880,7 @@ contract Ownable is IOwnable {
 
 
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.12;
 
 
 

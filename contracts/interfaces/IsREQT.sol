@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.11;
+pragma solidity 0.8.12;
 
 interface IsREQT {
     function rebase( uint256 reqtProfit_, uint epoch_) external returns (uint256);

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.11;
+pragma solidity 0.8.12;
 
 interface IBondCalculator {
   function valuation(address _LP, uint256 _amount)

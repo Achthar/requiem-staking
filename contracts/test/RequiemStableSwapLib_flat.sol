@@ -2,7 +2,7 @@
 
 // File: contracts/libraries/math/FullMath.sol
 
-pragma solidity >=0.8.11;
+pragma solidity >=0.8.12;
 
 // solhint-disable no-inline-assembly, reason-string
 
@@ -147,7 +147,7 @@ library FullMath {
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 // solhint-disable
 library RequiemErrors {
@@ -379,7 +379,7 @@ library Errors {
 
 // File: contracts/libraries/Context.sol
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -402,7 +402,7 @@ abstract contract Context {
 }
 // File: contracts/libraries/Ownable.sol
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -478,7 +478,7 @@ abstract contract Ownable is Context {
 }
 // File: contracts/interfaces/ERC20/IERC20.sol
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -566,7 +566,7 @@ interface IERC20 {
 // The `safeTransfer` and `safeTransferFrom` functions assume that `token` is a contract (an account with code), and
 // work differently from the OpenZeppelin version if it is not.
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 /**
  * @title SafeERC20
@@ -655,7 +655,7 @@ library SafeERC20 {
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 // Inspired by Aave Protocol's IFlashLoanReceiver.
 
@@ -679,7 +679,7 @@ interface IFlashLoanRecipient {
 
 // File: contracts/interfaces/IRequiemStableSwap.sol
 
-pragma solidity 0.8.11;
+pragma solidity 0.8.12;
 
 // solhint-disable var-name-mixedcase
 
@@ -848,7 +848,7 @@ interface IRequiemStableSwap {
 
 // File: contracts/interfaces/ERC20/IERC20Metadata.sol
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 /**
  * @dev Interface for the optional metadata functions from the ERC20 standard.
@@ -873,7 +873,7 @@ interface IERC20Metadata is IERC20 {
 }
 // File: contracts/libraries/ERC20.sol
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -1267,7 +1267,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
 // File: contracts/libraries/ERC20Burnable.sol
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 // solhint-disable reason-string
 
@@ -1309,7 +1309,7 @@ abstract contract ERC20Burnable is Context, ERC20 {
 
 // File: contracts/tokens/LPToken.sol
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 contract LPToken is Ownable, ERC20Burnable {
   IRequiemStableSwap public swap;
@@ -1341,7 +1341,7 @@ contract LPToken is Ownable, ERC20Burnable {
 
 // File: contracts/RequiemStableSwapLib.sol
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 // solhint-disable not-rely-on-time, var-name-mixedcase, max-line-length, reason-string
 

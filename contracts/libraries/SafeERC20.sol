@@ -4,7 +4,7 @@
 // The `safeTransfer` and `safeTransferFrom` functions assume that `token` is a contract (an account with code), and
 // work differently from the OpenZeppelin version if it is not.
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 import "../interfaces/ERC20/IERC20.sol";
 

@@ -24,7 +24,6 @@ interface RedRequiemStakingInterface extends ethers.utils.Interface {
   functions: {
     "accRewardPerShare()": FunctionFragment;
     "allocateMoreRewards(uint256,uint256)": FunctionFragment;
-    "blueICE()": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "emergencyWithdraw(address)": FunctionFragment;
     "endRewardTime()": FunctionFragment;
@@ -35,6 +34,7 @@ interface RedRequiemStakingInterface extends ethers.utils.Interface {
     "lastRewardTime()": FunctionFragment;
     "owner()": FunctionFragment;
     "pendingReward(address)": FunctionFragment;
+    "redRequiem()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "rescueFund(uint256)": FunctionFragment;
     "reserveFund()": FunctionFragment;
@@ -60,7 +60,6 @@ interface RedRequiemStakingInterface extends ethers.utils.Interface {
     functionFragment: "allocateMoreRewards",
     values: [BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "blueICE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "deposit",
     values: [BigNumberish, string]
@@ -94,6 +93,10 @@ interface RedRequiemStakingInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "pendingReward",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "redRequiem",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -155,7 +158,6 @@ interface RedRequiemStakingInterface extends ethers.utils.Interface {
     functionFragment: "allocateMoreRewards",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "blueICE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "emergencyWithdraw",
@@ -184,6 +186,7 @@ interface RedRequiemStakingInterface extends ethers.utils.Interface {
     functionFragment: "pendingReward",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "redRequiem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -350,8 +353,6 @@ export class RedRequiemStaking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    blueICE(overrides?: CallOverrides): Promise<[string]>;
-
     deposit(
       amount: BigNumberish,
       to: string,
@@ -380,7 +381,7 @@ export class RedRequiemStaking extends BaseContract {
 
     initialize(
       _usdc: string,
-      _blueICE: string,
+      _redRequiem: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -392,6 +393,8 @@ export class RedRequiemStaking extends BaseContract {
       _user: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { pending: BigNumber }>;
+
+    redRequiem(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -468,8 +471,6 @@ export class RedRequiemStaking extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  blueICE(overrides?: CallOverrides): Promise<string>;
-
   deposit(
     amount: BigNumberish,
     to: string,
@@ -498,7 +499,7 @@ export class RedRequiemStaking extends BaseContract {
 
   initialize(
     _usdc: string,
-    _blueICE: string,
+    _redRequiem: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -507,6 +508,8 @@ export class RedRequiemStaking extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   pendingReward(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  redRequiem(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -583,8 +586,6 @@ export class RedRequiemStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    blueICE(overrides?: CallOverrides): Promise<string>;
-
     deposit(
       amount: BigNumberish,
       to: string,
@@ -607,7 +608,7 @@ export class RedRequiemStaking extends BaseContract {
 
     initialize(
       _usdc: string,
-      _blueICE: string,
+      _redRequiem: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -616,6 +617,8 @@ export class RedRequiemStaking extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     pendingReward(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    redRequiem(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -856,8 +859,6 @@ export class RedRequiemStaking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    blueICE(overrides?: CallOverrides): Promise<BigNumber>;
-
     deposit(
       amount: BigNumberish,
       to: string,
@@ -886,7 +887,7 @@ export class RedRequiemStaking extends BaseContract {
 
     initialize(
       _usdc: string,
-      _blueICE: string,
+      _redRequiem: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -895,6 +896,8 @@ export class RedRequiemStaking extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     pendingReward(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    redRequiem(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -967,8 +970,6 @@ export class RedRequiemStaking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    blueICE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     deposit(
       amount: BigNumberish,
       to: string,
@@ -999,7 +1000,7 @@ export class RedRequiemStaking extends BaseContract {
 
     initialize(
       _usdc: string,
-      _blueICE: string,
+      _redRequiem: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1011,6 +1012,8 @@ export class RedRequiemStaking extends BaseContract {
       _user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    redRequiem(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }

@@ -2,7 +2,7 @@
 
 // File: contracts/interfaces/IRequiemWeightedPairFactory.sol
 
-pragma solidity >=0.8.11;
+pragma solidity >=0.8.12;
 
 interface IRequiemWeightedPairFactory {
   event PairCreated(
@@ -60,7 +60,7 @@ interface IRequiemWeightedPairFactory {
 
 // File: contracts/interfaces/IRequiemPairERC20.sol
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 // solhint-disable func-name-mixedcase
 
@@ -112,7 +112,7 @@ interface IRequiemPairERC20 {
 
 // File: contracts/interfaces/IRequiemWeightedPair.sol
 
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.12;
 
 // solhint-disable func-name-mixedcase
 
@@ -193,7 +193,7 @@ interface IRequiemWeightedPair is IRequiemPairERC20 {
 
 // File: contracts/interfaces/IRequiemFormula.sol
 
-pragma solidity >=0.8.11;
+pragma solidity >=0.8.12;
 
 /*
     Bancor Formula interface
@@ -330,7 +330,7 @@ interface IRequiemFormula {
 
 // File: contracts/RequiemFormula.sol
 
-pragma solidity >=0.8.11;
+pragma solidity >=0.8.12;
 
 // solhint-disable not-rely-on-time, var-name-mixedcase, max-line-length, reason-string, no-unused-vars
 
