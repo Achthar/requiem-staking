@@ -34,11 +34,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         contract: 'MockERC20',
         from: localhost,
         log: true,
-        args: ['USD Coin', 'USDC', 18],
+        args: ['USD Coin', 'USDC', 6],
     });
 
 
-    await execute('USDC', { from: localhost, log: true }, 'mint', localhost, parseUnits('100000000000', 18));
+    await execute('USDC', { from: localhost, log: true }, 'mint', localhost, parseUnits('100000000000', 6));
     // await execute('USDC', { from: localhost }, 'approve', router.address, ethers.constants.MaxInt256);
 
 
@@ -49,8 +49,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         args: [],
     });
 
-    await execute('RequiemERC20Token', { from: localhost, log: true }, 'setMinter', localhost, parseUnits('100000', 18));
-    await execute('RequiemERC20Token', { from: localhost, log: true }, 'mint', localhost, parseUnits('100000', 18));
+    await execute('RequiemERC20Token', { from: localhost, log: true }, 'setMinter', localhost, parseUnits('1000000000', 18));
+    await execute('RequiemERC20Token', { from: localhost, log: true }, 'mint', localhost, parseUnits('1000000000', 18));
 
     const redREQ = await deploy('RedRequiem', {
         contract: 'RedRequiem',
@@ -79,7 +79,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     );
 
-    await execute('USDC', { from: localhost, log: true }, 'mint', localhost, parseUnits('100000000000', 18));
+    // await execute('USDC', { from: localhost, log: true }, 'mint', localhost, parseUnits('100000000000', 18));
+
+    await execute('USDC', { from: localhost, log: true }, 'mint', redREQStaking.address, parseUnits('1000000000000', 6));
 
 
     await execute('RequiemERC20Token', { from: localhost, log: true }, 'approve', redREQ.address, ethers.constants.MaxInt256);
@@ -100,6 +102,95 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const balanceUser = await redReqContract.balanceOf(localhost)
 
     console.log("Balance RedREQ", balanceUser.toString())
+
+
+    const redReqStakingContract = await ethers.getContractAt('RedRequiemStaking', redREQStaking.address);
+
+
+    await execute('USDC', { from: localhost, log: true }, 'approve', redReqStakingContract.address, ethers.constants.MaxInt256);
+
+    await redReqStakingContract.allocateMoreRewards(
+        parseUnits('1000000', 6),// uint256 _addedReward,
+        1 //  uint256 _days
+    )
+
+    await execute('RedRequiem', { from: localhost, log: true }, 'approve',
+        redREQStaking.address,
+        ethers.constants.MaxInt256
+    );
+
+    await redReqStakingContract.deposit(
+        balanceUser.div(2), //amount
+        localhost //to
+    )
+
+    const usdcContract = await ethers.getContractAt('MockERC20', usdc.address);
+
+    const usdcBalBefore = await usdcContract.balanceOf(localhost)
+
+    console.log("usdc Balance before", usdcBalBefore.toString())
+
+    await redReqStakingContract.harvest(
+        localhost //to
+    )
+
+    const usdcBal = await usdcContract.balanceOf(localhost)
+
+    console.log("usdc balance after harvest", (usdcBal.sub(usdcBalBefore)).toString())
+
+    // await usdcContract.transfer('0x000000000000000000000000000000000000dead', usdcBal)
+
+    const rewardperSec = await redReqStakingContract.getRewardPerSecond()
+
+    console.log("Reward per S", Number(rewardperSec.toString()) / 10e6)
+
+    // await redReqStakingContract.setRewardPerSecond(BigNumber.from(Math.round(1e9 / 24 / 60 / 60)))
+
+    // const rewardperSec2 = await redReqStakingContract.getRewardPerSecond()
+    const pr0 = await redReqStakingContract.pendingReward(localhost)
+
+    // console.log("Reward per S 2", Number(rewardperSec2.toString()) / 10e6, "PR0", pr0.toString())
+    await redReqStakingContract.deposit(
+        balanceUser.div(2), //amount
+        localhost //to
+    )
+    const bn0 = await ethers.provider.getBlockNumber()
+    await network.provider.send("evm_setNextBlockTimestamp", [1925097600])
+    console.log("Block number", bn0)
+
+    await network.provider.send("evm_increaseTime", [3600])
+    for (let i = 0; i < 100; i++) {
+        await network.provider.send("evm_mine")
+    }
+    const bn1 = await ethers.provider.getBlockNumber()
+    console.log("Block number", bn1)
+
+    const pr01 = await redReqStakingContract.pendingReward(localhost)
+
+    console.log("PR01", pr01.toString())
+    const usdcBal01 = await usdcContract.balanceOf(localhost)
+    await redReqStakingContract.harvest(
+        localhost //to
+    )
+    const usdcBal1 = await usdcContract.balanceOf(localhost)
+
+    const pr1 = await redReqStakingContract.pendingReward(localhost)
+
+    console.log("PR1", pr1.toString())
+
+    const accRewardPerShare = await redReqStakingContract.accRewardPerShare()
+
+    console.log("TEDST", accRewardPerShare.toString())
+
+    console.log("usdc balance after 2nd harvest", (usdcBal1.sub(usdcBal01)).toString())
+
+
+    const uInfo = await redReqStakingContract.userInfo(localhost)
+
+    console.log("Uinfo", uInfo)
+
+    console.log("Uinfo Amnt", uInfo.amount.toString())
+    console.log("Uinfo reward debt", uInfo.rewardDebt.toString())
 
 };
 export default func;
