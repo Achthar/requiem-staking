@@ -28,11 +28,29 @@ const _abi = [
     name: "deposit",
     outputs: [
       {
-        internalType: "bool",
-        name: "",
-        type: "bool",
+        internalType: "uint256",
+        name: "send_",
+        type: "uint256",
       },
     ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_recipient",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+    ],
+    name: "mintRewards",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -49,7 +67,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "valueOfToken",
+    name: "valueOf",
     outputs: [
       {
         internalType: "uint256",

@@ -15,7 +15,7 @@ interface IUniswapV2Callee {
 
 // File: contracts/interfaces/ERC20/IERC20.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -99,7 +99,7 @@ interface IERC20 {
 }
 // File: contracts/libraries/UQ112x112.sol
 
-pragma solidity >=0.8.12;
+pragma solidity >=0.8.13;
 
 // a library for handling binary fixed point numbers (https://en.wikipedia.org/wiki/Q_(number_format))
 
@@ -122,7 +122,7 @@ library UQ112x112 {
 
 // File: contracts/libraries/TransferHelper.sol
 
-pragma solidity >=0.8.12;
+pragma solidity >=0.8.13;
 
 // solhint-disable avoid-low-level-calls, reason-string
 
@@ -182,7 +182,7 @@ library TransferHelper {
 
 // File: contracts/libraries/Math.sol
 
-pragma solidity >=0.8.12;
+pragma solidity >=0.8.13;
 
 // a library for performing various math operations
 
@@ -208,7 +208,7 @@ library Math {
 
 // File: contracts/interfaces/IRequiemFormula.sol
 
-pragma solidity >=0.8.12;
+pragma solidity >=0.8.13;
 
 /*
     Bancor Formula interface
@@ -345,7 +345,7 @@ interface IRequiemFormula {
 
 // File: contracts/interfaces/IRequiemSwap.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 interface IRequiemSwap {
   // this funtion requires the correctly calculated amounts as input
@@ -391,7 +391,7 @@ interface IRequiemSwap {
 
 // File: contracts/interfaces/IRequiemPairERC20.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // solhint-disable func-name-mixedcase
 
@@ -443,7 +443,7 @@ interface IRequiemPairERC20 {
 
 // File: contracts/RequiemPairERC20.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // solhint-disable not-rely-on-time, no-inline-assembly, var-name-mixedcase, max-line-length
 
@@ -570,7 +570,7 @@ contract RequiemPairERC20 is IRequiemPairERC20 {
 
 // File: contracts/interfaces/IRequiemWeightedPair.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // solhint-disable func-name-mixedcase
 
@@ -664,7 +664,7 @@ interface IRequiemWeightedPair is IRequiemPairERC20 {
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // solhint-disable
 library RequiemErrors {
@@ -901,7 +901,7 @@ library Errors {
 // size and runtime costs.
 // The `unchecked_at` function was also added, which allows for more gas efficient data reads in some scenarios.
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // solhint-disable func-name-mixedcase
 
@@ -1195,7 +1195,7 @@ library EnumerableSet {
 
 // File: contracts/interfaces/IRequiemWeightedPairFactory.sol
 
-pragma solidity >=0.8.12;
+pragma solidity >=0.8.13;
 
 interface IRequiemWeightedPairFactory {
   event PairCreated(
@@ -1253,7 +1253,7 @@ interface IRequiemWeightedPairFactory {
 
 // File: contracts/RequiemWeightedPair.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // solhint-disable not-rely-on-time, var-name-mixedcase, max-line-length, reason-string, avoid-low-level-calls
 
@@ -1787,7 +1787,7 @@ contract RequiemWeightedPair is
 
 // File: contracts/RequiemWeightedPairFactory.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // solhint-disable no-inline-assembly
 

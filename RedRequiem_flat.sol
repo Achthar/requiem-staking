@@ -2,7 +2,7 @@
 // File: contracts/interfaces/IGovernanceToken.sol
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 interface IGovernanceToken {
     function locked__of(address _addr) external view returns (uint256);
@@ -27,7 +27,7 @@ interface IGovernanceToken {
 // File: contracts/interfaces/IOwnable.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 interface IOwnable {
   function owner() external view returns (address);
@@ -39,7 +39,7 @@ interface IOwnable {
 // File: contracts/libraries/Ownable.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 
 contract Ownable is IOwnable {
@@ -77,7 +77,7 @@ contract Ownable is IOwnable {
 
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -101,7 +101,7 @@ abstract contract Context {
 // File: contracts/interfaces/ERC20/IERC20.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 interface IERC20 {
     function decimals() external view returns (uint8);
@@ -130,7 +130,7 @@ interface IERC20 {
 // The `safeTransfer` and `safeTransferFrom` functions assume that `token` is a contract (an account with code), and
 // work differently from the OpenZeppelin version if it is not.
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 
 /**
@@ -209,7 +209,7 @@ library SafeERC20 {
 
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 
 /**
@@ -237,7 +237,7 @@ interface IERC20Metadata is IERC20 {
 
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 
 
@@ -596,7 +596,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 
 
@@ -639,7 +639,7 @@ abstract contract ERC20Burnable is Context, ERC20 {
 // File: contracts/RedRequiem.sol
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 
 

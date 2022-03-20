@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 import "./interfaces/ERC20/IERC20.sol";
 import "./libraries/SafeERC20.sol";
@@ -10,10 +10,11 @@ import "./libraries/access/OwnableUpgradeable.sol";
 import "./interfaces/IRewarder.sol";
 import "./interfaces/IFundDistributor.sol";
 
+using SafeERC20 for IERC20 global;
+
 // solhint-disable max-line-length
 
 contract RedRequiemStaking is Initializable, OwnableUpgradeable, UUPSUpgradeable, ReentrancyGuardUpgradeable {
-    using SafeERC20 for IERC20;
 
     struct UserInfo {
         uint256 amount;

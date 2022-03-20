@@ -22,27 +22,21 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface IGovernanceLockInterface extends ethers.utils.Interface {
   functions: {
     "create_lock(uint256,uint256)": FunctionFragment;
-    "deposit_for_id(address,uint256,uint256)": FunctionFragment;
     "get_locks(address)": FunctionFragment;
     "get_minted_for_lock(address,uint256)": FunctionFragment;
     "get_minted_for_locks(address)": FunctionFragment;
-    "increase_amount(uint256,uint256)": FunctionFragment;
-    "increase_unlock_time(uint256,uint256)": FunctionFragment;
-    "locked_end(address,uint256)": FunctionFragment;
+    "increase_position(uint256,uint256)": FunctionFragment;
+    "increase_time_to_maturity(uint256,uint256,uint256)": FunctionFragment;
     "locked_of(address,uint256)": FunctionFragment;
     "voting_power_locked_days(uint256,uint256)": FunctionFragment;
     "voting_power_unlock_time(uint256,uint256)": FunctionFragment;
-    "withdraw(uint256)": FunctionFragment;
+    "withdraw(uint256,uint256)": FunctionFragment;
     "withdrawAll()": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "create_lock",
     values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deposit_for_id",
-    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "get_locks", values: [string]): string;
   encodeFunctionData(
@@ -54,16 +48,12 @@ interface IGovernanceLockInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "increase_amount",
+    functionFragment: "increase_position",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "increase_unlock_time",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "locked_end",
-    values: [string, BigNumberish]
+    functionFragment: "increase_time_to_maturity",
+    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "locked_of",
@@ -79,7 +69,7 @@ interface IGovernanceLockInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawAll",
@@ -88,10 +78,6 @@ interface IGovernanceLockInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "create_lock",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "deposit_for_id",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "get_locks", data: BytesLike): Result;
@@ -104,14 +90,13 @@ interface IGovernanceLockInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "increase_amount",
+    functionFragment: "increase_position",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "increase_unlock_time",
+    functionFragment: "increase_time_to_maturity",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "locked_end", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "locked_of", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "voting_power_locked_days",
@@ -180,28 +165,30 @@ export class IGovernanceLock extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    deposit_for_id(
-      _addr: string,
-      _value: BigNumberish,
-      _id: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     get_locks(
       _addr: string,
       overrides?: CallOverrides
     ): Promise<
-      [([BigNumber, BigNumber] & { amount: BigNumber; end: BigNumber })[]] & {
-        _balances: ([BigNumber, BigNumber] & {
+      [
+        ([BigNumber, BigNumber, BigNumber, BigNumber] & {
           amount: BigNumber;
           end: BigNumber;
+          minted: BigNumber;
+          votingPower: BigNumber;
+        })[]
+      ] & {
+        _balances: ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+          amount: BigNumber;
+          end: BigNumber;
+          minted: BigNumber;
+          votingPower: BigNumber;
         })[];
       }
     >;
 
     get_minted_for_lock(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { _minted: BigNumber }>;
 
@@ -210,27 +197,22 @@ export class IGovernanceLock extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]] & { _minted: BigNumber[] }>;
 
-    increase_amount(
+    increase_position(
       _value: BigNumberish,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    increase_unlock_time(
-      _days: BigNumberish,
-      _id: BigNumberish,
+    increase_time_to_maturity(
+      _amount: BigNumberish,
+      _end: BigNumberish,
+      _newEnd: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    locked_end(
-      _addr: string,
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     locked_of(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -247,7 +229,8 @@ export class IGovernanceLock extends BaseContract {
     ): Promise<[BigNumber]>;
 
     withdraw(
-      _id: BigNumberish,
+      _end: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -262,23 +245,21 @@ export class IGovernanceLock extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  deposit_for_id(
-    _addr: string,
-    _value: BigNumberish,
-    _id: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   get_locks(
     _addr: string,
     overrides?: CallOverrides
   ): Promise<
-    ([BigNumber, BigNumber] & { amount: BigNumber; end: BigNumber })[]
+    ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+      amount: BigNumber;
+      end: BigNumber;
+      minted: BigNumber;
+      votingPower: BigNumber;
+    })[]
   >;
 
   get_minted_for_lock(
     _addr: string,
-    _id: BigNumberish,
+    _end: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -287,27 +268,22 @@ export class IGovernanceLock extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  increase_amount(
+  increase_position(
     _value: BigNumberish,
-    _id: BigNumberish,
+    _end: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  increase_unlock_time(
-    _days: BigNumberish,
-    _id: BigNumberish,
+  increase_time_to_maturity(
+    _amount: BigNumberish,
+    _end: BigNumberish,
+    _newEnd: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  locked_end(
-    _addr: string,
-    _id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   locked_of(
     _addr: string,
-    _id: BigNumberish,
+    _end: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -324,7 +300,8 @@ export class IGovernanceLock extends BaseContract {
   ): Promise<BigNumber>;
 
   withdraw(
-    _id: BigNumberish,
+    _end: BigNumberish,
+    _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -339,23 +316,21 @@ export class IGovernanceLock extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    deposit_for_id(
-      _addr: string,
-      _value: BigNumberish,
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     get_locks(
       _addr: string,
       overrides?: CallOverrides
     ): Promise<
-      ([BigNumber, BigNumber] & { amount: BigNumber; end: BigNumber })[]
+      ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+        amount: BigNumber;
+        end: BigNumber;
+        minted: BigNumber;
+        votingPower: BigNumber;
+      })[]
     >;
 
     get_minted_for_lock(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -364,97 +339,22 @@ export class IGovernanceLock extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    increase_amount(
+    increase_position(
       _value: BigNumberish,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    increase_unlock_time(
-      _days: BigNumberish,
-      _id: BigNumberish,
+    increase_time_to_maturity(
+      _amount: BigNumberish,
+      _end: BigNumberish,
+      _newEnd: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    locked_end(
-      _addr: string,
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     locked_of(
       _addr: string,
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    voting_power_locked_days(
-      _value: BigNumberish,
-      _days: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    voting_power_unlock_time(
-      _value: BigNumberish,
-      _unlock_time: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    withdraw(_id: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    withdrawAll(overrides?: CallOverrides): Promise<void>;
-  };
-
-  filters: {};
-
-  estimateGas: {
-    create_lock(
-      _value: BigNumberish,
-      _days: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    deposit_for_id(
-      _addr: string,
-      _value: BigNumberish,
-      _id: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    get_locks(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    get_minted_for_lock(
-      _addr: string,
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    get_minted_for_locks(
-      _addr: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    increase_amount(
-      _value: BigNumberish,
-      _id: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    increase_unlock_time(
-      _days: BigNumberish,
-      _id: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    locked_end(
-      _addr: string,
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    locked_of(
-      _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -471,7 +371,70 @@ export class IGovernanceLock extends BaseContract {
     ): Promise<BigNumber>;
 
     withdraw(
-      _id: BigNumberish,
+      _end: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawAll(overrides?: CallOverrides): Promise<void>;
+  };
+
+  filters: {};
+
+  estimateGas: {
+    create_lock(
+      _value: BigNumberish,
+      _days: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    get_locks(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    get_minted_for_lock(
+      _addr: string,
+      _end: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    get_minted_for_locks(
+      _addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    increase_position(
+      _value: BigNumberish,
+      _end: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    increase_time_to_maturity(
+      _amount: BigNumberish,
+      _end: BigNumberish,
+      _newEnd: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    locked_of(
+      _addr: string,
+      _end: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    voting_power_locked_days(
+      _value: BigNumberish,
+      _days: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    voting_power_unlock_time(
+      _value: BigNumberish,
+      _unlock_time: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    withdraw(
+      _end: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -487,13 +450,6 @@ export class IGovernanceLock extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    deposit_for_id(
-      _addr: string,
-      _value: BigNumberish,
-      _id: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     get_locks(
       _addr: string,
       overrides?: CallOverrides
@@ -501,7 +457,7 @@ export class IGovernanceLock extends BaseContract {
 
     get_minted_for_lock(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -510,27 +466,22 @@ export class IGovernanceLock extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    increase_amount(
+    increase_position(
       _value: BigNumberish,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    increase_unlock_time(
-      _days: BigNumberish,
-      _id: BigNumberish,
+    increase_time_to_maturity(
+      _amount: BigNumberish,
+      _end: BigNumberish,
+      _newEnd: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    locked_end(
-      _addr: string,
-      _id: BigNumberish,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     locked_of(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -547,7 +498,8 @@ export class IGovernanceLock extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     withdraw(
-      _id: BigNumberish,
+      _end: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

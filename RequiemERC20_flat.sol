@@ -2,7 +2,7 @@
 // File: contracts/interfaces/IOwnable.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 interface IOwnable {
   function owner() external view returns (address);
@@ -14,7 +14,7 @@ interface IOwnable {
 // File: contracts/libraries/Ownable.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 
 contract Ownable is IOwnable {
@@ -52,7 +52,7 @@ contract Ownable is IOwnable {
 
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev https://eips.ethereum.org/EIPS/eip-712[EIP 712] is a standard for hashing and signing of typed structured data.
@@ -142,7 +142,7 @@ abstract contract EIP712 {
 
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev Interface of the ERC20 Permit extension allowing approvals to be made via signatures, as defined in
@@ -204,7 +204,7 @@ interface IERC20Permit {
 
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -228,7 +228,7 @@ abstract contract Context {
 // File: contracts/interfaces/ERC20/IERC20.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 interface IERC20 {
     function decimals() external view returns (uint8);
@@ -253,7 +253,7 @@ interface IERC20 {
 
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 
 /**
@@ -281,7 +281,7 @@ interface IERC20Metadata is IERC20 {
 
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 
 
@@ -640,7 +640,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 
 
@@ -722,7 +722,7 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712 {
 
 
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 
 
@@ -828,7 +828,7 @@ abstract contract Initializable {
 // File: contracts/RequiemERC20.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 
 

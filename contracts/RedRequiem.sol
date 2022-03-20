@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 import "./libraries/ERC20Burnable.sol";
 import "./libraries/SafeERC20.sol";
 import "./libraries/Ownable.sol";
 import "./interfaces/IGovernanceToken.sol";
 
-contract RedRequiem is ERC20Burnable, IGovernanceToken, Ownable {
-    using SafeERC20 for IERC20;
+using SafeERC20 for IERC20 global;
 
+contract RedRequiem is ERC20Burnable, IGovernanceToken, Ownable {
     // flags
     uint256 private _unlocked;
 

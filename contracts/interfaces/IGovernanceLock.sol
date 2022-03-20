@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 interface IGovernanceLock {
   struct LockedBalance {
     uint256 amount;
     uint256 end;
+    uint256 minted;
+    uint256 votingPower;
   }
 
   function get_locks(address _addr)
@@ -17,17 +19,12 @@ interface IGovernanceLock {
     view
     returns (uint256[] memory _minted);
 
-  function get_minted_for_lock(address _addr, uint256 _id)
+  function get_minted_for_lock(address _addr, uint256 _end)
     external
     view
     returns (uint256 _minted);
 
-  function locked_of(address _addr, uint256 _id)
-    external
-    view
-    returns (uint256);
-
-  function locked_end(address _addr, uint256 _id)
+  function locked_of(address _addr, uint256 _end)
     external
     view
     returns (uint256);
@@ -42,19 +39,17 @@ interface IGovernanceLock {
     view
     returns (uint256);
 
-  function deposit_for_id(
-    address _addr,
-    uint256 _value,
-    uint256 _id
-  ) external;
-
   function create_lock(uint256 _value, uint256 _days) external;
 
-  function increase_amount(uint256 _value, uint256 _id) external;
+  function increase_position(uint256 _value, uint256 _end) external;
 
-  function increase_unlock_time(uint256 _days, uint256 _id) external;
+  function increase_time_to_maturity(
+    uint256 _amount,
+    uint256 _end,
+    uint256 _newEnd
+  ) external;
 
-  function withdraw(uint256 _id) external;
+  function withdraw(uint256 _end, uint256 _amount) external;
 
   function withdrawAll() external;
 }

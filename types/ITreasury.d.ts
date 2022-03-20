@@ -22,7 +22,8 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface ITreasuryInterface extends ethers.utils.Interface {
   functions: {
     "deposit(uint256,address,uint256)": FunctionFragment;
-    "valueOfToken(address,uint256)": FunctionFragment;
+    "mintRewards(address,uint256)": FunctionFragment;
+    "valueOf(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -30,15 +31,20 @@ interface ITreasuryInterface extends ethers.utils.Interface {
     values: [BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "valueOfToken",
+    functionFragment: "mintRewards",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "valueOf",
     values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "valueOfToken",
+    functionFragment: "mintRewards",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "valueOf", data: BytesLike): Result;
 
   events: {};
 }
@@ -94,7 +100,13 @@ export class ITreasury extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    valueOfToken(
+    mintRewards(
+      _recipient: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    valueOf(
       _token: string,
       _amount: BigNumberish,
       overrides?: CallOverrides
@@ -108,7 +120,13 @@ export class ITreasury extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  valueOfToken(
+  mintRewards(
+    _recipient: string,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  valueOf(
     _token: string,
     _amount: BigNumberish,
     overrides?: CallOverrides
@@ -120,9 +138,15 @@ export class ITreasury extends BaseContract {
       _token: string,
       _profit: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<BigNumber>;
 
-    valueOfToken(
+    mintRewards(
+      _recipient: string,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    valueOf(
       _token: string,
       _amount: BigNumberish,
       overrides?: CallOverrides
@@ -139,7 +163,13 @@ export class ITreasury extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    valueOfToken(
+    mintRewards(
+      _recipient: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    valueOf(
       _token: string,
       _amount: BigNumberish,
       overrides?: CallOverrides
@@ -154,7 +184,13 @@ export class ITreasury extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    valueOfToken(
+    mintRewards(
+      _recipient: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    valueOf(
       _token: string,
       _amount: BigNumberish,
       overrides?: CallOverrides

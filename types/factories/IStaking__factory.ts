@@ -10,6 +10,32 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_recipient",
+        type: "address",
+      },
+    ],
+    name: "claim",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "index",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_amount",
         type: "uint256",
@@ -21,6 +47,30 @@ const _abi = [
       },
     ],
     name: "stake",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_recipient",
+        type: "address",
+      },
+    ],
+    name: "unstake",
     outputs: [
       {
         internalType: "bool",

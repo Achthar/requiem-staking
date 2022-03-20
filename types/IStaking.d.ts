@@ -21,15 +21,27 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface IStakingInterface extends ethers.utils.Interface {
   functions: {
+    "claim(address)": FunctionFragment;
+    "index()": FunctionFragment;
     "stake(uint256,address)": FunctionFragment;
+    "unstake(uint256,address)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "claim", values: [string]): string;
+  encodeFunctionData(functionFragment: "index", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "stake",
     values: [BigNumberish, string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "unstake",
+    values: [BigNumberish, string]
+  ): string;
 
+  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "index", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "unstake", data: BytesLike): Result;
 
   events: {};
 }
@@ -78,12 +90,32 @@ export class IStaking extends BaseContract {
   interface: IStakingInterface;
 
   functions: {
+    claim(
+      _recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    index(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     stake(
       _amount: BigNumberish,
       _recipient: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    unstake(
+      _amount: BigNumberish,
+      _recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
+
+  claim(
+    _recipient: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  index(overrides?: CallOverrides): Promise<BigNumber>;
 
   stake(
     _amount: BigNumberish,
@@ -91,8 +123,24 @@ export class IStaking extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  unstake(
+    _amount: BigNumberish,
+    _recipient: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
+    claim(_recipient: string, overrides?: CallOverrides): Promise<void>;
+
+    index(overrides?: CallOverrides): Promise<BigNumber>;
+
     stake(
+      _amount: BigNumberish,
+      _recipient: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    unstake(
       _amount: BigNumberish,
       _recipient: string,
       overrides?: CallOverrides
@@ -102,7 +150,20 @@ export class IStaking extends BaseContract {
   filters: {};
 
   estimateGas: {
+    claim(
+      _recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    index(overrides?: CallOverrides): Promise<BigNumber>;
+
     stake(
+      _amount: BigNumberish,
+      _recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    unstake(
       _amount: BigNumberish,
       _recipient: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -110,7 +171,20 @@ export class IStaking extends BaseContract {
   };
 
   populateTransaction: {
+    claim(
+      _recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    index(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     stake(
+      _amount: BigNumberish,
+      _recipient: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unstake(
       _amount: BigNumberish,
       _recipient: string,
       overrides?: Overrides & { from?: string | Promise<string> }

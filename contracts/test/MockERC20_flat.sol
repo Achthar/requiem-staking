@@ -2,7 +2,7 @@
 
 // File: libraries/Context.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -25,7 +25,7 @@ abstract contract Context {
 }
 // File: interfaces/ERC20/IERC20.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -109,7 +109,7 @@ interface IERC20 {
 }
 // File: interfaces/ERC20/IERC20Metadata.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev Interface for the optional metadata functions from the ERC20 standard.
@@ -134,7 +134,7 @@ interface IERC20Metadata is IERC20 {
 }
 // File: libraries/ERC20.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -528,7 +528,7 @@ contract ERC20Test is Context, IERC20, IERC20Metadata {
 
 // File: mocks/MockERC20.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev THIS CONTRACT IS FOR TESTING PURPOSES ONLY.

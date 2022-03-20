@@ -2,7 +2,7 @@
 
 // File: interfaces/IRequiemQPairManager.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // solhint-disable func-name-mixedcase
 
@@ -143,7 +143,7 @@ interface IRequiemQPairManager {
 
 // File: interfaces/ERC20/IERC20.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -240,7 +240,7 @@ interface IERC20 {
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 /**
  * @dev Interface for WETH9.
@@ -254,7 +254,7 @@ interface IWETH is IERC20 {
 
 // File: libraries/TransferHelper.sol
 
-pragma solidity >=0.8.12;
+pragma solidity >=0.8.13;
 
 // solhint-disable avoid-low-level-calls, reason-string
 
@@ -314,7 +314,7 @@ library TransferHelper {
 
 // File: interfaces/IRequiemSwap.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 interface IRequiemSwap {
   // this funtion requires the correctly calculated amounts as input
@@ -360,7 +360,7 @@ interface IRequiemSwap {
 
 // File: interfaces/IRequiemERC20.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // solhint-disable func-name-mixedcase
 
@@ -412,7 +412,7 @@ interface IRequiemERC20 {
 
 // File: interfaces/IRequiemPair.sol
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // solhint-disable func-name-mixedcase
 
@@ -493,7 +493,7 @@ interface IRequiemPair is IRequiemERC20 {
 
 // File: interfaces/IRequiemFormula.sol
 
-pragma solidity >=0.8.12;
+pragma solidity >=0.8.13;
 
 /*
     Bancor Formula interface
@@ -688,7 +688,7 @@ interface IRequiemFactory {
 
 // File: RequiemQPairManager.sol
 
-pragma solidity >=0.8.12;
+pragma solidity >=0.8.13;
 
 // solhint-disable not-rely-on-time, var-name-mixedcase, max-line-length, reason-string
 

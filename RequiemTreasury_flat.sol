@@ -2,7 +2,7 @@
 // File: contracts/interfaces/IBondingCalculator.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 interface IBondingCalculator {
   function valuation(address pair_, uint256 amount_)
@@ -14,7 +14,7 @@ interface IBondingCalculator {
 // File: contracts/interfaces/IREQTERC20.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 interface IREQTERC20 {
     function burnFrom(address account_, uint256 amount_) external;
@@ -23,7 +23,7 @@ interface IREQTERC20 {
 // File: contracts/interfaces/ERC20/IERC20Mintable.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 interface IERC20Mintable {
   function mint(uint256 amount_) external;
@@ -34,7 +34,7 @@ interface IERC20Mintable {
 // File: contracts/interfaces/ITreasury.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 interface ITreasury {
   function deposit(
@@ -55,7 +55,7 @@ interface ITreasury {
 
 
 
-pragma solidity >=0.8.12;
+pragma solidity >=0.8.13;
 
 // solhint-disable no-inline-assembly, reason-string, max-line-length
 
@@ -188,7 +188,7 @@ library FullMath {
 // File: contracts/libraries/math/FixedPoint.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 
 library FixedPoint {
@@ -241,7 +241,7 @@ library FixedPoint {
 // File: contracts/interfaces/ERC20/IERC20.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 interface IERC20 {
     function decimals() external view returns (uint8);
@@ -278,7 +278,7 @@ interface IERC20 {
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 // solhint-disable
 library RequiemErrors {
@@ -504,7 +504,7 @@ library Errors {
 // The `safeTransfer` and `safeTransferFrom` functions assume that `token` is a contract (an account with code), and
 // work differently from the OpenZeppelin version if it is not.
 
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 
 
@@ -583,7 +583,7 @@ library SafeERC20 {
 // File: contracts/interfaces/IManageable.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 
 interface IManageable {
@@ -599,7 +599,7 @@ interface IManageable {
 
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 
 contract Manageable is IManageable {
@@ -649,7 +649,7 @@ contract Manageable is IManageable {
 // File: contracts/RequiemTreasury.sol
 
 
-pragma solidity 0.8.12;
+pragma solidity 0.8.13;
 
 
 

@@ -22,7 +22,6 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface ERC20PermitInterface extends ethers.utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
-    "PERMIT_TYPEHASH()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -40,10 +39,6 @@ interface ERC20PermitInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "DOMAIN_SEPARATOR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "PERMIT_TYPEHASH",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -94,10 +89,6 @@ interface ERC20PermitInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "DOMAIN_SEPARATOR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "PERMIT_TYPEHASH",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
@@ -193,8 +184,6 @@ export class ERC20Permit extends BaseContract {
   functions: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
-
     allowance(
       owner: string,
       spender: string,
@@ -230,7 +219,7 @@ export class ERC20Permit extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,
@@ -257,8 +246,6 @@ export class ERC20Permit extends BaseContract {
   };
 
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
-
-  PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
   allowance(
     owner: string,
@@ -295,7 +282,7 @@ export class ERC20Permit extends BaseContract {
   permit(
     owner: string,
     spender: string,
-    amount: BigNumberish,
+    value: BigNumberish,
     deadline: BigNumberish,
     v: BigNumberish,
     r: BytesLike,
@@ -322,8 +309,6 @@ export class ERC20Permit extends BaseContract {
 
   callStatic: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
-
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
     allowance(
       owner: string,
@@ -360,7 +345,7 @@ export class ERC20Permit extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,
@@ -427,8 +412,6 @@ export class ERC20Permit extends BaseContract {
   estimateGas: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
-
     allowance(
       owner: string,
       spender: string,
@@ -464,7 +447,7 @@ export class ERC20Permit extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,
@@ -492,8 +475,6 @@ export class ERC20Permit extends BaseContract {
 
   populateTransaction: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     allowance(
       owner: string,
@@ -536,7 +517,7 @@ export class ERC20Permit extends BaseContract {
     permit(
       owner: string,
       spender: string,
-      amount: BigNumberish,
+      value: BigNumberish,
       deadline: BigNumberish,
       v: BigNumberish,
       r: BytesLike,

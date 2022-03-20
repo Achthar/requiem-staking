@@ -25,7 +25,9 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     "MAXTIME()": FunctionFragment;
     "MAX_WITHDRAWAL_PENALTY()": FunctionFragment;
     "MINDAYS()": FunctionFragment;
+    "MINTIME()": FunctionFragment;
     "PRECISION()": FunctionFragment;
+    "REF_DATE()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -34,23 +36,24 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     "create_lock(uint256,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
-    "deposit_for_id(address,uint256,uint256)": FunctionFragment;
     "earlyWithdrawPenaltyRate()": FunctionFragment;
     "emergencyWithdraw(uint256)": FunctionFragment;
     "emergencyWithdrawAll()": FunctionFragment;
+    "get_amount_minted(uint256,uint256)": FunctionFragment;
     "get_locks(address)": FunctionFragment;
     "get_minted_for_lock(address,uint256)": FunctionFragment;
     "get_minted_for_locks(address)": FunctionFragment;
+    "get_share(address)": FunctionFragment;
+    "get_voting_power(address,uint256)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "increase_amount(uint256,uint256)": FunctionFragment;
-    "increase_unlock_time(uint256,uint256)": FunctionFragment;
-    "lockIds(address)": FunctionFragment;
-    "lockedBalances(address,uint256)": FunctionFragment;
+    "increase_position(uint256,uint256)": FunctionFragment;
+    "increase_time_to_maturity(uint256,uint256,uint256)": FunctionFragment;
+    "lockedPosition(address,uint256)": FunctionFragment;
     "lockedToken()": FunctionFragment;
-    "locked_end(address,uint256)": FunctionFragment;
     "locked_of(address,uint256)": FunctionFragment;
     "minLockedAmount()": FunctionFragment;
     "mintedForLock(address,uint256)": FunctionFragment;
+    "multipliers(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "penaltyCollector()": FunctionFragment;
@@ -63,11 +66,11 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferFullLock(uint256,address)": FunctionFragment;
-    "transferLock(uint256,uint256,address)": FunctionFragment;
+    "transferLockShare(uint256,uint256,address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "voting_power_locked_days(uint256,uint256)": FunctionFragment;
     "voting_power_unlock_time(uint256,uint256)": FunctionFragment;
-    "withdraw(uint256)": FunctionFragment;
+    "withdraw(uint256,uint256)": FunctionFragment;
     "withdrawAll()": FunctionFragment;
   };
 
@@ -78,7 +81,9 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "MINDAYS", values?: undefined): string;
+  encodeFunctionData(functionFragment: "MINTIME", values?: undefined): string;
   encodeFunctionData(functionFragment: "PRECISION", values?: undefined): string;
+  encodeFunctionData(functionFragment: "REF_DATE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -103,10 +108,6 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "deposit_for_id",
-    values: [string, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "earlyWithdrawPenaltyRate",
     values?: undefined
   ): string;
@@ -118,6 +119,10 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     functionFragment: "emergencyWithdrawAll",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "get_amount_minted",
+    values: [BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "get_locks", values: [string]): string;
   encodeFunctionData(
     functionFragment: "get_minted_for_lock",
@@ -127,30 +132,30 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     functionFragment: "get_minted_for_locks",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "get_share", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "get_voting_power",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "increaseAllowance",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "increase_amount",
+    functionFragment: "increase_position",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "increase_unlock_time",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: "increase_time_to_maturity",
+    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "lockIds", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "lockedBalances",
+    functionFragment: "lockedPosition",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "lockedToken",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "locked_end",
-    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "locked_of",
@@ -162,6 +167,10 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "mintedForLock",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "multipliers",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
@@ -204,7 +213,7 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "transferLock",
+    functionFragment: "transferLockShare",
     values: [BigNumberish, BigNumberish, string]
   ): string;
   encodeFunctionData(
@@ -221,7 +230,7 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawAll",
@@ -235,7 +244,9 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "MINDAYS", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "MINTIME", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "PRECISION", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "REF_DATE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -251,10 +262,6 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "deposit_for_id",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "earlyWithdrawPenaltyRate",
     data: BytesLike
   ): Result;
@@ -266,6 +273,10 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     functionFragment: "emergencyWithdrawAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "get_amount_minted",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "get_locks", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "get_minted_for_lock",
@@ -275,28 +286,31 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     functionFragment: "get_minted_for_locks",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "get_share", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "get_voting_power",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "increase_amount",
+    functionFragment: "increase_position",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "increase_unlock_time",
+    functionFragment: "increase_time_to_maturity",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "lockIds", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "lockedBalances",
+    functionFragment: "lockedPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "lockedToken",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "locked_end", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "locked_of", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "minLockedAmount",
@@ -304,6 +318,10 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "mintedForLock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "multipliers",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
@@ -343,7 +361,7 @@ interface BloodRedRequiemInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "transferLock",
+    functionFragment: "transferLockShare",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -480,7 +498,11 @@ export class BloodRedRequiem extends BaseContract {
 
     MINDAYS(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    MINTIME(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     PRECISION(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    REF_DATE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     allowance(
       owner: string,
@@ -509,7 +531,7 @@ export class BloodRedRequiem extends BaseContract {
 
     create_lock(
       _value: BigNumberish,
-      _days: BigNumberish,
+      _end: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -521,17 +543,10 @@ export class BloodRedRequiem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    deposit_for_id(
-      _addr: string,
-      _value: BigNumberish,
-      _id: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     earlyWithdrawPenaltyRate(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     emergencyWithdraw(
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -539,21 +554,36 @@ export class BloodRedRequiem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    get_amount_minted(
+      _value: BigNumberish,
+      _unlock_time: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     get_locks(
       _addr: string,
       overrides?: CallOverrides
     ): Promise<
-      [([BigNumber, BigNumber] & { amount: BigNumber; end: BigNumber })[]] & {
-        _balances: ([BigNumber, BigNumber] & {
+      [
+        ([BigNumber, BigNumber, BigNumber, BigNumber] & {
           amount: BigNumber;
           end: BigNumber;
+          minted: BigNumber;
+          votingPower: BigNumber;
+        })[]
+      ] & {
+        _balances: ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+          amount: BigNumber;
+          end: BigNumber;
+          minted: BigNumber;
+          votingPower: BigNumber;
         })[];
       }
     >;
 
     get_minted_for_lock(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { _minted: BigNumber }>;
 
@@ -562,49 +592,59 @@ export class BloodRedRequiem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]] & { _minted: BigNumber[] }>;
 
+    get_share(
+      _addr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { _vote: BigNumber }>;
+
+    get_voting_power(
+      _addr: string,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { _votingPower: BigNumber }>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    increase_amount(
+    increase_position(
       _value: BigNumberish,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    increase_unlock_time(
-      _days: BigNumberish,
-      _id: BigNumberish,
+    increase_time_to_maturity(
+      _amount: BigNumberish,
+      _end: BigNumberish,
+      _newEnd: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    lockIds(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    lockedBalances(
+    lockedPosition(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { amount: BigNumber; end: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
     lockedToken(overrides?: CallOverrides): Promise<[string]>;
 
-    locked_end(
-      _addr: string,
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     locked_of(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     minLockedAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     mintedForLock(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    multipliers(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -653,14 +693,14 @@ export class BloodRedRequiem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     transferFullLock(
-      _id: BigNumberish,
+      _end: BigNumberish,
       _to: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    transferLock(
-      _amountThis: BigNumberish,
-      _id: BigNumberish,
+    transferLockShare(
+      _amount: BigNumberish,
+      _end: BigNumberish,
       _to: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -683,7 +723,8 @@ export class BloodRedRequiem extends BaseContract {
     ): Promise<[BigNumber]>;
 
     withdraw(
-      _id: BigNumberish,
+      _end: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -700,7 +741,11 @@ export class BloodRedRequiem extends BaseContract {
 
   MINDAYS(overrides?: CallOverrides): Promise<BigNumber>;
 
+  MINTIME(overrides?: CallOverrides): Promise<BigNumber>;
+
   PRECISION(overrides?: CallOverrides): Promise<BigNumber>;
+
+  REF_DATE(overrides?: CallOverrides): Promise<BigNumber>;
 
   allowance(
     owner: string,
@@ -729,7 +774,7 @@ export class BloodRedRequiem extends BaseContract {
 
   create_lock(
     _value: BigNumberish,
-    _days: BigNumberish,
+    _end: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -741,17 +786,10 @@ export class BloodRedRequiem extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  deposit_for_id(
-    _addr: string,
-    _value: BigNumberish,
-    _id: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   earlyWithdrawPenaltyRate(overrides?: CallOverrides): Promise<BigNumber>;
 
   emergencyWithdraw(
-    _id: BigNumberish,
+    _end: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -759,16 +797,27 @@ export class BloodRedRequiem extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  get_amount_minted(
+    _value: BigNumberish,
+    _unlock_time: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   get_locks(
     _addr: string,
     overrides?: CallOverrides
   ): Promise<
-    ([BigNumber, BigNumber] & { amount: BigNumber; end: BigNumber })[]
+    ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+      amount: BigNumber;
+      end: BigNumber;
+      minted: BigNumber;
+      votingPower: BigNumber;
+    })[]
   >;
 
   get_minted_for_lock(
     _addr: string,
-    _id: BigNumberish,
+    _end: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -777,49 +826,56 @@ export class BloodRedRequiem extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  get_share(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  get_voting_power(
+    _addr: string,
+    _amount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   increaseAllowance(
     spender: string,
     addedValue: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  increase_amount(
+  increase_position(
     _value: BigNumberish,
-    _id: BigNumberish,
+    _end: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  increase_unlock_time(
-    _days: BigNumberish,
-    _id: BigNumberish,
+  increase_time_to_maturity(
+    _amount: BigNumberish,
+    _end: BigNumberish,
+    _newEnd: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  lockIds(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  lockedBalances(
+  lockedPosition(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { amount: BigNumber; end: BigNumber }>;
+  ): Promise<BigNumber>;
 
   lockedToken(overrides?: CallOverrides): Promise<string>;
 
-  locked_end(
-    _addr: string,
-    _id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   locked_of(
     _addr: string,
-    _id: BigNumberish,
+    _end: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   minLockedAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
   mintedForLock(
+    arg0: string,
+    arg1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  multipliers(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
@@ -868,14 +924,14 @@ export class BloodRedRequiem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   transferFullLock(
-    _id: BigNumberish,
+    _end: BigNumberish,
     _to: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  transferLock(
-    _amountThis: BigNumberish,
-    _id: BigNumberish,
+  transferLockShare(
+    _amount: BigNumberish,
+    _end: BigNumberish,
     _to: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -898,7 +954,8 @@ export class BloodRedRequiem extends BaseContract {
   ): Promise<BigNumber>;
 
   withdraw(
-    _id: BigNumberish,
+    _end: BigNumberish,
+    _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -915,7 +972,11 @@ export class BloodRedRequiem extends BaseContract {
 
     MINDAYS(overrides?: CallOverrides): Promise<BigNumber>;
 
+    MINTIME(overrides?: CallOverrides): Promise<BigNumber>;
+
     PRECISION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    REF_DATE(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
       owner: string,
@@ -941,7 +1002,7 @@ export class BloodRedRequiem extends BaseContract {
 
     create_lock(
       _value: BigNumberish,
-      _days: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -953,32 +1014,36 @@ export class BloodRedRequiem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    deposit_for_id(
-      _addr: string,
-      _value: BigNumberish,
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     earlyWithdrawPenaltyRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     emergencyWithdraw(
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     emergencyWithdrawAll(overrides?: CallOverrides): Promise<void>;
 
+    get_amount_minted(
+      _value: BigNumberish,
+      _unlock_time: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     get_locks(
       _addr: string,
       overrides?: CallOverrides
     ): Promise<
-      ([BigNumber, BigNumber] & { amount: BigNumber; end: BigNumber })[]
+      ([BigNumber, BigNumber, BigNumber, BigNumber] & {
+        amount: BigNumber;
+        end: BigNumber;
+        minted: BigNumber;
+        votingPower: BigNumber;
+      })[]
     >;
 
     get_minted_for_lock(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -987,49 +1052,56 @@ export class BloodRedRequiem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    get_share(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    get_voting_power(
+      _addr: string,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    increase_amount(
+    increase_position(
       _value: BigNumberish,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    increase_unlock_time(
-      _days: BigNumberish,
-      _id: BigNumberish,
+    increase_time_to_maturity(
+      _amount: BigNumberish,
+      _end: BigNumberish,
+      _newEnd: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    lockIds(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    lockedBalances(
+    lockedPosition(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { amount: BigNumber; end: BigNumber }>;
+    ): Promise<BigNumber>;
 
     lockedToken(overrides?: CallOverrides): Promise<string>;
 
-    locked_end(
-      _addr: string,
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     locked_of(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     minLockedAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
     mintedForLock(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    multipliers(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -1076,14 +1148,14 @@ export class BloodRedRequiem extends BaseContract {
     ): Promise<boolean>;
 
     transferFullLock(
-      _id: BigNumberish,
+      _end: BigNumberish,
       _to: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    transferLock(
-      _amountThis: BigNumberish,
-      _id: BigNumberish,
+    transferLockShare(
+      _amount: BigNumberish,
+      _end: BigNumberish,
       _to: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1105,7 +1177,11 @@ export class BloodRedRequiem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    withdraw(_id: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    withdraw(
+      _end: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     withdrawAll(overrides?: CallOverrides): Promise<void>;
   };
@@ -1245,7 +1321,11 @@ export class BloodRedRequiem extends BaseContract {
 
     MINDAYS(overrides?: CallOverrides): Promise<BigNumber>;
 
+    MINTIME(overrides?: CallOverrides): Promise<BigNumber>;
+
     PRECISION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    REF_DATE(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
       owner: string,
@@ -1274,7 +1354,7 @@ export class BloodRedRequiem extends BaseContract {
 
     create_lock(
       _value: BigNumberish,
-      _days: BigNumberish,
+      _end: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1286,17 +1366,10 @@ export class BloodRedRequiem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    deposit_for_id(
-      _addr: string,
-      _value: BigNumberish,
-      _id: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     earlyWithdrawPenaltyRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     emergencyWithdraw(
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1304,16 +1377,30 @@ export class BloodRedRequiem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    get_amount_minted(
+      _value: BigNumberish,
+      _unlock_time: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     get_locks(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     get_minted_for_lock(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     get_minted_for_locks(
       _addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    get_share(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    get_voting_power(
+      _addr: string,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1323,21 +1410,20 @@ export class BloodRedRequiem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    increase_amount(
+    increase_position(
       _value: BigNumberish,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    increase_unlock_time(
-      _days: BigNumberish,
-      _id: BigNumberish,
+    increase_time_to_maturity(
+      _amount: BigNumberish,
+      _end: BigNumberish,
+      _newEnd: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    lockIds(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    lockedBalances(
+    lockedPosition(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -1345,21 +1431,21 @@ export class BloodRedRequiem extends BaseContract {
 
     lockedToken(overrides?: CallOverrides): Promise<BigNumber>;
 
-    locked_end(
-      _addr: string,
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     locked_of(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     minLockedAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
     mintedForLock(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    multipliers(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -1408,14 +1494,14 @@ export class BloodRedRequiem extends BaseContract {
     ): Promise<BigNumber>;
 
     transferFullLock(
-      _id: BigNumberish,
+      _end: BigNumberish,
       _to: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    transferLock(
-      _amountThis: BigNumberish,
-      _id: BigNumberish,
+    transferLockShare(
+      _amount: BigNumberish,
+      _end: BigNumberish,
       _to: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1438,7 +1524,8 @@ export class BloodRedRequiem extends BaseContract {
     ): Promise<BigNumber>;
 
     withdraw(
-      _id: BigNumberish,
+      _end: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1458,7 +1545,11 @@ export class BloodRedRequiem extends BaseContract {
 
     MINDAYS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    MINTIME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     PRECISION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    REF_DATE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     allowance(
       owner: string,
@@ -1490,7 +1581,7 @@ export class BloodRedRequiem extends BaseContract {
 
     create_lock(
       _value: BigNumberish,
-      _days: BigNumberish,
+      _end: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1502,24 +1593,23 @@ export class BloodRedRequiem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    deposit_for_id(
-      _addr: string,
-      _value: BigNumberish,
-      _id: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     earlyWithdrawPenaltyRate(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     emergencyWithdraw(
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     emergencyWithdrawAll(
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    get_amount_minted(
+      _value: BigNumberish,
+      _unlock_time: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     get_locks(
@@ -1529,12 +1619,23 @@ export class BloodRedRequiem extends BaseContract {
 
     get_minted_for_lock(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     get_minted_for_locks(
       _addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    get_share(
+      _addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    get_voting_power(
+      _addr: string,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1544,24 +1645,20 @@ export class BloodRedRequiem extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    increase_amount(
+    increase_position(
       _value: BigNumberish,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    increase_unlock_time(
-      _days: BigNumberish,
-      _id: BigNumberish,
+    increase_time_to_maturity(
+      _amount: BigNumberish,
+      _end: BigNumberish,
+      _newEnd: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    lockIds(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    lockedBalances(
+    lockedPosition(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -1569,21 +1666,21 @@ export class BloodRedRequiem extends BaseContract {
 
     lockedToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    locked_end(
-      _addr: string,
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     locked_of(
       _addr: string,
-      _id: BigNumberish,
+      _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     minLockedAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     mintedForLock(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    multipliers(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -1632,14 +1729,14 @@ export class BloodRedRequiem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     transferFullLock(
-      _id: BigNumberish,
+      _end: BigNumberish,
       _to: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    transferLock(
-      _amountThis: BigNumberish,
-      _id: BigNumberish,
+    transferLockShare(
+      _amount: BigNumberish,
+      _end: BigNumberish,
       _to: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1662,7 +1759,8 @@ export class BloodRedRequiem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     withdraw(
-      _id: BigNumberish,
+      _end: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

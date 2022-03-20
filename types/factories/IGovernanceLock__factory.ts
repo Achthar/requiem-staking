@@ -35,29 +35,6 @@ const _abi = [
         name: "_addr",
         type: "address",
       },
-      {
-        internalType: "uint256",
-        name: "_value",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_id",
-        type: "uint256",
-      },
-    ],
-    name: "deposit_for_id",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_addr",
-        type: "address",
-      },
     ],
     name: "get_locks",
     outputs: [
@@ -71,6 +48,16 @@ const _abi = [
           {
             internalType: "uint256",
             name: "end",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "minted",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "votingPower",
             type: "uint256",
           },
         ],
@@ -91,7 +78,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "_id",
+        name: "_end",
         type: "uint256",
       },
     ],
@@ -134,11 +121,11 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "_id",
+        name: "_end",
         type: "uint256",
       },
     ],
-    name: "increase_amount",
+    name: "increase_position",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -147,16 +134,21 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_days",
+        name: "_amount",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "_id",
+        name: "_end",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_newEnd",
         type: "uint256",
       },
     ],
-    name: "increase_unlock_time",
+    name: "increase_time_to_maturity",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -170,31 +162,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "_id",
-        type: "uint256",
-      },
-    ],
-    name: "locked_end",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_addr",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_id",
+        name: "_end",
         type: "uint256",
       },
     ],
@@ -261,7 +229,12 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_id",
+        name: "_end",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
         type: "uint256",
       },
     ],
