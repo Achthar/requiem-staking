@@ -6,7 +6,7 @@ interface IGovernanceLock {
     uint256 amount;
     uint256 end;
     uint256 minted;
-    uint256 votingPower;
+    uint256 multiplier;
   }
 
   function get_locks(address _addr)
@@ -39,9 +39,22 @@ interface IGovernanceLock {
     view
     returns (uint256);
 
-  function create_lock(uint256 _value, uint256 _days) external;
+  function create_lock(
+    uint256 _value,
+    uint256 _days,
+    address _recipient
+  ) external;
 
-  function increase_position(uint256 _value, uint256 _end) external;
+  function lock_exists(address _addr, uint256 _end)
+    external
+    view
+    returns (bool);
+
+  function increase_position(
+    uint256 _value,
+    uint256 _end,
+    address _recipient
+  ) external;
 
   function increase_time_to_maturity(
     uint256 _amount,

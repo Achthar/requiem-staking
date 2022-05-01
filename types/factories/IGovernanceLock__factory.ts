@@ -22,6 +22,11 @@ const _abi = [
         name: "_days",
         type: "uint256",
       },
+      {
+        internalType: "address",
+        name: "_recipient",
+        type: "address",
+      },
     ],
     name: "create_lock",
     outputs: [],
@@ -57,7 +62,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "votingPower",
+            name: "multiplier",
             type: "uint256",
           },
         ],
@@ -124,6 +129,11 @@ const _abi = [
         name: "_end",
         type: "uint256",
       },
+      {
+        internalType: "address",
+        name: "_recipient",
+        type: "address",
+      },
     ],
     name: "increase_position",
     outputs: [],
@@ -151,6 +161,30 @@ const _abi = [
     name: "increase_time_to_maturity",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_addr",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_end",
+        type: "uint256",
+      },
+    ],
+    name: "lock_exists",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

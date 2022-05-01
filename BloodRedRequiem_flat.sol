@@ -1490,7 +1490,7 @@ contract BloodRedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
       _value,
       _now,
       _end,
-      _value,
+      lockedPosition[_addr][_end],
       multipliers[_addr][_end]
     );
 

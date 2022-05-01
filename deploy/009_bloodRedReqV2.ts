@@ -4,7 +4,7 @@ import { ethers, waffle } from 'hardhat';
 // const { solidity } = 'ethereum-waffle'
 // const { expect } = 'chai'
 import { DeployFunction } from "hardhat-deploy/types";
-import { parseUnits } from 'ethers/lib/utils';
+import { formatEther, parseUnits } from 'ethers/lib/utils';
 import { expandDecimals } from "../test/ts/shared/utilities";
 import { BigNumber } from "ethers";
 import { toNormalizedWeights } from "./resources/normalizedWeights"
@@ -16,7 +16,7 @@ import { Console, timeStamp } from 'console';
 
 
 const lockConverter = (lockArray: any[]) => {
-    return lockArray.map((l) => { return { amount: l.amount.toString(), end: l.end.toString(), minted: l.minted.toString(), voting: l.votingPower.toString() } })
+    return lockArray.map((l) => { return { amount: l.amount.toString(), end: l.end.toString(), minted: l.minted.toString(), multiplier: formatEther(l.multiplier) } })
 }
 
 
