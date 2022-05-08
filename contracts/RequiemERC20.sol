@@ -7,13 +7,13 @@ import "./libraries/ERC20Permit.sol";
 import "./libraries/Ownable.sol";
 
 /**
- *  Governance token for requiem.finance
- *  - Flexible minting allowed for flexibility
+ *  Reward token for requiem.finance
+ *  - Flexible minting allowed for multiple rewards
  *  - Total supply cap for better control
  *  - Controllable minters with indivitual caps
  */
 contract RequiemERC20Token is ERC20Permit, Ownable, ERC20Burnable {
-  uint256 public MAX_TOTAL_SUPPLY = 10_000_000_000 ether; // 10bn
+  uint256 public MAX_TOTAL_SUPPLY = 10_000_000 ether; // 10m
 
   mapping(address => uint256) public minters; // minter's address => minter's max cap
   mapping(address => uint256) public minters_minted;
@@ -29,7 +29,7 @@ contract RequiemERC20Token is ERC20Permit, Ownable, ERC20Burnable {
     _;
   }
 
-  constructor() ERC20("Requiem Token", "REQT", 18) ERC20Permit("REQT") {}
+  constructor() ERC20("Requiem Alpha", "REQA", 18) ERC20Permit("REQA") {}
 
   /* ========== MUTATIVE FUNCTIONS ========== */
 

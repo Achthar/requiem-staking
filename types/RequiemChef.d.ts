@@ -21,7 +21,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface RequiemChefInterface extends ethers.utils.Interface {
   functions: {
-    "add(uint256,uint256,address,address)": FunctionFragment;
+    "add(uint256,address,address)": FunctionFragment;
     "deposit(uint256,uint256,address)": FunctionFragment;
     "emergencyWithdraw(uint256,address)": FunctionFragment;
     "fund()": FunctionFragment;
@@ -50,7 +50,7 @@ interface RequiemChefInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "add",
-    values: [BigNumberish, BigNumberish, string, string]
+    values: [BigNumberish, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "deposit",
@@ -336,7 +336,6 @@ export class RequiemChef extends BaseContract {
   functions: {
     add(
       allocPoint: BigNumberish,
-      maturity: BigNumberish,
       _lpToken: string,
       _rewarder: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -387,11 +386,10 @@ export class RequiemChef extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber] & {
         accRewardPerShare: BigNumber;
         lastRewardTime: BigNumber;
         allocPoint: BigNumber;
-        maturity: BigNumber;
       }
     >;
 
@@ -464,7 +462,6 @@ export class RequiemChef extends BaseContract {
 
   add(
     allocPoint: BigNumberish,
-    maturity: BigNumberish,
     _lpToken: string,
     _rewarder: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -515,11 +512,10 @@ export class RequiemChef extends BaseContract {
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [BigNumber, BigNumber, BigNumber] & {
       accRewardPerShare: BigNumber;
       lastRewardTime: BigNumber;
       allocPoint: BigNumber;
-      maturity: BigNumber;
     }
   >;
 
@@ -590,7 +586,6 @@ export class RequiemChef extends BaseContract {
   callStatic: {
     add(
       allocPoint: BigNumberish,
-      maturity: BigNumberish,
       _lpToken: string,
       _rewarder: string,
       overrides?: CallOverrides
@@ -638,11 +633,10 @@ export class RequiemChef extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber] & {
         accRewardPerShare: BigNumber;
         lastRewardTime: BigNumber;
         allocPoint: BigNumber;
-        maturity: BigNumber;
       }
     >;
 
@@ -682,11 +676,10 @@ export class RequiemChef extends BaseContract {
       pid: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber] & {
         accRewardPerShare: BigNumber;
         lastRewardTime: BigNumber;
         allocPoint: BigNumber;
-        maturity: BigNumber;
       }
     >;
 
@@ -918,7 +911,6 @@ export class RequiemChef extends BaseContract {
   estimateGas: {
     add(
       allocPoint: BigNumberish,
-      maturity: BigNumberish,
       _lpToken: string,
       _rewarder: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1033,7 +1025,6 @@ export class RequiemChef extends BaseContract {
   populateTransaction: {
     add(
       allocPoint: BigNumberish,
-      maturity: BigNumberish,
       _lpToken: string,
       _rewarder: string,
       overrides?: Overrides & { from?: string | Promise<string> }

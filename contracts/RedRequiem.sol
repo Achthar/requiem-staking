@@ -30,13 +30,8 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
   uint256 public minLockedAmount;
   uint256 public earlyWithdrawPenaltyRate;
 
-  mapping(address => mapping(uint256 => uint256)) public mintedForLock;
-
-  // the dictionary that contains the locked positions for each endtime
-  mapping(address => mapping(uint256 => uint256)) public lockedPosition;
-
-  // 18-decimal multiplier mapped from user to lockEnd
-  mapping(address => mapping(uint256 => uint256)) public multipliers;
+  // user address -> end times -> locked position
+  mapping(address => mapping(uint256 => LockedBalance)) public lockedPositions;
 
   // tracks the maturities for locks per user
   mapping(address => EnumerableSet.UintSet) private lockEnds;
@@ -63,15 +58,6 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
 
   /* ========== PUBLIC FUNCTIONS ========== */
 
-  function locked_of(address _addr, uint256 _end)
-    external
-    view
-    override
-    returns (uint256)
-  {
-    return lockedPosition[_addr][_end];
-  }
-
   /**
    * Gets lock data for user
    * @param _addr user to get data of
@@ -86,12 +72,7 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
     _balances = new LockedBalance[](length);
     for (uint256 i = 0; i < length; i++) {
       uint256 _end = lockEnds[_addr].at(i);
-      _balances[i] = LockedBalance(
-        lockedPosition[_addr][_end],
-        _end,
-        mintedForLock[_addr][_end],
-        multipliers[_addr][_end]
-      );
+      _balances[i] = lockedPositions[_addr][_end];
     }
   }
 
@@ -99,30 +80,6 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
     return lockEnds[_addr].contains(_end);
   }
 
-  // returns minted voting power for lock
-  function get_minted_for_locks(address _addr)
-    external
-    view
-    override
-    returns (uint256[] memory _minted)
-  {
-    uint256 length = lockEnds[_addr].length();
-    _minted = new uint256[](length);
-    for (uint256 i = 0; i < length; i++) {
-      uint256 _end = lockEnds[_addr].at(i);
-      _minted[i] = mintedForLock[_addr][_end];
-    }
-  }
-
-  // returns minted voting power for lock
-  function get_minted_for_lock(address _addr, uint256 _end)
-    external
-    view
-    override
-    returns (uint256 _minted)
-  {
-    _minted = mintedForLock[_addr][_end];
-  }
 
   function voting_power_unlock_time(uint256 _value, uint256 _unlock_time)
     public
@@ -144,7 +101,7 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
     _vote = 0;
     for (uint256 i = 0; i < _length; i++) {
       uint256 _end = lockEnds[_addr].at(i);
-      _vote += lockedPosition[_addr][_end] * multipliers[_addr][_end];
+      _vote += lockedPositions[_addr][_end].amount * lockedPositions[_addr][_end].multiplier;
     }
 
     _vote /= 1e18;
@@ -160,8 +117,9 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
     _votingPower = 0;
     for (uint256 i = 0; i < _length; i++) {
       uint256 _end = lockEnds[_addr].at(i);
-      _votingPower += (mintedForLock[_addr][_end] * multipliers[_addr][_end]) / 1e18;
-      _locked += lockedPosition[_addr][_end];
+      LockedBalance memory _lock = lockedPositions[_addr][_end];
+      _votingPower += (_lock.minted * _lock.multiplier) / 1e18;
+      _locked += _lock.amount;
     }
 
     // we pick the minimum of amount and locked, otherwise
@@ -239,18 +197,21 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
     uint256 _endsLength = lockEnds[_msgSender()].length();
     for (uint256 i = 0; i < _endsLength; i++) {
       uint256 _end = lockEnds[_msgSender()].at(i);
-      uint256 _locked = lockedPosition[_msgSender()][_end];
+      LockedBalance storage _lock = lockedPositions[_msgSender()][_end];
+      uint256 _locked = _lock.amount;
       uint256 _now = block.timestamp;
       if (_locked > 0 && _now >= _end) {
-        // delete position and multiplier
-        delete lockedPosition[_msgSender()][_end];
-        delete multipliers[_msgSender()][_end];
+        uint256 _minted = _lock.minted;
 
         // burn minted amount
-        _burn(_msgSender(), mintedForLock[_msgSender()][_end]);
+        _burn(_msgSender(), _minted);
 
-        // delete minted entry
-        delete mintedForLock[_msgSender()][_end];
+        // delete lock entry
+        delete lockedPositions[_msgSender()][_end];
+
+        // delete _end entry
+        lockEnds[_msgSender()].remove(_end);
+
         IERC20(lockedToken).safeTransfer(_msgSender(), _locked);
 
         emit Withdraw(_msgSender(), _locked, _now);
@@ -259,21 +220,27 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
   }
 
   function withdraw(uint256 _end, uint256 _amount) external override lock {
-    uint256 _locked = lockedPosition[_msgSender()][_end];
+    LockedBalance memory _lock = lockedPositions[_msgSender()][_end];
     uint256 _now = block.timestamp;
+    uint256 _locked = _lock.amount;
     require(_locked > 0, "Nothing to withdraw");
     require(_now >= _end, "The lock didn't expire");
-    require(_locked >= _amount, "Insufficient locked");
     if (_amount >= _locked) {
-      delete lockedPosition[_msgSender()][_end];
-      delete multipliers[_msgSender()][_end];
-      _burn(_msgSender(), mintedForLock[_msgSender()][_end]);
-      delete mintedForLock[_msgSender()][_end];
+      uint256 _minted = _lock.minted;
+
+      // burn minted amount
+      _burn(_msgSender(), _minted);
+
+      // delete lock entry
+      delete lockedPositions[_msgSender()][_end];
+
+      // delete _end entry
       lockEnds[_msgSender()].remove(_end);
     } else {
-      lockedPosition[_msgSender()][_end] -= _amount;
-      _burn(_msgSender(), mintedForLock[_msgSender()][_end]);
-      mintedForLock[_msgSender()][_end] -= get_amount_minted(_amount, _end);
+      uint256 _minted = get_amount_minted(_amount, _end);
+      _lock.amount -= _amount;
+      _lock.minted -= _minted;
+      _burn(_msgSender(), _minted);
     }
 
     IERC20(lockedToken).safeTransfer(_msgSender(), _amount);
@@ -283,7 +250,8 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
 
   // This will charge PENALTY if lock is not expired yet
   function emergencyWithdraw(uint256 _end) external lock {
-    uint256 _amount = lockedPosition[_msgSender()][_end];
+    LockedBalance memory _lock = lockedPositions[_msgSender()][_end];
+    uint256 _amount = _lock.amount;
     uint256 _now = block.timestamp;
     require(_amount > 0, "Nothing to withdraw");
     if (_now < _end) {
@@ -291,10 +259,14 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
       _penalize(_fee);
       _amount = _amount - _fee;
     }
-    delete lockedPosition[_msgSender()][_end];
-    delete multipliers[_msgSender()][_end];
-    _burn(_msgSender(), mintedForLock[_msgSender()][_end]);
-    delete mintedForLock[_msgSender()][_end];
+
+    // burn amount
+    _burn(_msgSender(), _lock.minted);
+
+    // remove lock
+    delete lockedPositions[_msgSender()][_end];
+
+    // delete _end entry
     lockEnds[_msgSender()].remove(_end);
 
     IERC20(lockedToken).safeTransfer(_msgSender(), _amount);
@@ -305,20 +277,26 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
   // This will charge PENALTY if lock is not expired yet
   function emergencyWithdrawAll() external lock {
     uint256 _endsLength = lockEnds[_msgSender()].length();
+    uint256 _now = block.timestamp;
+
     for (uint256 i = 0; i < _endsLength; i++) {
       uint256 _end = lockEnds[_msgSender()].at(i);
-      uint256 _locked = lockedPosition[_msgSender()][_end];
-      uint256 _now = block.timestamp;
+      LockedBalance memory _lock = lockedPositions[_msgSender()][_end];
+      uint256 _locked = _lock.amount;
       if (_locked > 0) {
         if (_now < _end) {
           uint256 _fee = (_locked * earlyWithdrawPenaltyRate) / PRECISION;
           _penalize(_fee);
-          lockedPosition[_msgSender()][_end] = _locked - _fee;
+         _locked -= _fee;
         }
-        delete lockedPosition[_msgSender()][_end];
-        delete multipliers[_msgSender()][_end];
-        _burn(_msgSender(), mintedForLock[_msgSender()][i]);
-        delete mintedForLock[_msgSender()][_end];
+
+        _burn(_msgSender(), _lock.minted);
+
+        // delete lock
+        delete lockedPositions[_msgSender()][_end];
+
+        // delete _end entry
+        lockEnds[_msgSender()].remove(_end);
 
         IERC20(lockedToken).safeTransfer(_msgSender(), _locked);
 
@@ -332,9 +310,8 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
     uint256 _end,
     address _to
   ) public {
-    uint256 _share = (_amount * 1e18) / lockedPosition[_msgSender()][_end];
 
-    uint256 _toSend = (_share * mintedForLock[_msgSender()][_end]) / 1e18;
+    uint256 _toSend = get_amount_minted(_amount, _end);
 
     // send the respective amount of this token
     IERC20(address(this)).safeTransferFrom(
@@ -349,7 +326,7 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
 
   function transferFullLock(uint256 _end, address _to) public {
     // for a full transfer, the full minted amount has to be paid
-    uint256 _minted = mintedForLock[_msgSender()][_end];
+    uint256 _minted = lockedPositions[_msgSender()][_end].minted;
 
     // send the underying amount of this token
     IERC20(address(this)).safeTransferFrom(_msgSender(), _to, _minted);
@@ -370,13 +347,18 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
     require(!lockEnds[_addr].contains(_end), "position exists");
     uint256 _vp = get_amount_minted(_value, _end);
     require(_vp > 0, "No benefit to lock");
-    lockedPosition[_addr][_end] = _value;
 
     IERC20(lockedToken).safeTransferFrom(_msgSender(), address(this), _value);
     _mint(_addr, _vp);
-    mintedForLock[_addr][_end] = _vp;
+
     lockEnds[_addr].add(_end);
-    multipliers[_addr][_end] = _calculate_multiplier(block.timestamp, _end);
+    lockedPositions[_addr][_end] = LockedBalance({
+      amount:_value,
+      end:_end,
+      multiplier: _calculate_multiplier(block.timestamp, _end),
+      minted: _vp
+
+    });
   }
 
   /**
@@ -395,45 +377,58 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
   ) internal lock {
     uint256 _vp = get_amount_minted(_amount, _end);
     uint256 _vpNew = get_amount_minted(_amount, _newEnd);
-    uint256 _oldLocked = lockedPosition[_addr][_end];
+
+    LockedBalance memory _lock = lockedPositions[_addr][_end];
+    uint256 _oldLocked = _lock.amount;
     uint256 _now = block.timestamp;
     // adjust multipliers
     if (lockEnds[_addr].contains(_newEnd)) {
+
+      LockedBalance memory _lockNew = lockedPositions[_addr][_newEnd];
+
       // position exists
-      multipliers[_addr][_newEnd] = _calculate_adjusted_multiplier_position(
+     _lockNew.multiplier = _calculate_adjusted_multiplier_position(
         _amount,
         _now,
         _newEnd,
-        lockedPosition[_addr][_newEnd],
-        multipliers[_addr][_newEnd]
+        _lockNew.amount,
+        _lockNew.multiplier
       );
       // increase on new
-      lockedPosition[_addr][_newEnd] += _amount;
-      mintedForLock[_addr][_newEnd] += _vpNew;
+      _lockNew.amount += _amount;
+      _lockNew.minted += _vpNew;
+
+      lockedPositions[_addr][_newEnd] = _lockNew;
     } else {
       // position does not exist
-      multipliers[_addr][_newEnd] = _calculate_adjusted_multiplier_maturity(
+
+      // add maturity entry
+      lockEnds[_addr].add(_newEnd);
+
+      // add lock
+      lockedPositions[_addr][_newEnd] = LockedBalance({
+        amount:_amount,
+        minted: _vpNew,
+        multiplier: _calculate_adjusted_multiplier_maturity(
         _now,
         _end,
         _newEnd,
-        multipliers[_addr][_end]
-      );
-      // create on new
-      lockedPosition[_addr][_newEnd] = _amount;
-      mintedForLock[_addr][_newEnd] = _vpNew;
-      lockEnds[_addr].add(_newEnd);
+        _lock.multiplier
+      ),
+      end:_newEnd
+      });
     }
 
     if (_amount == _oldLocked) {
       // delete from old
-      delete lockedPosition[_addr][_end];
-      delete mintedForLock[_addr][_end];
-      delete multipliers[_addr][_end];
+      delete lockedPositions[_addr][_end];
       lockEnds[_addr].remove(_end);
     } else {
       // decrease from old
-      lockedPosition[_addr][_end] -= _amount;
-      mintedForLock[_addr][_end] -= _vp;
+      _lock.amount -= _amount;
+      _lock.minted -= _vp;
+
+      lockedPositions[_addr][_end] = _lock;
     }
 
     uint256 _vpDiff = _vpNew - _vp;
@@ -457,25 +452,28 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
     // calculate amount to mint
     uint256 _vp = get_amount_minted(_value, _end); // voting_power_unlock_time(_value, _end);
 
+    LockedBalance memory _lock = lockedPositions[_msgSender()][_end];
     // adjust multiplier
     uint256 _now = block.timestamp;
-    multipliers[_addr][_end] = _calculate_adjusted_multiplier_position(
+   _lock.multiplier = _calculate_adjusted_multiplier_position(
       _value,
       _now,
       _end,
-      lockedPosition[_addr][_end],
-      multipliers[_addr][_end]
+      _lock.amount,
+      _lock.multiplier
     );
 
     // increase locked amount
-    lockedPosition[_addr][_end] += _value;
+    _lock.amount += _value;
 
     require(_vp > 0, "No benefit to lock");
 
     IERC20(lockedToken).safeTransferFrom(_msgSender(), address(this), _value);
 
     _mint(_addr, _vp);
-    mintedForLock[_addr][_end] += _vp;
+    _lock.minted += _vp;
+
+    lockedPositions[_msgSender()][_end] = _lock;
 
     emit Deposit(_addr, _value, _end, _now);
   }
@@ -502,17 +500,24 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
     uint256 _end,
     address _to
   ) internal {
-    uint256 _locked = lockedPosition[_from][_end];
-    require(_amount <= _locked, "Insufficient funds in Lock");
+
+    LockedBalance memory _lock = lockedPositions[_from][_end];
+
+    require(_amount <= _lock.amount, "Insufficient funds in Lock");
+
+    // adjust lock before transfer
+    _lock.amount = _amount;
+    _lock.minted = _vp;
 
     // log the amount for the recipient
-    _receiveLock(_amount, _vp, _end, _to);
+    _receiveLock(_lock, _to);
 
     // reduce this users lock amount
-    lockedPosition[_from][_end] -= _amount;
+    lockedPositions[_from][_end].amount -= _amount;
 
     // reduce related voting power
-    mintedForLock[_from][_end] -= _vp;
+    lockedPositions[_from][_end].minted -= _vp;
+
   }
 
   /**
@@ -525,56 +530,54 @@ contract RedRequiem is ERC20Burnable, IGovernanceLock, Ownable {
     address _to,
     uint256 _end
   ) internal {
+
+    LockedBalance memory _lock = lockedPositions[_from][_end];
+
     // log the amount for the recipient
     _receiveLock(
-      lockedPosition[_from][_end],
-      mintedForLock[_from][_end],
-      _end,
+      _lock,
       _to
     );
 
-    // reduce this users lock amount
-    delete lockedPosition[_from][_end];
-    delete mintedForLock[_from][_end];
-
-    delete multipliers[_from][_end];
-    // delete index
+    // reduce this users lock data
+    delete lockedPositions[_from][_end];
+    // delete maturity entry
     lockEnds[_from].remove(_end);
   }
 
   /**
   Function that logs the recipients lock
   All locks will searched and once a match is found the lock amount is added
-  @param _lockAmount locked amount that is received
-  @param _lockEnd lock end time
+  @param _lock locked amount that is received
   @param _recipient recipient address
   - does NOT reduce the senders lock, that has to be done before
    */
   function _receiveLock(
-    uint256 _lockAmount,
-    uint256 _vp,
-    uint256 _lockEnd,
+    LockedBalance memory _lock,
     address _recipient
   ) internal {
-    bool _lockExists = lockEnds[_recipient].contains(_lockEnd);
+    bool _lockExists = lockEnds[_recipient].contains(_lock.end);
     uint256 _now = block.timestamp;
     if (_lockExists) {
-      mintedForLock[_recipient][_lockEnd] += _vp;
-      multipliers[_recipient][
-        _lockEnd
-      ] = _calculate_adjusted_multiplier_position(
-        _lockAmount,
+      LockedBalance memory _existingLock = lockedPositions[_recipient][_lock.end];
+      _existingLock.minted += _lock.minted;
+      _lock.multiplier = _calculate_adjusted_multiplier_position(
+        _lock.amount,
         _now,
-        _lockEnd,
-        lockedPosition[_recipient][_lockEnd],
-        multipliers[_recipient][_lockEnd]
+        _lock.end,
+        _existingLock.amount,
+        _existingLock.amount
       );
-      lockedPosition[_recipient][_lockEnd] += _lockAmount;
+      _existingLock.amount += _lock.amount;
+
+      lockedPositions[_recipient][_lock.end] = _existingLock;
+
     } else {
-      multipliers[_recipient][_lockEnd] = _calculate_multiplier(_now, _lockEnd);
-      lockedPosition[_recipient][_lockEnd] = _lockAmount;
-      mintedForLock[_recipient][_lockEnd] = _vp;
-      lockEnds[_recipient].add(_lockEnd);
+      // assign lock
+      lockedPositions[_recipient][_lock.end] = _lock;
+      lockedPositions[_recipient][_lock.end].multiplier = _calculate_multiplier(_now, _lock.end);
+      // add maturity entry
+      lockEnds[_recipient].add(_lock.end);
     }
   }
 

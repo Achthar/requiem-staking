@@ -24,16 +24,12 @@ import {
 } from "../../types";
 
 
-const TOTAL_SUPPLY = toWei(10000)
-const TEST_AMOUNT = toWei(10)
-
 const lockConverter = (lockArray: any[]) => {
 	return lockArray.map((l) => { return { amount: l.amount.toString(), end: l.end.toString(), minted: l.minted.toString(), multiplier: ethers.utils.formatEther(l.multiplier) } })
 }
 
 
 describe('RedRequiem', () => {
-
 
 	let signers: SignerWithAddress[];
 
@@ -44,26 +40,6 @@ describe('RedRequiem', () => {
 	let redReq: Contract
 	let req: Contract
 	let tokenB: Contract
-	let weth: Contract
-	let formula: Contract
-	let factory: Contract
-	let pairManager: Contract
-	let router: Contract
-
-	// specs for pair
-	let tokenWeightA = BigNumber.from(20)
-	let swapFee = BigNumber.from(10)
-	let amplification = BigNumber.from(15000)
-
-	let newSwapFee = BigNumber.from(20)
-	let newAmplification = BigNumber.from(20000)
-
-	let amountA = parseUnits('50', 18)
-	let amountB = parseUnits('100', 18)
-	let ZERO = BigNumber.from(0)
-	let pairContract: Contract
-	let deadline = '9999999999999999'
-
 
 	beforeEach(async () => {
 		deployWallet = await ethers.Wallet.fromMnemonic(((network.config.accounts) as any).mnemonic);
@@ -95,9 +71,9 @@ describe('RedRequiem', () => {
 
 
 
-		const locks0 = await redReq.locked_of(wallet.address, 0)
+		// const locks0 = await redReq.locked_of(wallet.address, 0)
 
-		console.log("Locks User", locks0)
+		// console.log("Locks User", locks0)
 		const _end1 = 60 * 60 * 24 + now
 
 		await redReq.create_lock(

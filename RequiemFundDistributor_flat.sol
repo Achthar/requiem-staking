@@ -1,203 +1,58 @@
 
-// File: contracts/interfaces/IOwnable.sol
-
-
-pragma solidity 0.8.13;
-
-interface IOwnable {
-  function owner() external view returns (address);
-
-  function renounceOwnership() external;
-  
-  function transferOwnership( address newOwner_ ) external;
-}
-// File: contracts/libraries/Ownable.sol
-
-
-pragma solidity 0.8.13;
-
-
-contract Ownable is IOwnable {
-    
-  address internal _owner;
-
-  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
-  constructor () {
-    _owner = msg.sender;
-    emit OwnershipTransferred( address(0), _owner );
-  }
-
-  function owner() public view override returns (address) {
-    return _owner;
-  }
-
-  modifier onlyOwner() {
-    require( _owner == msg.sender, "Ownable: caller is not the owner" );
-    _;
-  }
-
-  function renounceOwnership() public virtual override onlyOwner() {
-    emit OwnershipTransferred( _owner, address(0) );
-    _owner = address(0);
-  }
-
-  function transferOwnership( address newOwner_ ) public virtual override onlyOwner() {
-    require( newOwner_ != address(0), "Ownable: new owner is the zero address");
-    emit OwnershipTransferred( _owner, newOwner_ );
-    _owner = newOwner_;
-  }
-}
-// File: contracts/libraries/EIP712.sol
-
+// File: contracts/interfaces/IGovernanceLock.sol
 
 
 pragma solidity ^0.8.13;
 
-/**
- * @dev https://eips.ethereum.org/EIPS/eip-712[EIP 712] is a standard for hashing and signing of typed structured data.
- *
- * The encoding specified in the EIP is very generic, and such a generic implementation in Solidity is not feasible,
- * thus this contract does not implement the encoding itself. Protocols need to implement the type-specific encoding
- * they need in their contracts using a combination of `abi.encode` and `keccak256`.
- *
- * This contract implements the EIP 712 domain separator ({_domainSeparatorV4}) that is used as part of the encoding
- * scheme, and the final step of the encoding to obtain the message digest that is then signed via ECDSA
- * ({_hashTypedDataV4}).
- *
- * The implementation of the domain separator was designed to be as efficient as possible while still properly updating
- * the chain id to protect against replay attacks on an eventual fork of the chain.
- *
- * NOTE: This contract implements the version of the encoding known as "v4", as implemented by the JSON RPC method
- * https://docs.metamask.io/guide/signing-data.html[`eth_signTypedDataV4` in MetaMask].
- *
- * _Available since v3.4._
- */
-abstract contract EIP712 {
-    /* solhint-disable var-name-mixedcase */
-    bytes32 private immutable _HASHED_NAME;
-    bytes32 private immutable _HASHED_VERSION;
-    bytes32 private immutable _TYPE_HASH;
+interface IGovernanceLock {
+  struct LockedBalance {
+    uint256 amount;
+    uint256 end;
+    uint256 minted;
+    uint256 multiplier;
+  }
 
-    /* solhint-enable var-name-mixedcase */
+  function get_locks(address _addr)
+    external
+    view
+    returns (LockedBalance[] memory _balances);
 
-    /**
-     * @dev Initializes the domain separator and parameter caches.
-     *
-     * The meaning of `name` and `version` is specified in
-     * https://eips.ethereum.org/EIPS/eip-712#definition-of-domainseparator[EIP 712]:
-     *
-     * - `name`: the user readable name of the signing domain, i.e. the name of the DApp or the protocol.
-     * - `version`: the current major version of the signing domain.
-     *
-     * NOTE: These parameters cannot be changed except through a xref:learn::upgrading-smart-contracts.adoc[smart
-     * contract upgrade].
-     */
-    constructor(string memory name, string memory version) {
-        _HASHED_NAME = keccak256(bytes(name));
-        _HASHED_VERSION = keccak256(bytes(version));
-        _TYPE_HASH = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
-    }
+  function voting_power_unlock_time(uint256 _value, uint256 _unlock_time)
+    external
+    view
+    returns (uint256);
 
-    /**
-     * @dev Returns the domain separator for the current chain.
-     */
-    function _domainSeparatorV4() internal view virtual returns (bytes32) {
-        return keccak256(abi.encode(_TYPE_HASH, _HASHED_NAME, _HASHED_VERSION, _getChainId(), address(this)));
-    }
+  function voting_power_locked_days(uint256 _value, uint256 _days)
+    external
+    view
+    returns (uint256);
 
-    /**
-     * @dev Given an already https://eips.ethereum.org/EIPS/eip-712#definition-of-hashstruct[hashed struct], this
-     * function returns the hash of the fully encoded EIP712 message for this domain.
-     *
-     * This hash can be used together with {ECDSA-recover} to obtain the signer of a message. For example:
-     *
-     * ```solidity
-     * bytes32 digest = _hashTypedDataV4(keccak256(abi.encode(
-     *     keccak256("Mail(address to,string contents)"),
-     *     mailTo,
-     *     keccak256(bytes(mailContents))
-     * )));
-     * address signer = ECDSA.recover(digest, signature);
-     * ```
-     */
-    function _hashTypedDataV4(bytes32 structHash) internal view virtual returns (bytes32) {
-        return keccak256(abi.encodePacked("\x19\x01", _domainSeparatorV4(), structHash));
-    }
+  function create_lock(
+    uint256 _value,
+    uint256 _days,
+    address _recipient
+  ) external;
 
-    function _getChainId() private view returns (uint256 chainId) {
-        // Silence state mutability warning without generating bytecode.
-        // See https://github.com/ethereum/solidity/issues/10090#issuecomment-741789128 and
-        // https://github.com/ethereum/solidity/issues/2691
-        this;
+  function lock_exists(address _addr, uint256 _end)
+    external
+    view
+    returns (bool);
 
-        // solhint-disable-next-line no-inline-assembly
-        assembly {
-            chainId := chainid()
-        }
-    }
-}
+  function increase_position(
+    uint256 _value,
+    uint256 _end,
+    address _recipient
+  ) external;
 
-// File: contracts/interfaces/ERC20/IERC20Permit.sol
+  function increase_time_to_maturity(
+    uint256 _amount,
+    uint256 _end,
+    uint256 _newEnd
+  ) external;
 
+  function withdraw(uint256 _end, uint256 _amount) external;
 
-
-pragma solidity ^0.8.13;
-
-/**
- * @dev Interface of the ERC20 Permit extension allowing approvals to be made via signatures, as defined in
- * https://eips.ethereum.org/EIPS/eip-2612[EIP-2612].
- *
- * Adds the {permit} method, which can be used to change an account's ERC20 allowance (see {IERC20-allowance}) by
- * presenting a message signed by the account. By not relying on `{IERC20-approve}`, the token holder account doesn't
- * need to send a transaction, and thus is not required to hold Ether at all.
- */
-interface IERC20Permit {
-    /**
-     * @dev Sets `value` as the allowance of `spender` over `owner`'s tokens,
-     * given `owner`'s signed approval.
-     *
-     * IMPORTANT: The same issues {IERC20-approve} has related to transaction
-     * ordering also apply here.
-     *
-     * Emits an {Approval} event.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     * - `deadline` must be a timestamp in the future.
-     * - `v`, `r` and `s` must be a valid `secp256k1` signature from `owner`
-     * over the EIP712-formatted function arguments.
-     * - the signature must use ``owner``'s current nonce (see {nonces}).
-     *
-     * For more information on the signature format, see the
-     * https://eips.ethereum.org/EIPS/eip-2612#specification[relevant EIP
-     * section].
-     */
-    function permit(
-        address owner,
-        address spender,
-        uint256 value,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) external;
-
-    /**
-     * @dev Returns the current nonce for `owner`. This value must be
-     * included whenever a signature is generated for {permit}.
-     *
-     * Every successful call to {permit} increases ``owner``'s nonce by one. This
-     * prevents a signature from being used multiple times.
-     */
-    function nonces(address owner) external view returns (uint256);
-
-    /**
-     * @dev Returns the domain separator used in the encoding of the signature for `permit`, as defined by {EIP712}.
-     */
-    // solhint-disable-next-line func-name-mixedcase
-    function DOMAIN_SEPARATOR() external view returns (bytes32);
+  function withdrawAll() external;
 }
 
 // File: contracts/libraries/Context.sol
@@ -249,6 +104,100 @@ interface IERC20 {
 
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
+// File: contracts/interfaces/ERC20/IRewardToken.sol
+
+
+
+pragma solidity ^0.8.13;
+
+
+interface IRewardToken is IERC20 {
+    function mint(address _recipient, uint256 _amount) external;
+}
+
+// File: contracts/libraries/SafeERC20.sol
+
+
+
+// Based on the ReentrancyGuard library from OpenZeppelin Contracts, altered to reduce gas costs.
+// The `safeTransfer` and `safeTransferFrom` functions assume that `token` is a contract (an account with code), and
+// work differently from the OpenZeppelin version if it is not.
+
+pragma solidity ^0.8.13;
+
+
+/**
+ * @title SafeERC20
+ * @dev Wrappers around ERC20 operations that throw on failure (when the token
+ * contract returns false). Tokens that return no value (and instead revert or
+ * throw on failure) are also supported, non-reverting calls are assumed to be
+ * successful.
+ * To use this library you can add a `using SafeERC20 for IERC20;` statement to your contract,
+ * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.
+ */
+library SafeERC20 {
+  function safeTransfer(
+    IERC20 token,
+    address to,
+    uint256 value
+  ) internal {
+    _callOptionalReturn(
+      address(token),
+      abi.encodeWithSelector(token.transfer.selector, to, value)
+    );
+  }
+
+  function safeTransferFrom(
+    IERC20 token,
+    address from,
+    address to,
+    uint256 value
+  ) internal {
+    _callOptionalReturn(
+      address(token),
+      abi.encodeWithSelector(token.transferFrom.selector, from, to, value)
+    );
+  }
+
+  function safeIncreaseAllowance(
+    IERC20 token,
+    address spender,
+    uint256 value
+  ) internal {
+    uint256 newAllowance = token.allowance(address(this), spender) + value;
+    _callOptionalReturn(
+      address(token),
+      abi.encodeWithSelector(token.approve.selector, spender, newAllowance)
+    );
+  }
+
+  /**
+   * @dev Imitates a Solidity high-level call (i.e. a regular function call to a contract), relaxing the requirement
+   * on the return value: the return value is optional (but if data is returned, it must not be false).
+   *
+   * WARNING: `token` is assumed to be a contract: calls to EOAs will *not* revert.
+   */
+  function _callOptionalReturn(address token, bytes memory data) private {
+    // We need to perform a low level call here, to bypass Solidity's return data size checking mechanism, since
+    // we're implementing it ourselves.
+    (bool success, bytes memory returndata) = token.call(data);
+
+    // If the low-level call didn't succeed we return whatever was returned from it.
+    assembly {
+      if eq(success, 0) {
+        returndatacopy(0, 0, returndatasize())
+        revert(0, returndatasize())
+      }
+    }
+
+    // Finally we check the returndata size is either zero or true - note that this check will always pass for EOAs
+    require(
+      returndata.length == 0 || abi.decode(returndata, (bool)),
+      "SAFE_ERC20_CALL_FAILED"
+    );
+  }
+}
+
 // File: contracts/interfaces/ERC20/IERC20Metadata.sol
 
 
@@ -636,132 +585,6 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     ) internal virtual {}
 }
 
-// File: contracts/libraries/ERC20Permit.sol
-
-
-
-pragma solidity ^0.8.13;
-
-
-
-
-// solhint-disable no-empty-blocks
-
-/**
- * @dev Implementation of the ERC20 Permit extension allowing approvals to be made via signatures, as defined in
- * https://eips.ethereum.org/EIPS/eip-2612[EIP-2612].
- *
- * Adds the {permit} method, which can be used to change an account's ERC20 allowance (see {IERC20-allowance}) by
- * presenting a message signed by the account. By not relying on `{IERC20-approve}`, the token holder account doesn't
- * need to send a transaction, and thus is not required to hold Ether at all.
- *
- * _Available since v3.4._
- */
-abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712 {
-  mapping(address => uint256) private _nonces;
-
-  // solhint-disable-next-line var-name-mixedcase
-  bytes32 private immutable _PERMIT_TYPEHASH =
-    keccak256(
-      "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
-    );
-
-  /**
-   * @dev Initializes the {EIP712} domain separator using the `name` parameter, and setting `version` to `"1"`.
-   *
-   * It's a good idea to use the same `name` that is defined as the ERC20 token name.
-   */
-  constructor(string memory name) EIP712(name, "1") {}
-
-  /**
-   * @dev See {IERC20Permit-permit}.
-   */
-  function permit(
-    address owner,
-    address spender,
-    uint256 value,
-    uint256 deadline,
-    uint8 v,
-    bytes32 r,
-    bytes32 s
-  ) public virtual override {
-    // solhint-disable-next-line not-rely-on-time
-    require(block.timestamp <= deadline, "EXPIRED_PERMIT");
-
-    uint256 nonce = _nonces[owner];
-    bytes32 structHash = keccak256(
-      abi.encode(_PERMIT_TYPEHASH, owner, spender, value, nonce, deadline)
-    );
-
-    bytes32 hash = _hashTypedDataV4(structHash);
-
-    address signer = ecrecover(hash, v, r, s);
-    require((signer != address(0)) && (signer == owner), "INVALID_SIGNATURE");
-
-    _nonces[owner] = nonce + 1;
-    _approve(owner, spender, value);
-  }
-
-  /**
-   * @dev See {IERC20Permit-nonces}.
-   */
-  function nonces(address owner) public view override returns (uint256) {
-    return _nonces[owner];
-  }
-
-  /**
-   * @dev See {IERC20Permit-DOMAIN_SEPARATOR}.
-   */
-  // solhint-disable-next-line func-name-mixedcase
-  function DOMAIN_SEPARATOR() external view override returns (bytes32) {
-    return _domainSeparatorV4();
-  }
-}
-
-// File: contracts/libraries/ERC20Burnable.sol
-
-
-
-pragma solidity ^0.8.13;
-
-
-
-/**
- * @dev Extension of {ERC20} that allows token holders to destroy both their own
- * tokens and those that they have an allowance for, in a way that can be
- * recognized off-chain (via event analysis).
- */
-abstract contract ERC20Burnable is Context, ERC20 {
-  /**
-   * @dev Destroys `amount` tokens from the caller.
-   *
-   * See {ERC20-_burn}.
-   */
-  function burn(uint256 amount) public virtual {
-    _burn(_msgSender(), amount);
-  }
-
-  /**
-   * @dev Destroys `amount` tokens from `account`, deducting from the caller's
-   * allowance.
-   *
-   * See {ERC20-_burn} and {ERC20-allowance}.
-   *
-   * Requirements:
-   *
-   * - the caller must have allowance for ``accounts``'s tokens of at least
-   * `amount`.
-   */
-  function burnFrom(address account, uint256 amount) public virtual {
-    uint256 currentAllowance = allowance(account, _msgSender());
-    require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
-    unchecked {
-      _approve(account, _msgSender(), currentAllowance - amount);
-    }
-    _burn(account, amount);
-  }
-}
-
 // File: contracts/libraries/Initializable.sol
 
 
@@ -825,89 +648,133 @@ abstract contract Initializable {
         }
     }
 }
-// File: contracts/RequiemERC20.sol
+// File: contracts/interfaces/IOwnable.sol
+
+
+pragma solidity 0.8.13;
+
+interface IOwnable {
+  function owner() external view returns (address);
+
+  function renounceOwnership() external;
+  
+  function transferOwnership( address newOwner_ ) external;
+}
+// File: contracts/libraries/Ownable.sol
 
 
 pragma solidity 0.8.13;
 
 
+contract Ownable is IOwnable {
+    
+  address internal _owner;
 
+  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
+  constructor () {
+    _owner = msg.sender;
+    emit OwnershipTransferred( address(0), _owner );
+  }
 
-/**
- *  Reward token for requiem.finance
- *  - Flexible minting allowed for multiple rewards
- *  - Total supply cap for better control
- *  - Controllable minters with indivitual caps
- */
-contract RequiemERC20Token is ERC20Permit, Ownable, ERC20Burnable {
-  uint256 public MAX_TOTAL_SUPPLY = 10_000_000 ether; // 10m
+  function owner() public view override returns (address) {
+    return _owner;
+  }
 
-  mapping(address => uint256) public minters; // minter's address => minter's max cap
-  mapping(address => uint256) public minters_minted;
-
-  /* ========== EVENTS ========== */
-  event MinterUpdate(address indexed account, uint256 cap);
-  event MaxTotalSupplyUpdated(uint256 _newCap);
-
-  /* ========== Modifiers =============== */
-
-  modifier onlyMinter() {
-    require(minters[msg.sender] > 0, "Only minter can interact");
+  modifier onlyOwner() {
+    require( _owner == msg.sender, "Ownable: caller is not the owner" );
     _;
   }
 
-  constructor() ERC20("Requiem Alpha", "REQA", 18) ERC20Permit("REQA") {}
-
-  /* ========== MUTATIVE FUNCTIONS ========== */
-
-  function mint(address _recipient, uint256 _amount) public onlyMinter {
-    minters_minted[_msgSender()] += _amount;
-    require(
-      minters[_msgSender()] >= minters_minted[_msgSender()],
-      "Minting amount exceeds minter cap"
-    );
-    _mint(_recipient, _amount);
+  function renounceOwnership() public virtual override onlyOwner() {
+    emit OwnershipTransferred( _owner, address(0) );
+    _owner = address(0);
   }
 
-  function _beforeTokenTransfer(
-    address _from,
-    address _to,
-    uint256 _amount
-  ) internal override {
-    super._beforeTokenTransfer(_from, _to, _amount);
-    if (_from == address(0)) {
-      // When minting tokens
-      require(
-        totalSupply() + _amount <= MAX_TOTAL_SUPPLY,
-        "Max total supply exceeded"
-      );
+  function transferOwnership( address newOwner_ ) public virtual override onlyOwner() {
+    require( newOwner_ != address(0), "Ownable: new owner is the zero address");
+    emit OwnershipTransferred( _owner, newOwner_ );
+    _owner = newOwner_;
+  }
+}
+// File: contracts/RequiemFundDistributor.sol
+
+
+
+pragma solidity ^0.8.13;
+
+
+
+
+
+
+
+
+
+contract RequiemFundDistributor is Ownable, Initializable, Context {
+  using SafeERC20 for IRewardToken;
+
+  IRewardToken public reward;
+  IGovernanceLock public rewardGovernance;
+  uint256 public missingDecimals;
+
+  // CONTRACTS
+  mapping(address => bool) public requesters;
+
+  /* ========== MODIFIER ========== */
+
+  modifier onlyRequester() {
+    require(requesters[_msgSender()], "Only pool can request transfer");
+    _;
+  }
+
+  function initialize(address _reward, address _rewardGovernance)
+    external
+    initializer
+  {
+    reward = IRewardToken(_reward);
+    reward.approve(_rewardGovernance, type(uint256).max);
+    rewardGovernance = IGovernanceLock(_rewardGovernance);
+    missingDecimals = 18 - ERC20(_reward).decimals();
+  }
+
+  /* ========== MUTATIVE ====================== */
+
+  function distributeTo(
+    address _receiver,
+    uint256 _amount,
+    uint256 _maturity
+  ) public onlyRequester {
+    require(_receiver != address(0), "Invalid address");
+    if (_amount > 0) {
+      uint256 _toLock = _amount / (10**missingDecimals);
+      uint256 _end = block.timestamp + _maturity;
+      reward.mint(address(this), _toLock);
+      if (!rewardGovernance.lock_exists(_receiver, _end)) {
+        rewardGovernance.create_lock(_toLock, _end, _receiver);
+      } else {
+        rewardGovernance.increase_position(_toLock, _end, _receiver);
+      }
     }
-    if (_to == address(0)) {
-      // When burning tokens
-      require(
-        MAX_TOTAL_SUPPLY >= _amount,
-        "Burn amount exceeds max total supply"
-      );
-      MAX_TOTAL_SUPPLY -= _amount;
-    }
   }
 
-  /* ========== OWNER FUNCTIONS ========== */
+  /* ========== RESTRICTED FUNCTIONS ========== */
 
-  function setMinter(address _account, uint256 _minterCap) external onlyOwner {
-    require(_account != address(0), "invalid address");
-    require(
-      minters_minted[_account] <= _minterCap,
-      "Minter already minted a larger amount than new cap"
-    );
-    minters[_account] = _minterCap;
-    emit MinterUpdate(_account, _minterCap);
+  function addRequester(address _requester) external onlyOwner {
+    require(!requesters[_requester], "requester existed");
+    requesters[_requester] = true;
+    emit RequesterAdded(_requester);
   }
 
-  function resetMaxTotalSupply(uint256 _newCap) external onlyOwner {
-    require(_newCap >= totalSupply(), "_newCap is below current total supply");
-    MAX_TOTAL_SUPPLY = _newCap;
-    emit MaxTotalSupplyUpdated(_newCap);
+  function removeRequester(address _requester) external onlyOwner {
+    require(requesters[_requester], "requester not found");
+    delete requesters[_requester];
+    emit RequesterRemoved(_requester);
   }
+
+  /* ========== EVENTS ========================= */
+
+  event RequesterAdded(address indexed requester);
+  event RequesterRemoved(address indexed requester);
+  event FundRequested(uint256 indexed amount);
 }

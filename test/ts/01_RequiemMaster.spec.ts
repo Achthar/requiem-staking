@@ -52,27 +52,8 @@ describe('Master', () => {
 	let req: Contract
 	let reqDist: Contract
 	let lpToken: Contract
-	let weth: Contract
-	let formula: Contract
-	let factory: Contract
-	let pairManager: Contract
-	let router: Contract
 	let preBal: BigNumber
 	let postBal: BigNumber
-
-	// specs for pair
-	let tokenWeightA = BigNumber.from(20)
-	let swapFee = BigNumber.from(10)
-	let amplification = BigNumber.from(15000)
-
-	let newSwapFee = BigNumber.from(20)
-	let newAmplification = BigNumber.from(20000)
-
-	let amountA = parseUnits('50', 18)
-	let amountB = parseUnits('100', 18)
-	let ZERO = BigNumber.from(0)
-	let pairContract: Contract
-	let deadline = '9999999999999999'
 
 
 	beforeEach(async () => {
@@ -87,7 +68,7 @@ describe('Master', () => {
 
 		await reqDist.initialize(req.address, redReq.address)
 
-		master = await new RequiemChef__factory(wallet).deploy(req.address, reqDist.address)
+		master = await new RequiemMaster__factory(wallet).deploy(req.address, reqDist.address)
 
 		await req.setMinter(wallet.address, ethers.constants.MaxUint256)
 

@@ -41,20 +41,15 @@ interface RedRequiemInterface extends ethers.utils.Interface {
     "emergencyWithdrawAll()": FunctionFragment;
     "get_amount_minted(uint256,uint256)": FunctionFragment;
     "get_locks(address)": FunctionFragment;
-    "get_minted_for_lock(address,uint256)": FunctionFragment;
-    "get_minted_for_locks(address)": FunctionFragment;
     "get_share(address)": FunctionFragment;
     "get_voting_power(address,uint256)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "increase_position(uint256,uint256,address)": FunctionFragment;
     "increase_time_to_maturity(uint256,uint256,uint256)": FunctionFragment;
     "lock_exists(address,uint256)": FunctionFragment;
-    "lockedPosition(address,uint256)": FunctionFragment;
+    "lockedPositions(address,uint256)": FunctionFragment;
     "lockedToken()": FunctionFragment;
-    "locked_of(address,uint256)": FunctionFragment;
     "minLockedAmount()": FunctionFragment;
-    "mintedForLock(address,uint256)": FunctionFragment;
-    "multipliers(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "penaltyCollector()": FunctionFragment;
@@ -125,14 +120,6 @@ interface RedRequiemInterface extends ethers.utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "get_locks", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "get_minted_for_lock",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "get_minted_for_locks",
-    values: [string]
-  ): string;
   encodeFunctionData(functionFragment: "get_share", values: [string]): string;
   encodeFunctionData(
     functionFragment: "get_voting_power",
@@ -155,7 +142,7 @@ interface RedRequiemInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "lockedPosition",
+    functionFragment: "lockedPositions",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -163,20 +150,8 @@ interface RedRequiemInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "locked_of",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "minLockedAmount",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mintedForLock",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "multipliers",
-    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -283,14 +258,6 @@ interface RedRequiemInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "get_locks", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "get_minted_for_lock",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "get_minted_for_locks",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "get_share", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "get_voting_power",
@@ -313,24 +280,15 @@ interface RedRequiemInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "lockedPosition",
+    functionFragment: "lockedPositions",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "lockedToken",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "locked_of", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "minLockedAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "mintedForLock",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "multipliers",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
@@ -591,17 +549,6 @@ export class RedRequiem extends BaseContract {
       }
     >;
 
-    get_minted_for_lock(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { _minted: BigNumber }>;
-
-    get_minted_for_locks(
-      _addr: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]] & { _minted: BigNumber[] }>;
-
     get_share(
       _addr: string,
       overrides?: CallOverrides
@@ -639,33 +586,22 @@ export class RedRequiem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    lockedPosition(
+    lockedPositions(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        amount: BigNumber;
+        end: BigNumber;
+        minted: BigNumber;
+        multiplier: BigNumber;
+      }
+    >;
 
     lockedToken(overrides?: CallOverrides): Promise<[string]>;
 
-    locked_of(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     minLockedAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    mintedForLock(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    multipliers(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -833,17 +769,6 @@ export class RedRequiem extends BaseContract {
     })[]
   >;
 
-  get_minted_for_lock(
-    _addr: string,
-    _end: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  get_minted_for_locks(
-    _addr: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
   get_share(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   get_voting_power(
@@ -878,33 +803,22 @@ export class RedRequiem extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  lockedPosition(
+  lockedPositions(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      amount: BigNumber;
+      end: BigNumber;
+      minted: BigNumber;
+      multiplier: BigNumber;
+    }
+  >;
 
   lockedToken(overrides?: CallOverrides): Promise<string>;
 
-  locked_of(
-    _addr: string,
-    _end: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   minLockedAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
-  mintedForLock(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  multipliers(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -1067,17 +981,6 @@ export class RedRequiem extends BaseContract {
       })[]
     >;
 
-    get_minted_for_lock(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    get_minted_for_locks(
-      _addr: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
     get_share(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     get_voting_power(
@@ -1112,33 +1015,22 @@ export class RedRequiem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    lockedPosition(
+    lockedPositions(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        amount: BigNumber;
+        end: BigNumber;
+        minted: BigNumber;
+        multiplier: BigNumber;
+      }
+    >;
 
     lockedToken(overrides?: CallOverrides): Promise<string>;
 
-    locked_of(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     minLockedAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    mintedForLock(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    multipliers(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -1419,17 +1311,6 @@ export class RedRequiem extends BaseContract {
 
     get_locks(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    get_minted_for_lock(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    get_minted_for_locks(
-      _addr: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     get_share(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     get_voting_power(
@@ -1464,7 +1345,7 @@ export class RedRequiem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    lockedPosition(
+    lockedPositions(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -1472,25 +1353,7 @@ export class RedRequiem extends BaseContract {
 
     lockedToken(overrides?: CallOverrides): Promise<BigNumber>;
 
-    locked_of(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     minLockedAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    mintedForLock(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    multipliers(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1659,17 +1522,6 @@ export class RedRequiem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    get_minted_for_lock(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    get_minted_for_locks(
-      _addr: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     get_share(
       _addr: string,
       overrides?: CallOverrides
@@ -1707,7 +1559,7 @@ export class RedRequiem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    lockedPosition(
+    lockedPositions(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -1715,25 +1567,7 @@ export class RedRequiem extends BaseContract {
 
     lockedToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    locked_of(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     minLockedAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    mintedForLock(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    multipliers(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

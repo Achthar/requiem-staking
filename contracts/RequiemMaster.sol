@@ -5,16 +5,17 @@ pragma solidity ^0.8.13;
 import "./libraries/Ownable.sol";
 import "./interfaces/ERC20/IERC20.sol";
 import "./interfaces/IRewarder.sol";
-import "./interfaces/IFundDistributor.sol";
+import "./interfaces/IRewardDistributor.sol";
 import "./libraries/SafeERC20.sol";
 
-/*  RequiemMaster is a fork from Sushi's MiniChef v2 with slightly modification.
+using SafeERC20 for IERC20 global;
+
+/*  RequiemChef is a fork from Sushi's MiniChef v2 with slightly modification.
     1.  Rewards will be transferred from a seperated contract so that it will be more flexible to switch between:
         [mint reward token directly] OR [transfer them instead]
     2.  Add a Harvest all function to quickly harvest rewards from all the deposited pools
 */
 contract RequiemMaster is Ownable {
-  using SafeERC20 for IERC20;
 
   struct UserInfo {
     uint256 amount;
@@ -25,10 +26,11 @@ contract RequiemMaster is Ownable {
     uint256 accRewardPerShare;
     uint256 lastRewardTime;
     uint256 allocPoint;
+    uint256 maturity;
   }
 
   IERC20 public reward;
-  IFundDistributor public fund;
+  IRewardDistributor public fund;
 
   /// @notice Info of each MCV2 pool.
   PoolInfo[] public poolInfo;
@@ -45,7 +47,7 @@ contract RequiemMaster is Ownable {
   uint256 public rewardPerSecond;
   uint256 private constant ACC_REWARD_PRECISION = 1e12;
 
-  constructor(IERC20 _reward, IFundDistributor _fund) {
+  constructor(IERC20 _reward, IRewardDistributor _fund) {
     reward = _reward;
     fund = _fund;
   }
@@ -189,7 +191,7 @@ contract RequiemMaster is Ownable {
     user.rewardDebt = accumulatedReward;
 
     // Interactions
-    fund.distributeTo(to, _pendingReward);
+    fund.distributeTo(to, _pendingReward, pool.maturity);
 
     IRewarder _rewarder = rewarder[pid];
     if (address(_rewarder) != address(0)) {
@@ -222,7 +224,7 @@ contract RequiemMaster is Ownable {
     user.amount -= amount;
 
     // Interactions
-    fund.distributeTo(to, _pendingReward);
+    fund.distributeTo(to, _pendingReward, pool.maturity);
 
     IRewarder _rewarder = rewarder[pid];
     if (address(_rewarder) != address(0)) {
@@ -281,6 +283,7 @@ contract RequiemMaster is Ownable {
   /// @param _rewarder Address of the rewarder delegate.
   function add(
     uint256 allocPoint,
+    uint256 maturity,
     IERC20 _lpToken,
     IRewarder _rewarder
   ) public onlyOwner {
@@ -294,7 +297,8 @@ contract RequiemMaster is Ownable {
       PoolInfo({
         allocPoint: allocPoint,
         lastRewardTime: block.timestamp,
-        accRewardPerShare: 0
+        accRewardPerShare: 0,
+        maturity: maturity
       })
     );
     emit LogPoolAddition(lpToken.length - 1, allocPoint, _lpToken, _rewarder);
@@ -333,7 +337,7 @@ contract RequiemMaster is Ownable {
 
   /// @notice Set the new fund contract.
   /// @param _fund The address of new fund contract.
-  function setFund(IFundDistributor _fund) public onlyOwner {
+  function setFund(IRewardDistributor _fund) public onlyOwner {
     fund = _fund;
     emit PoolFundChanged(address(_fund));
   }

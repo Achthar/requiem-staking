@@ -23,12 +23,9 @@ interface IGovernanceLockInterface extends ethers.utils.Interface {
   functions: {
     "create_lock(uint256,uint256,address)": FunctionFragment;
     "get_locks(address)": FunctionFragment;
-    "get_minted_for_lock(address,uint256)": FunctionFragment;
-    "get_minted_for_locks(address)": FunctionFragment;
     "increase_position(uint256,uint256,address)": FunctionFragment;
     "increase_time_to_maturity(uint256,uint256,uint256)": FunctionFragment;
     "lock_exists(address,uint256)": FunctionFragment;
-    "locked_of(address,uint256)": FunctionFragment;
     "voting_power_locked_days(uint256,uint256)": FunctionFragment;
     "voting_power_unlock_time(uint256,uint256)": FunctionFragment;
     "withdraw(uint256,uint256)": FunctionFragment;
@@ -41,14 +38,6 @@ interface IGovernanceLockInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "get_locks", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "get_minted_for_lock",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "get_minted_for_locks",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "increase_position",
     values: [BigNumberish, BigNumberish, string]
   ): string;
@@ -58,10 +47,6 @@ interface IGovernanceLockInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "lock_exists",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "locked_of",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -87,14 +72,6 @@ interface IGovernanceLockInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "get_locks", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "get_minted_for_lock",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "get_minted_for_locks",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "increase_position",
     data: BytesLike
   ): Result;
@@ -106,7 +83,6 @@ interface IGovernanceLockInterface extends ethers.utils.Interface {
     functionFragment: "lock_exists",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "locked_of", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "voting_power_locked_days",
     data: BytesLike
@@ -196,17 +172,6 @@ export class IGovernanceLock extends BaseContract {
       }
     >;
 
-    get_minted_for_lock(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { _minted: BigNumber }>;
-
-    get_minted_for_locks(
-      _addr: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]] & { _minted: BigNumber[] }>;
-
     increase_position(
       _value: BigNumberish,
       _end: BigNumberish,
@@ -226,12 +191,6 @@ export class IGovernanceLock extends BaseContract {
       _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    locked_of(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     voting_power_locked_days(
       _value: BigNumberish,
@@ -275,17 +234,6 @@ export class IGovernanceLock extends BaseContract {
     })[]
   >;
 
-  get_minted_for_lock(
-    _addr: string,
-    _end: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  get_minted_for_locks(
-    _addr: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
   increase_position(
     _value: BigNumberish,
     _end: BigNumberish,
@@ -305,12 +253,6 @@ export class IGovernanceLock extends BaseContract {
     _end: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  locked_of(
-    _addr: string,
-    _end: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   voting_power_locked_days(
     _value: BigNumberish,
@@ -354,17 +296,6 @@ export class IGovernanceLock extends BaseContract {
       })[]
     >;
 
-    get_minted_for_lock(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    get_minted_for_locks(
-      _addr: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
     increase_position(
       _value: BigNumberish,
       _end: BigNumberish,
@@ -384,12 +315,6 @@ export class IGovernanceLock extends BaseContract {
       _end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    locked_of(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     voting_power_locked_days(
       _value: BigNumberish,
@@ -424,17 +349,6 @@ export class IGovernanceLock extends BaseContract {
 
     get_locks(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    get_minted_for_lock(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    get_minted_for_locks(
-      _addr: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     increase_position(
       _value: BigNumberish,
       _end: BigNumberish,
@@ -450,12 +364,6 @@ export class IGovernanceLock extends BaseContract {
     ): Promise<BigNumber>;
 
     lock_exists(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    locked_of(
       _addr: string,
       _end: BigNumberish,
       overrides?: CallOverrides
@@ -497,17 +405,6 @@ export class IGovernanceLock extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    get_minted_for_lock(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    get_minted_for_locks(
-      _addr: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     increase_position(
       _value: BigNumberish,
       _end: BigNumberish,
@@ -523,12 +420,6 @@ export class IGovernanceLock extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     lock_exists(
-      _addr: string,
-      _end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    locked_of(
       _addr: string,
       _end: BigNumberish,
       overrides?: CallOverrides
